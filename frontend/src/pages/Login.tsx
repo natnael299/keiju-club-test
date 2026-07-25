@@ -37,11 +37,11 @@ function Login() {
       login(response.token, response.user);
 
       if (response.user.role === "organizer") {
-        navigate("/organizer");
+        navigate("/organizer/dashboard");
         return;
       }
 
-      navigate("/home");
+      navigate("/app/home");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(
