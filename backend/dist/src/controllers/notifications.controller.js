@@ -1,0 +1,21 @@
+import { notificationsService } from "../services/notifications.service";
+export const notificationsController = {
+    getAllNotifications(req, res) {
+        const days = req.query.days ? Number(req.query.days) : undefined;
+        if (req.query.days && Number.isNaN(days)) {
+            return res.status(400).json({ error: "days must be a number" });
+        }
+        const notifications = notificationsService.getAllNotifications({
+            ownerId: req.query.ownerId,
+            days,
+        });
+        return res.json(notifications);
+    },
+    getNotificationById(req, res) {
+        const notification = notificationsService.getNotificationById(req.params.notificationId);
+        if (!notification) {
+            return res.status(404).json({ error: "Notification not found" });
+        }
+        return res.json(notification);
+    },
+};
