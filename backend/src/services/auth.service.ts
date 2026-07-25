@@ -1,9 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
-import User from "../models/user.model";
-import Organizer from "../models/organizer.model";
-
+import { mockOrganizers, mockUsers } from "../data";
 type AuthRole = "caretaker" | "nurse" | "organizer";
 
 type AuthenticatedUser = {
@@ -39,12 +36,12 @@ export const loginAccount = async (
 ): Promise<LoginResult> => {
   const normalizedEmail = email.trim().toLowerCase();
 
-  const user = await User.findOne({
-    email: normalizedEmail,
-  }).select("+passwordHash");
+  const user = mockUsers.find(
+    (candidate) => candidate.email.toLowerCase() === normalizedEmail,
+  );
 
   if (user) {
-    const passwordMatches = await bcrypt.compare(password, user.passwordHash);
+    const passwordMatches = await verifyPassword(password, user.passwordHash);
 
     if (!passwordMatches) {
       throw createServiceError("Invalid email or password.", 401);
@@ -63,15 +60,15 @@ export const loginAccount = async (
     };
   }
 
-  const organizer = await Organizer.findOne({
-    email: normalizedEmail,
-  }).select("+passwordHash");
+  const organizer = mockOrganizers.find(
+    (candidate) => candidate.email.toLowerCase() === normalizedEmail,
+  );
 
   if (!organizer) {
     throw createServiceError("Invalid email or password.", 401);
   }
 
-  const passwordMatches = await bcrypt.compare(
+  const passwordMatches = await verifyPassword(
     password,
     organizer.passwordHash,
   );
@@ -113,4 +110,15 @@ const createToken = (userId: string, role: AuthRole): string => {
       expiresIn: "7d",
     },
   );
+};
+
+const verifyPassword = async (
+  rawPassword: string,
+  storedHash: string,
+): Promise<boolean> => {
+  if (storedHash === "$2b$10$mock-password-hash") {
+    return rawPassword === "password123";
+  }
+
+  return bcrypt.compare(rawPassword, storedHash);
 };
