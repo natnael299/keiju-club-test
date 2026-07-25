@@ -1,0 +1,18 @@
+{
+  "login": {
+    "welcome": "Tervetuloa takaisin",
+    "email": "Sähköposti",
+    "emailPlaceholder": "sahkoposti@yritys.fi",
+    "password": "Salasana",
+    "passwordPlaceholder": "Syötä salasana",
+    "showPassword": "Näytä salasana",
+    "hidePassword": "Piilota salasana",
+    "signIn": "Kirjaudu sisään",
+    "forgotPassword": "Unohditko salasanasi?"
+  },
+  "language": {
+    "fi": "Suomi",
+    "sv": "Svenska",
+    "en": "English"
+  }
+}
