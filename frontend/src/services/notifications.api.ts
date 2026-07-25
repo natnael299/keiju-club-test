@@ -1,12 +1,12 @@
 import { api } from "./api";
-import type { RawNotification } from "@/types";
+import type { Notification } from "@/types";
 
 export const notificationsApi = {
   getAll() {
-    return api<RawNotification[]>("/notifications");
+    return api<Notification[]>("/notifications");
   },
 
   getByOwner(ownerId: string) {
-    return api<RawNotification[]>(`/notifications?ownerId=${ownerId}`);
+    return api<Notification[]>(`/notifications?ownerId=${ownerId}`);
   },
 };

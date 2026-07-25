@@ -1,6 +1,3 @@
-import { Moon, Sunrise, Sunset } from "lucide-react";
-import { useOwnerStore } from "@/store/owner.store";
-
 function getGreeting() {
   const hour = new Date().getHours();
 
