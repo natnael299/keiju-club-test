@@ -1,4 +1,4 @@
-import type { Organizer } from "../types";
+import type { Organizer } from "../types/index.js";
 
 export const mockOrganizers: Organizer[] = [
   {

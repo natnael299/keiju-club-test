@@ -1,5 +1,5 @@
-import { mockClubEvents } from "../data";
-import type { EventAudience, EventCategory } from "../types";
+import { mockClubEvents } from "../data/index.js";
+import type { EventAudience, EventCategory } from "../types/index.js";
 
 type GetClubEventsFilters = {
   city?: string;

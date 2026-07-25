@@ -1,4 +1,4 @@
-import type { Owner } from "../types";
+import type { Owner } from "../types/index.js";
 
 export const mockOwners: Owner[] = [
   {

@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { clubEventsService } from "../services/clubEvents.service";
-import type { EventAudience, EventCategory } from "../types";
+import { clubEventsService } from "../services/clubEvents.service.js";
+import type { EventAudience, EventCategory } from "../types/index.js";
 
 type ClubEventParams = {
   eventId: string;

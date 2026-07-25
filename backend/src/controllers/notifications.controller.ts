@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { notificationsService } from "../services/notifications.service";
+import { notificationsService } from "../services/notifications.service.js";
 
 type NotificationParams = {
   notificationId: string;

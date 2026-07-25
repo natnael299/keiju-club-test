@@ -1,4 +1,4 @@
-import type { RawNotification } from "../types";
+import type { RawNotification } from "../types/index.js";
 
 export const mockNotifications: RawNotification[] = [
   {

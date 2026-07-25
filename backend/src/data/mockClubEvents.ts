@@ -1,4 +1,4 @@
-import type { ClubEvent } from "../types";
+import type { ClubEvent } from "../types/index.js";
 
 export const mockClubEvents: ClubEvent[] = [
   {

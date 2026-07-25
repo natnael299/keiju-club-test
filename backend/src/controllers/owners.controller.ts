@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { ownersService } from "../services/owners.service";
+import { ownersService } from "../services/owners.service.js";
 
 type OwnerParams = {
   ownerId: string;

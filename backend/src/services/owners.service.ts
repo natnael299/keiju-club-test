@@ -1,4 +1,4 @@
-import { mockOwners } from "../data";
+import { mockOwners } from "../data/index.js";
 
 export const ownersService = {
   getAllOwners() {

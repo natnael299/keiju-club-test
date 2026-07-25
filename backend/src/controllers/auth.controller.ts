@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { loginAccount } from "../services/auth.service";
+import { loginAccount } from "../services/auth.service.js";
 
 type LoginRequestBody = {
   email: string;

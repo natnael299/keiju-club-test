@@ -1,11 +1,11 @@
 import cors from "cors";
 import express from "express";
 
-import healthRoutes from "./routes/health.routes";
-import ownersRoutes from "./routes/owners.routes";
-import notificationsRoutes from "./routes/notifications.routes";
-import clubEventsRoutes from "./routes/clubEvents.routes";
-import authRouter from "./routes/auth.routes";
+import healthRoutes from "./routes/health.routes.js";
+import ownersRoutes from "./routes/owners.routes.js";
+import notificationsRoutes from "./routes/notifications.routes.js";
+import clubEventsRoutes from "./routes/clubEvents.routes.js";
+import authRouter from "./routes/auth.routes.js";
 
 const app = express();
 
