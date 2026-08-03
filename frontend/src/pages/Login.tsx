@@ -4,7 +4,7 @@ import { useState, type SubmitEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-import logo from "@/assets/logo.svg";
+import logo from "@/assets/logo.png";
 import bg from "@/assets/bg.png";
 import { login as loginRequest } from "@/services/auth.service";
 import { useAuthStore } from "@/store/authStore";
@@ -69,7 +69,7 @@ function Login() {
 
       <section className="relative w-full max-w-[360px] rounded-[24px] bg-card px-6 py-5 shadow-[0_12px_40px_rgba(23,53,43,0.18)]">
         <div className="mb-2 flex justify-center">
-          <img src={logo} alt="Keiju Club" className="h-19 w-auto" />
+          <img src={logo} alt="Keiju Club" className="h-10 w-auto" />
         </div>
 
         <div className="mb-4 text-center">

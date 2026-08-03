@@ -27,7 +27,7 @@ export default function Greeting() {
   return (
     <section className="mb-10">
       <h1 className="text-3xl font-extrabold leading-tight text-primary">
-        {greeting.title}, Keiju!
+        {greeting.title}!
       </h1>
 
       <p className="mt-4 text-xl text-muted-foreground">{greeting.subtitle}</p>

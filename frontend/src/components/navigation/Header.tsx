@@ -1,6 +1,6 @@
 import { Moon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import logo from "@/assets/logo.svg";
+import logo from "@/assets/logo.png";
 import { useOwnerStore } from "@/store/owner.store";
 
 function getInitials(name?: string) {

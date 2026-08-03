@@ -1,11 +1,11 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
 import {
+  BedDouble,
   ChevronLeft,
   ChevronRight,
   Clock3,
-  CookingPot,
+  Footprints,
   Timer,
-  Utensils,
 } from "lucide-react";
 import {
   Bar,
@@ -23,47 +23,47 @@ import type { Notification } from "@/types";
 
 type RangeMode = "day" | "week" | "month";
 
-type KitchenVisit = {
+type BedExit = {
   id: number;
-  enteredAt: string;
-  leftAt: string;
+  leftBedAt: string;
+  returnedAt: string;
   durationMinutes: number;
   position: number;
-  mealPeriod: "Breakfast" | "Lunch" | "Dinner" | "Other";
 };
 
-type KitchenActivityDay = {
+type OutOfBedDay = {
   date: string;
-  visits: KitchenVisit[];
-  totalKitchenMinutes: number;
-  firstVisitAt: string | null;
-  lastVisitAt: string | null;
+  bedtime: string;
+  wakeTime: string;
+  exits: BedExit[];
+  totalOutOfBedMinutes: number;
+  longestExitMinutes: number;
 };
 
-type KitchenChartDay = KitchenActivityDay & {
+type ChartDay = OutOfBedDay & {
   label: string;
-  visitCount: number;
+  exitCount: number;
 };
 
-const DAY_IN_MILLISECONDS = 86_400_000;
-const today = startOfDay(new Date());
-
-const kitchenActivityHistory = createKitchenActivityHistory(190);
-
-type KitchenActivityWidgetProps = {
+type OutOfBedHistoryProps = {
   notification: Notification;
 };
 
-export default function KitchenActivityWidget({
+const DAY_MS = 86_400_000;
+const today = startOfDay(new Date());
+
+const outOfBedHistory = createOutOfBedHistory(190);
+
+export default function OutOfBedHistory({
   notification,
-}: KitchenActivityWidgetProps) {
-  const [mode, setMode] = useState<RangeMode>("day");
+}: OutOfBedHistoryProps) {
   const notificationDate = startOfDay(new Date(notification.dt));
 
+  const [mode, setMode] = useState<RangeMode>("day");
   const [anchorDate, setAnchorDate] = useState(notificationDate);
 
   const selectedData = useMemo(
-    () => getSelectedData(kitchenActivityHistory, anchorDate, mode),
+    () => getSelectedData(outOfBedHistory, anchorDate, mode),
     [anchorDate, mode],
   );
 
@@ -71,26 +71,32 @@ export default function KitchenActivityWidget({
     selectedData.find((day) => day.date === toDateKey(anchorDate)) ??
     selectedData[selectedData.length - 1];
 
-  const totalVisits = useMemo(
-    () => selectedData.reduce((sum, day) => sum + day.visits.length, 0),
+  const totalExits = useMemo(
+    () => selectedData.reduce((total, day) => total + day.exits.length, 0),
     [selectedData],
   );
 
-  const totalKitchenMinutes = useMemo(
-    () => selectedData.reduce((sum, day) => sum + day.totalKitchenMinutes, 0),
+  const totalOutOfBedMinutes = useMemo(
+    () =>
+      selectedData.reduce((total, day) => total + day.totalOutOfBedMinutes, 0),
     [selectedData],
   );
 
-  const averageVisits =
-    selectedData.length > 0 ? totalVisits / selectedData.length : 0;
+  const longestExitMinutes = useMemo(
+    () => Math.max(0, ...selectedData.map((day) => day.longestExitMinutes)),
+    [selectedData],
+  );
+
+  const averageExits =
+    selectedData.length > 0 ? totalExits / selectedData.length : 0;
 
   const averageMinutes =
-    selectedData.length > 0 ? totalKitchenMinutes / selectedData.length : 0;
+    selectedData.length > 0 ? totalOutOfBedMinutes / selectedData.length : 0;
 
   const canGoForward =
     endOfPeriod(anchorDate, mode).getTime() < today.getTime();
 
-  const handleModeChange = (nextMode: RangeMode) => {
+  const changeMode = (nextMode: RangeMode) => {
     setMode(nextMode);
     setAnchorDate(notificationDate);
   };
@@ -106,14 +112,14 @@ export default function KitchenActivityWidget({
   return (
     <Card className="overflow-hidden p-0">
       <div className="space-y-5 p-4 sm:p-6">
-        <WidgetHeader
+        <Header
           mode={mode}
           activeDay={activeDay}
-          averageVisits={averageVisits}
+          averageExits={averageExits}
           averageMinutes={averageMinutes}
         />
 
-        <RangeSelector mode={mode} onModeChange={handleModeChange} />
+        <RangeSelector mode={mode} onChange={changeMode} />
 
         <PeriodNavigation
           mode={mode}
@@ -124,13 +130,14 @@ export default function KitchenActivityWidget({
         />
 
         {mode === "day" ? (
-          <KitchenDayView day={activeDay} />
+          <DayView day={activeDay} />
         ) : (
-          <KitchenTrendView
+          <TrendView
             data={selectedData}
             mode={mode}
-            totalVisits={totalVisits}
-            totalMinutes={totalKitchenMinutes}
+            totalExits={totalExits}
+            totalMinutes={totalOutOfBedMinutes}
+            longestExitMinutes={longestExitMinutes}
           />
         )}
       </div>
@@ -138,43 +145,45 @@ export default function KitchenActivityWidget({
   );
 }
 
-function WidgetHeader({
+function Header({
   mode,
   activeDay,
-  averageVisits,
+  averageExits,
   averageMinutes,
 }: {
   mode: RangeMode;
-  activeDay?: KitchenActivityDay;
-  averageVisits: number;
+  activeDay?: OutOfBedDay;
+  averageExits: number;
   averageMinutes: number;
 }) {
+  const exitCount = activeDay?.exits.length ?? 0;
+
+  const outOfBedMinutes = activeDay?.totalOutOfBedMinutes ?? 0;
+
   return (
     <div className="flex items-start justify-between gap-4">
       <div className="min-w-0">
         <div className="flex items-center gap-2">
-          <CookingPot className="h-6 w-6 shrink-0 text-primary" />
+          <BedDouble className="h-6 w-6 shrink-0 text-primary" />
 
-          <h2 className="text-xl font-extrabold text-foreground">
-            Kitchen activity
-          </h2>
+          <h2 className="text-xl font-extrabold text-foreground">Out of bed</h2>
         </div>
 
         <p className="mt-1 text-sm text-muted-foreground">
-          Kitchen visits and time spent preparing meals
+          Times the user left the bed and how long it took to return
         </p>
       </div>
 
       <div className="shrink-0 text-right">
         <p className="text-lg font-extrabold text-primary sm:text-xl">
           {mode === "day"
-            ? `${activeDay?.visits.length ?? 0} visits`
-            : `Avg ${averageVisits.toFixed(1)} visits`}
+            ? `${exitCount} ${exitCount === 1 ? "exit" : "exits"}`
+            : `Avg ${averageExits.toFixed(1)} exits`}
         </p>
 
         <p className="mt-0.5 text-sm text-muted-foreground">
           {mode === "day"
-            ? `${activeDay?.totalKitchenMinutes ?? 0} min in kitchen`
+            ? `${outOfBedMinutes} min out of bed`
             : `Avg ${Math.round(averageMinutes)} min`}
         </p>
       </div>
@@ -184,34 +193,30 @@ function WidgetHeader({
 
 function RangeSelector({
   mode,
-  onModeChange,
+  onChange,
 }: {
   mode: RangeMode;
-  onModeChange: (mode: RangeMode) => void;
+  onChange: (mode: RangeMode) => void;
 }) {
   const options: RangeMode[] = ["day", "week", "month"];
 
   return (
     <div className="grid grid-cols-3 rounded-2xl bg-[#f2eadb] p-1">
-      {options.map((option) => {
-        const isActive = mode === option;
-
-        return (
-          <button
-            key={option}
-            type="button"
-            onClick={() => onModeChange(option)}
-            aria-pressed={isActive}
-            className={`rounded-xl px-3 py-2.5 text-sm font-bold capitalize transition ${
-              isActive
-                ? "bg-white text-primary shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {option}
-          </button>
-        );
-      })}
+      {options.map((option) => (
+        <button
+          key={option}
+          type="button"
+          onClick={() => onChange(option)}
+          aria-pressed={mode === option}
+          className={`rounded-xl px-3 py-2.5 text-sm font-bold capitalize transition ${
+            mode === option
+              ? "bg-white text-primary shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          {option}
+        </button>
+      ))}
     </div>
   );
 }
@@ -257,50 +262,46 @@ function PeriodNavigation({
   );
 }
 
-function KitchenDayView({ day }: { day?: KitchenActivityDay }) {
+function DayView({ day }: { day?: OutOfBedDay }) {
   if (!day) {
     return (
       <div className="grid min-h-64 place-items-center rounded-2xl bg-muted/50 text-sm text-muted-foreground">
-        No kitchen activity is available for this day.
+        No bed activity is available for this day.
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <KitchenSummary day={day} />
+      <DaySummary day={day} />
 
-      <KitchenTimeline day={day} />
+      <BedPresenceTimeline day={day} />
 
-      <KitchenVisitList day={day} />
+      <ExitList day={day} />
     </div>
   );
 }
 
-function KitchenSummary({ day }: { day: KitchenActivityDay }) {
+function DaySummary({ day }: { day: OutOfBedDay }) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+    <div className="grid gap-3 sm:grid-cols-3">
       <SummaryCard
         icon={<Clock3 className="h-5 w-5" />}
-        label="First kitchen visit"
-        value={day.firstVisitAt ?? "None"}
+        label="Bedtime"
+        value={day.bedtime}
       />
 
       <SummaryCard
-        icon={<Utensils className="h-5 w-5" />}
-        label="Kitchen visits"
-        value={`${day.visits.length}`}
+        icon={<Footprints className="h-5 w-5" />}
+        label="Bed exits"
+        value={`${day.exits.length}`}
       />
 
       <SummaryCard
         icon={<Timer className="h-5 w-5" />}
-        label="Time in kitchen"
-        value={`${day.totalKitchenMinutes} min`}
-        supportingText={
-          day.lastVisitAt
-            ? `Last activity at ${day.lastVisitAt}`
-            : "No activity detected"
-        }
+        label="Time out of bed"
+        value={`${day.totalOutOfBedMinutes} min`}
+        supportingText={`Longest ${day.longestExitMinutes} min`}
       />
     </div>
   );
@@ -312,7 +313,7 @@ function SummaryCard({
   value,
   supportingText,
 }: {
-  icon: ReactNode;
+  icon: React.ReactNode;
   label: string;
   value: string;
   supportingText?: string;
@@ -332,30 +333,45 @@ function SummaryCard({
   );
 }
 
-function KitchenTimeline({ day }: { day: KitchenActivityDay }) {
-  const timelineStart = 6 * 60;
-  const timelineEnd = 22 * 60;
-  const timelineMinutes = timelineEnd - timelineStart;
+function BedPresenceTimeline({ day }: { day: OutOfBedDay }) {
+  const bedtimeMinutes = parseClock(day.bedtime);
+
+  const wakeTimeMinutes = normalizeEndTime(
+    bedtimeMinutes,
+    parseClock(day.wakeTime),
+  );
+
+  const totalPeriodMinutes = wakeTimeMinutes - bedtimeMinutes;
 
   return (
     <div>
-      <div className="mb-3 flex items-center justify-between text-sm text-muted-foreground">
-        <span>06:00</span>
-        <span>22:00</span>
+      <div className="mb-3 flex items-center justify-between">
+        <div>
+          <h3 className="font-extrabold text-foreground">Bed presence</h3>
+
+          <p className="text-sm text-muted-foreground">
+            Green shows time in bed. Peach shows time out of bed.
+          </p>
+        </div>
       </div>
 
-      <div className="relative pt-10">
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <span>{day.bedtime}</span>
+        <span>{day.wakeTime}</span>
+      </div>
+
+      <div className="relative mt-3 pt-10">
         <div className="absolute inset-x-0 top-0 h-10">
-          {day.visits.map((visit) => (
+          {day.exits.map((exit) => (
             <div
-              key={visit.id}
+              key={exit.id}
               className="absolute top-0 flex -translate-x-1/2 flex-col items-center"
               style={{
-                left: `${visit.position}%`,
+                left: `${exit.position}%`,
               }}
             >
               <span className="grid h-7 w-7 place-items-center rounded-full bg-[#d89161] text-xs font-extrabold text-white">
-                {visit.id}
+                {exit.id}
               </span>
 
               <span className="h-3 w-px bg-[#d89161]" />
@@ -363,59 +379,59 @@ function KitchenTimeline({ day }: { day: KitchenActivityDay }) {
           ))}
         </div>
 
-        <div className="relative h-16 overflow-hidden rounded-2xl bg-[#edf1ed]">
-          {day.visits.map((visit) => {
+        <div className="relative h-16 overflow-hidden rounded-2xl bg-[#346f59]">
+          {day.exits.map((exit) => {
             const width = Math.max(
-              (visit.durationMinutes / timelineMinutes) * 100,
-              1,
+              (exit.durationMinutes / totalPeriodMinutes) * 100,
+              0.8,
             );
 
             return (
               <div
-                key={`visit-${visit.id}`}
-                className="absolute inset-y-0 bg-[#4f8b72]"
+                key={exit.id}
+                className="absolute inset-y-0 bg-[#efc4a7]"
                 style={{
-                  left: `${visit.position}%`,
+                  left: `${exit.position}%`,
                   width: `${width}%`,
                   transform: "translateX(-50%)",
                 }}
-                title={`${visit.enteredAt}–${visit.leftAt}, ${visit.durationMinutes} minutes`}
+                title={`${exit.leftBedAt}–${exit.returnedAt}, ${exit.durationMinutes} min out of bed`}
               />
             );
           })}
         </div>
       </div>
 
-      <KitchenTimelineTicks
-        startMinutes={timelineStart}
-        totalMinutes={timelineMinutes}
+      <TimelineTicks
+        startMinutes={bedtimeMinutes}
+        totalMinutes={totalPeriodMinutes}
       />
 
-      <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
-        <LegendItem className="bg-[#edf1ed]" label="No kitchen activity" />
+      <div className="mt-4 flex flex-wrap gap-5">
+        <LegendItem className="bg-[#346f59]" label="In bed" />
 
-        <LegendItem className="bg-[#4f8b72]" label="Kitchen activity" />
+        <LegendItem className="bg-[#efc4a7]" label="Out of bed" />
       </div>
     </div>
   );
 }
 
-function KitchenTimelineTicks({
+function TimelineTicks({
   startMinutes,
   totalMinutes,
 }: {
   startMinutes: number;
   totalMinutes: number;
 }) {
-  const tickCount = 9;
+  const tickCount = 8;
 
   const ticks = Array.from({ length: tickCount }, (_, index) => {
-    const percentage = (index / (tickCount - 1)) * 100;
+    const position = (index / (tickCount - 1)) * 100;
 
     return {
-      percentage,
+      position,
       label: formatClock(
-        startMinutes + Math.round((percentage / 100) * totalMinutes),
+        startMinutes + Math.round((position / 100) * totalMinutes),
       ),
     };
   });
@@ -433,7 +449,7 @@ function KitchenTimelineTicks({
                 : "-translate-x-1/2"
           }`}
           style={{
-            left: `${tick.percentage}%`,
+            left: `${tick.position}%`,
           }}
         >
           {tick.label}
@@ -443,111 +459,76 @@ function KitchenTimelineTicks({
   );
 }
 
-function KitchenVisitList({ day }: { day: KitchenActivityDay }) {
+function ExitList({ day }: { day: OutOfBedDay }) {
   return (
     <div className="rounded-2xl border border-[#eadfce] p-4">
       <div className="mb-4 flex items-center justify-between gap-4">
-        <h3 className="font-extrabold text-foreground">Kitchen visits</h3>
+        <h3 className="font-extrabold text-foreground">Out-of-bed events</h3>
 
         <p className="text-sm text-muted-foreground">
-          {day.totalKitchenMinutes} min total
+          {day.totalOutOfBedMinutes} min total
         </p>
       </div>
 
-      {day.visits.length === 0 ? (
-        <div className="rounded-xl bg-[#faf7f1] p-4 text-sm text-muted-foreground">
-          No kitchen activity was detected.
-        </div>
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {day.visits.map((visit) => (
-            <div
-              key={visit.id}
-              className="flex items-center gap-3 rounded-xl bg-[#faf7f1] p-3"
-            >
-              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-[#e2ad86] bg-white text-xs font-extrabold text-[#b96f3e]">
-                {visit.id}
-              </span>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {day.exits.map((exit) => (
+          <div
+            key={exit.id}
+            className="flex items-center gap-3 rounded-xl bg-[#faf7f1] p-3"
+          >
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-[#e2ad86] bg-white text-xs font-extrabold text-[#b96f3e]">
+              {exit.id}
+            </span>
 
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-extrabold text-foreground">
-                    {visit.enteredAt} – {visit.leftAt}
-                  </p>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-extrabold text-foreground">
+                {exit.leftBedAt} – {exit.returnedAt}
+              </p>
 
-                  <MealBadge mealPeriod={visit.mealPeriod} />
-                </div>
-
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {visit.durationMinutes} min in kitchen
-                </p>
-              </div>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Returned after {exit.durationMinutes} min
+              </p>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-function MealBadge({ mealPeriod }: { mealPeriod: KitchenVisit["mealPeriod"] }) {
-  const classes: Record<KitchenVisit["mealPeriod"], string> = {
-    Breakfast: "bg-[#fff0d8] text-[#9a6529]",
-    Lunch: "bg-[#e4f3eb] text-[#346f59]",
-    Dinner: "bg-[#efe8f8] text-[#71548a]",
-    Other: "bg-[#eeeeee] text-[#676767]",
-  };
-
-  return (
-    <span
-      className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-bold ${classes[mealPeriod]}`}
-    >
-      {mealPeriod}
-    </span>
-  );
-}
-
-function KitchenTrendView({
+function TrendView({
   data,
   mode,
-  totalVisits,
+  totalExits,
   totalMinutes,
+  longestExitMinutes,
 }: {
-  data: KitchenActivityDay[];
+  data: OutOfBedDay[];
   mode: Exclude<RangeMode, "day">;
-  totalVisits: number;
+  totalExits: number;
   totalMinutes: number;
+  longestExitMinutes: number;
 }) {
-  const chartData: KitchenChartDay[] = data.map((day) => ({
+  const chartData: ChartDay[] = data.map((day) => ({
     ...day,
     label: formatChartLabel(day.date, mode),
-    visitCount: day.visits.length,
+    exitCount: day.exits.length,
   }));
 
-  if (chartData.length === 0) {
+  if (!chartData.length) {
     return (
       <div className="grid min-h-64 place-items-center rounded-2xl bg-muted/50 text-sm text-muted-foreground">
-        No kitchen activity is available for this period.
+        No bed activity is available for this period.
       </div>
     );
   }
 
-  const maximumVisitCount = Math.max(
-    ...chartData.map((day) => day.visitCount),
-    1,
-  );
-
-  const maximumMinutes = Math.max(
-    ...chartData.map((day) => day.totalKitchenMinutes),
-    10,
-  );
-
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-        <LegendItem className="bg-primary" label="Kitchen visits" />
+      <div className="flex flex-wrap justify-center gap-6">
+        <LegendItem className="bg-primary" label="Times out of bed" />
 
-        <LegendItem className="bg-[#efb184]" label="Minutes in kitchen" />
+        <LegendItem className="bg-[#efb184]" label="Minutes out of bed" />
       </div>
 
       <div className="h-72 w-full sm:h-80">
@@ -557,7 +538,7 @@ function KitchenTrendView({
             margin={{
               top: 18,
               right: 10,
-              left: -14,
+              left: -12,
               bottom: 0,
             }}
           >
@@ -579,12 +560,11 @@ function KitchenTrendView({
             />
 
             <YAxis
-              yAxisId="visits"
-              domain={[0, Math.max(8, maximumVisitCount + 1)]}
+              yAxisId="exits"
               allowDecimals={false}
               axisLine={false}
               tickLine={false}
-              width={34}
+              width={32}
               tick={{
                 fill: "var(--muted-foreground)",
                 fontSize: 11,
@@ -594,21 +574,21 @@ function KitchenTrendView({
             <YAxis
               yAxisId="minutes"
               orientation="right"
-              domain={[0, Math.max(120, roundUpToTen(maximumMinutes + 10))]}
               axisLine={false}
               tickLine={false}
-              width={34}
+              width={36}
               tick={{
                 fill: "var(--muted-foreground)",
                 fontSize: 11,
               }}
+              tickFormatter={(value) => `${value}m`}
             />
 
-            <Tooltip content={<KitchenChartTooltip />} />
+            <Tooltip content={<OutOfBedTooltip />} />
 
             <Bar
-              yAxisId="visits"
-              dataKey="visitCount"
+              yAxisId="exits"
+              dataKey="exitCount"
               fill="var(--primary)"
               radius={[5, 5, 0, 0]}
               maxBarSize={mode === "week" ? 40 : 14}
@@ -617,54 +597,71 @@ function KitchenTrendView({
             <Line
               yAxisId="minutes"
               type="monotone"
-              dataKey="totalKitchenMinutes"
+              dataKey="totalOutOfBedMinutes"
               stroke="#efb184"
               strokeWidth={2.5}
               dot={{
                 r: mode === "week" ? 5 : 3,
                 fill: "#efb184",
-                stroke: "#efb184",
                 strokeWidth: 0,
               }}
               activeDot={{
                 r: 6,
+                fill: "#efb184",
                 stroke: "#ffffff",
                 strokeWidth: 2,
-                fill: "#efb184",
               }}
             />
           </ComposedChart>
         </ResponsiveContainer>
       </div>
 
-      <div className="grid grid-cols-2 overflow-hidden rounded-2xl bg-[#e9f5ef]">
-        <div className="border-r border-white p-4">
-          <p className="text-sm text-muted-foreground">Total kitchen visits</p>
+      <div className="grid grid-cols-3 overflow-hidden rounded-2xl bg-[#e9f5ef]">
+        <TrendSummary label="Total exits" value={`${totalExits}`} />
 
-          <p className="mt-1 text-xl font-extrabold text-primary">
-            {totalVisits}
-          </p>
-        </div>
+        <TrendSummary
+          label="Total time"
+          value={`${totalMinutes} min`}
+          withBorder
+        />
 
-        <div className="p-4">
-          <p className="text-sm text-muted-foreground">Total time in kitchen</p>
-
-          <p className="mt-1 text-xl font-extrabold text-primary">
-            {totalMinutes} min
-          </p>
-        </div>
+        <TrendSummary
+          label="Longest exit"
+          value={`${longestExitMinutes} min`}
+          withBorder
+        />
       </div>
     </div>
   );
 }
 
-function KitchenChartTooltip({
+function TrendSummary({
+  label,
+  value,
+  withBorder = false,
+}: {
+  label: string;
+  value: string;
+  withBorder?: boolean;
+}) {
+  return (
+    <div className={`p-4 ${withBorder ? "border-l border-white" : ""}`}>
+      <p className="text-xs text-muted-foreground sm:text-sm">{label}</p>
+
+      <p className="mt-1 text-lg font-extrabold text-primary sm:text-xl">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function OutOfBedTooltip({
   active,
   payload,
 }: {
   active?: boolean;
   payload?: Array<{
-    payload: KitchenChartDay;
+    payload: ChartDay;
   }>;
 }) {
   if (!active || !payload?.length) {
@@ -674,37 +671,35 @@ function KitchenChartTooltip({
   const day = payload[0].payload;
 
   return (
-    <div className="min-w-44 rounded-2xl border border-[#eadfce] bg-white p-3 shadow-lg">
+    <div className="min-w-48 rounded-2xl border border-[#eadfce] bg-white p-3 shadow-lg">
       <p className="text-sm font-extrabold text-foreground">
         {formatFullDate(parseDate(day.date))}
       </p>
 
-      <div className="mt-2 space-y-1.5">
-        <p className="flex items-center justify-between gap-4 text-xs text-muted-foreground">
-          <span>Kitchen visits</span>
+      <div className="mt-2 space-y-1.5 text-xs text-muted-foreground">
+        <TooltipRow label="Times out of bed" value={`${day.exitCount}`} />
 
-          <span className="font-extrabold text-foreground">
-            {day.visitCount}
-          </span>
-        </p>
+        <TooltipRow
+          label="Total time"
+          value={`${day.totalOutOfBedMinutes} min`}
+        />
 
-        <p className="flex items-center justify-between gap-4 text-xs text-muted-foreground">
-          <span>Time in kitchen</span>
-
-          <span className="font-extrabold text-foreground">
-            {day.totalKitchenMinutes} min
-          </span>
-        </p>
-
-        <p className="flex items-center justify-between gap-4 text-xs text-muted-foreground">
-          <span>First visit</span>
-
-          <span className="font-extrabold text-foreground">
-            {day.firstVisitAt ?? "None"}
-          </span>
-        </p>
+        <TooltipRow
+          label="Longest exit"
+          value={`${day.longestExitMinutes} min`}
+        />
       </div>
     </div>
+  );
+}
+
+function TooltipRow({ label, value }: { label: string; value: string }) {
+  return (
+    <p className="flex justify-between gap-4">
+      <span>{label}</span>
+
+      <strong className="text-foreground">{value}</strong>
+    </p>
   );
 }
 
@@ -724,111 +719,94 @@ function LegendItem({
   );
 }
 
-function createKitchenActivityHistory(
-  numberOfDays: number,
-): KitchenActivityDay[] {
+function createOutOfBedHistory(numberOfDays: number): OutOfBedDay[] {
   return Array.from({ length: numberOfDays }, (_, index) => {
     const date = new Date(
-      today.getTime() - (numberOfDays - index - 1) * DAY_IN_MILLISECONDS,
+      today.getTime() - (numberOfDays - index - 1) * DAY_MS,
     );
 
-    const shouldHaveLowActivity = index % 17 === 0 || index % 29 === 0;
+    const bedtimeMinutes = 22 * 60 + 15 + ((index * 13) % 55);
 
-    const visitCount = shouldHaveLowActivity
-      ? index % 2
-      : clamp(3 + Math.round(Math.abs(Math.sin(index * 0.63)) * 3), 3, 6);
+    const sleepPeriodMinutes = 450 + Math.round(Math.sin(index * 0.31) * 30);
 
-    const visits = createKitchenVisits(visitCount, index);
+    const exitCount = clamp(
+      1 +
+        Math.round(Math.abs(Math.sin(index * 0.73)) * 4) +
+        (index % 19 === 0 ? 1 : 0),
+      1,
+      6,
+    );
 
-    const totalKitchenMinutes = visits.reduce(
-      (sum, visit) => sum + visit.durationMinutes,
+    const exits = createBedExits(
+      exitCount,
+      bedtimeMinutes,
+      sleepPeriodMinutes,
+      index,
+    );
+
+    const totalOutOfBedMinutes = exits.reduce(
+      (total, exit) => total + exit.durationMinutes,
       0,
+    );
+
+    const longestExitMinutes = Math.max(
+      ...exits.map((exit) => exit.durationMinutes),
     );
 
     return {
       date: toDateKey(date),
-      visits,
-      totalKitchenMinutes,
-      firstVisitAt: visits.length > 0 ? visits[0].enteredAt : null,
-      lastVisitAt: visits.length > 0 ? visits[visits.length - 1].leftAt : null,
+      bedtime: formatClock(bedtimeMinutes),
+      wakeTime: formatClock(bedtimeMinutes + sleepPeriodMinutes),
+      exits,
+      totalOutOfBedMinutes,
+      longestExitMinutes,
     };
   });
 }
 
-function createKitchenVisits(count: number, seed: number): KitchenVisit[] {
-  const preferredTimes = [
-    7 * 60 + 30,
-    10 * 60 + 15,
-    12 * 60 + 20,
-    15 * 60 + 10,
-    18 * 60,
-    20 * 60,
-  ];
-
-  const timelineStart = 6 * 60;
-  const timelineEnd = 22 * 60;
-  const timelineMinutes = timelineEnd - timelineStart;
-
+function createBedExits(
+  count: number,
+  bedtimeMinutes: number,
+  sleepPeriodMinutes: number,
+  seed: number,
+): BedExit[] {
   return Array.from({ length: count }, (_, index) => {
-    const baseTime = preferredTimes[index] ?? 8 * 60 + index * 120;
+    const basePosition = ((index + 1) / (count + 1)) * 100;
 
-    const variation = ((seed * 13 + index * 17) % 35) - 17;
-
-    const enteredMinutes = clamp(
-      baseTime + variation,
-      timelineStart + 10,
-      timelineEnd - 30,
+    const position = clamp(
+      Number((basePosition + Math.sin((seed + index) * 1.5) * 4).toFixed(1)),
+      6,
+      94,
     );
 
-    const durationMinutes = clamp(8 + ((seed * 9 + index * 14) % 29), 8, 36);
+    const durationMinutes = clamp(4 + ((seed * 9 + index * 13) % 27), 4, 30);
 
-    const leftMinutes = enteredMinutes + durationMinutes;
-
-    const position = ((enteredMinutes - timelineStart) / timelineMinutes) * 100;
+    const leftBedMinutes =
+      bedtimeMinutes + Math.round((position / 100) * sleepPeriodMinutes);
 
     return {
       id: index + 1,
-      enteredAt: formatClock(enteredMinutes),
-      leftAt: formatClock(leftMinutes),
+      leftBedAt: formatClock(leftBedMinutes),
+      returnedAt: formatClock(leftBedMinutes + durationMinutes),
       durationMinutes,
-      position: Number(position.toFixed(1)),
-      mealPeriod: getMealPeriod(enteredMinutes),
+      position,
     };
-  }).sort(
-    (first, second) =>
-      parseClock(first.enteredAt) - parseClock(second.enteredAt),
-  );
-}
-
-function getMealPeriod(minutes: number): KitchenVisit["mealPeriod"] {
-  if (minutes >= 6 * 60 && minutes < 10 * 60) {
-    return "Breakfast";
-  }
-
-  if (minutes >= 11 * 60 && minutes < 15 * 60) {
-    return "Lunch";
-  }
-
-  if (minutes >= 17 * 60 && minutes < 21 * 60) {
-    return "Dinner";
-  }
-
-  return "Other";
+  }).sort((first, second) => first.position - second.position);
 }
 
 function getSelectedData(
-  data: KitchenActivityDay[],
+  data: OutOfBedDay[],
   anchorDate: Date,
   mode: RangeMode,
 ) {
-  const periodStart = startOfPeriod(anchorDate, mode).getTime();
+  const start = startOfPeriod(anchorDate, mode).getTime();
 
-  const periodEnd = endOfPeriod(anchorDate, mode).getTime();
+  const end = endOfPeriod(anchorDate, mode).getTime();
 
   return data.filter((day) => {
-    const dayDate = parseDate(day.date).getTime();
+    const date = parseDate(day.date).getTime();
 
-    return dayDate >= periodStart && dayDate <= periodEnd;
+    return date >= start && date <= end;
   });
 }
 
@@ -836,11 +814,11 @@ function startOfPeriod(date: Date, mode: RangeMode) {
   const result = startOfDay(date);
 
   if (mode === "week") {
-    const dayOfWeek = result.getDay();
+    const weekday = result.getDay();
 
-    const offsetToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const offset = weekday === 0 ? -6 : 1 - weekday;
 
-    result.setDate(result.getDate() + offsetToMonday);
+    result.setDate(result.getDate() + offset);
   }
 
   if (mode === "month") {
@@ -898,20 +876,20 @@ function formatPeriodLabel(date: Date, mode: RangeMode) {
     }).format(date);
   }
 
-  const weekStart = startOfPeriod(date, "week");
+  const start = startOfPeriod(date, "week");
 
-  const weekEnd = endOfPeriod(date, "week");
+  const end = endOfPeriod(date, "week");
 
   const startLabel = new Intl.DateTimeFormat("en", {
     month: "short",
     day: "numeric",
-  }).format(weekStart);
+  }).format(start);
 
   const endLabel = new Intl.DateTimeFormat("en", {
     month: "short",
     day: "numeric",
     year: "numeric",
-  }).format(weekEnd);
+  }).format(end);
 
   return `${startLabel} – ${endLabel}`;
 }
@@ -936,6 +914,10 @@ function formatFullDate(date: Date) {
     day: "numeric",
     year: "numeric",
   }).format(date);
+}
+
+function normalizeEndTime(startMinutes: number, endMinutes: number) {
+  return endMinutes <= startMinutes ? endMinutes + 24 * 60 : endMinutes;
 }
 
 function startOfDay(date: Date) {
@@ -967,20 +949,16 @@ function parseClock(value: string) {
 function formatClock(totalMinutes: number) {
   const minutesInDay = 24 * 60;
 
-  const normalizedMinutes =
+  const normalized =
     ((totalMinutes % minutesInDay) + minutesInDay) % minutesInDay;
 
-  const hours = Math.floor(normalizedMinutes / 60);
+  const hours = Math.floor(normalized / 60);
 
-  const minutes = normalizedMinutes % 60;
+  const minutes = normalized % 60;
 
   return `${hours.toString().padStart(2, "0")}:${minutes
     .toString()
     .padStart(2, "0")}`;
-}
-
-function roundUpToTen(value: number) {
-  return Math.ceil(value / 10) * 10;
 }
 
 function clamp(value: number, minimum: number, maximum: number) {

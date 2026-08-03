@@ -12,7 +12,7 @@ export const mockNotifications: RawNotification[] = [
     ldt: "2026-07-01T07:42:12.000Z",
     ts: 1782891720000,
     level: "20",
-    term: "sleep_interruption",
+    term: "out_of_bed",
     category: "sleep",
     content: {
       interruptions: 5,
