@@ -21,12 +21,14 @@ export const useReportsStore = create<ReportsStore>((set) => ({
     try {
       const reports = await reportsApi.getAll();
 
+      console.log("REPORTS FROM API:", reports);
+
       set({
         reports,
         loading: false,
       });
     } catch (error) {
-      console.error(error);
+      console.error("REPORT FETCH ERROR:", error);
 
       set({
         reports: [],
