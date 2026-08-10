@@ -113,3 +113,23 @@ export type RawNotification = {
   // siteId?: string;
   // siteName?: string;
 };
+
+export type WeeklyReport = {
+  id: string;
+  ownerId: string;
+
+  week: number;
+  startDate: string;
+  endDate: string;
+
+  createdAt: string;
+  isCurrent: boolean;
+
+  status: "stable" | "attention" | "concern";
+
+  summary: string;
+
+  observations: string[];
+
+  recommendation?: string;
+};

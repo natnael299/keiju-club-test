@@ -9,8 +9,12 @@ export default function ClubPreview() {
 
   const clubEvents = useClubEventsStore((state) => state.clubEvents);
 
+  const handleEventClick = (eventId: string) => {
+    navigate(`/app/club?event=${encodeURIComponent(eventId)}`);
+  };
+
   return (
-    <section className="mb-8">
+    <section>
       <SectionHeader
         title="Keiju Club"
         actionLabel="Show all"
@@ -19,7 +23,15 @@ export default function ClubPreview() {
 
       <div className="space-y-4">
         {clubEvents.slice(0, 3).map((event) => (
-          <ClubEventCard key={event.id} event={event} />
+          <button
+            key={event.id}
+            type="button"
+            onClick={() => handleEventClick(event.id)}
+            className="block w-full cursor-pointer rounded-2xl text-left transition active:scale-[0.99]"
+            aria-label={`Open ${event.title}`}
+          >
+            <ClubEventCard event={event} />
+          </button>
         ))}
       </div>
     </section>
