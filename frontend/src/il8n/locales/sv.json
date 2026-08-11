@@ -32,15 +32,6 @@
     "logout": "Logga ut"
   },
 
-  "home": {
-    "alerts": "Aviseringar",
-    "showAll": "Visa alla",
-    "weeklyReport": "Veckorapport",
-    "open": "Öppna",
-    "weeklySummary": "Sjukskötarens veckosammanfattning",
-    "weeklySummaryDescription": "Se veckans observationer och hälsosammanfattning."
-  },
-
   "alertsPage": {
     "title": "Aviseringar",
     "subtitle": "Senaste 30 dagarna"
@@ -152,10 +143,34 @@
     "error": "Det gick inte att uppdatera evenemanget. Försök igen."
   },
 
+  "language": {
+    "fi": "Finska",
+    "sv": "Svenska",
+    "en": "Engelska"
+  },
+
   "login": {
+    "welcome": "Välkommen",
+    "email": "E-post",
+    "emailPlaceholder": "Ange din e-postadress",
+    "password": "Lösenord",
+    "passwordPlaceholder": "Ange ditt lösenord",
+    "hidePassword": "Dölj lösenord",
+    "showPassword": "Visa lösenord",
+    "signIn": "Logga in",
     "signingIn": "Loggar in...",
     "failed": "Inloggningen misslyckades. Kontrollera e-post och lösenord.",
     "genericError": "Något gick fel. Försök igen."
+  },
+
+  "home": {
+    "alerts": "Aviseringar",
+    "showAll": "Visa alla",
+    "weeklyReport": "Veckorapport",
+    "open": "Öppna",
+    "weeklySummary": "Sjukskötarens veckosammanfattning",
+    "weeklySummaryDescription": "Se veckans observationer och hälsosammanfattning.",
+    "openWeeklyReport": "Öppna veckans sjukskötarrapport"
   },
 
   "alertsPreview": {

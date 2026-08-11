@@ -32,15 +32,6 @@
     "logout": "Kirjaudu ulos"
   },
 
-  "home": {
-    "alerts": "Hälytykset",
-    "showAll": "Näytä kaikki",
-    "weeklyReport": "Viikkoraportti",
-    "open": "Avaa",
-    "weeklySummary": "Hoitajan viikkoyhteenveto",
-    "weeklySummaryDescription": "Katso tämän viikon havainnot ja terveydentilan yhteenveto."
-  },
-
   "alertsPage": {
     "title": "Hälytykset",
     "subtitle": "Viimeiset 30 päivää"
@@ -152,10 +143,34 @@
     "error": "Tapahtuman päivittäminen epäonnistui. Yritä uudelleen."
   },
 
+  "language": {
+    "fi": "Suomi",
+    "sv": "Ruotsi",
+    "en": "Englanti"
+  },
+
   "login": {
+    "welcome": "Tervetuloa",
+    "email": "Sähköposti",
+    "emailPlaceholder": "Syötä sähköpostiosoitteesi",
+    "password": "Salasana",
+    "passwordPlaceholder": "Syötä salasanasi",
+    "hidePassword": "Piilota salasana",
+    "showPassword": "Näytä salasana",
+    "signIn": "Kirjaudu sisään",
     "signingIn": "Kirjaudutaan...",
     "failed": "Kirjautuminen epäonnistui. Tarkista sähköposti ja salasana.",
     "genericError": "Jokin meni pieleen. Yritä uudelleen."
+  },
+
+  "home": {
+    "alerts": "Hälytykset",
+    "showAll": "Näytä kaikki",
+    "weeklyReport": "Viikkoraportti",
+    "open": "Avaa",
+    "weeklySummary": "Hoitajan viikkoyhteenveto",
+    "weeklySummaryDescription": "Katso tämän viikon havainnot ja terveydentilan yhteenveto.",
+    "openWeeklyReport": "Avaa tämän viikon hoitajan raportti"
   },
 
   "alertsPreview": {

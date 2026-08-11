@@ -38,7 +38,8 @@
     "weeklyReport": "Weekly Report",
     "open": "Open",
     "weeklySummary": "Nurse Weekly Summary",
-    "weeklySummaryDescription": "View this week's observations and health summary."
+    "weeklySummaryDescription": "View this week's observations and health summary.",
+    "openWeeklyReport": "Avaa tämän viikon hoitajan raportti"
   },
 
   "alertsPage": {
@@ -152,7 +153,21 @@
     "error": "Event update failed. Please try again."
   },
 
+  "language": {
+    "fi": "Finnish",
+    "sv": "Swedish",
+    "en": "English"
+  },
+
   "login": {
+    "welcome": "Welcome",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "hidePassword": "Hide password",
+    "showPassword": "Show password",
+    "signIn": "Sign in",
     "signingIn": "Signing in...",
     "failed": "Login failed. Please check your email and password.",
     "genericError": "Something went wrong. Please try again."
