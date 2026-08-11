@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type AuthRole = "caretaker" | "nurse" | "organizer";
+type AuthRole = "caretaker" | "organizer";
 
 type AuthUser = {
   id: string;

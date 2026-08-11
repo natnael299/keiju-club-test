@@ -1,5 +1,3 @@
-export type UserRole = "caretaker" | "nurse";
-
 export type Owner = {
   id: string;
   fullName: string;
@@ -10,7 +8,7 @@ export type Owner = {
 
 export type User = {
   id: string;
-  role: UserRole;
+  role: "caretaker";
   fullName: string;
   email: string;
   passwordHash: string;

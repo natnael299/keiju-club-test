@@ -14,14 +14,4 @@ export const mockUsers: User[] = [
     cdt: "2026-06-01T09:00:00.000Z",
     ldt: "2026-06-01T09:00:00.000Z",
   },
-  {
-    id: "usr2a42b8d8e5e74db5a3021fd6bc882a",
-    role: "nurse",
-    fullName: "Laura Nieminen",
-    email: "laura@example.com",
-    passwordHash: "$2b$10$mock-password-hash",
-    ownerIds: ["me675d10f00ca1ee103726e36f3d235c"],
-    cdt: "2026-06-01T09:10:00.000Z",
-    ldt: "2026-06-01T09:10:00.000Z",
-  },
 ];

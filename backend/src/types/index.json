@@ -1,5 +1,4 @@
 {
-  "UserRole": ["caretaker", "nurse"],
   "Owner": {
     "id": "string",
     "fullName": "string",
@@ -9,7 +8,7 @@
   },
   "User": {
     "id": "string",
-    "role": "UserRole",
+    "role": "caretaker",
     "fullName": "string",
     "email": "string",
     "passwordHash": "string",

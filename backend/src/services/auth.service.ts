@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { mockOrganizers, mockUsers } from "../data/index.js";
-type AuthRole = "caretaker" | "nurse" | "organizer";
+type AuthRole = "caretaker" | "organizer";
 
 type AuthenticatedUser = {
   id: string;
