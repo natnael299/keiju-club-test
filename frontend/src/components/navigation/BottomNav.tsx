@@ -1,17 +1,36 @@
 import { Bell, ClipboardList, Home, Star } from "lucide-react";
 import { NavLink } from "react-router-dom";
-
-const navItems = [
-  { label: "Etusivu", to: "/app/home", icon: Home },
-  { label: "Hälytykset", to: "/app/alerts", icon: Bell },
-  { label: "Raportit", to: "/app/reports", icon: ClipboardList },
-  { label: "Club", to: "/app/club", icon: Star },
-];
+import { useTranslation } from "react-i18next";
 
 export default function BottomNav() {
+  const { t } = useTranslation();
+
+  const navItems = [
+    {
+      label: t("nav.home"),
+      to: "/app/home",
+      icon: Home,
+    },
+    {
+      label: t("nav.alerts"),
+      to: "/app/alerts",
+      icon: Bell,
+    },
+    {
+      label: t("nav.reports"),
+      to: "/app/reports",
+      icon: ClipboardList,
+    },
+    {
+      label: t("nav.club"),
+      to: "/app/club",
+      icon: Star,
+    },
+  ];
+
   return (
-    <nav className="sticky bottom-4 z-20 mx-4 mb-4 rounded-[2rem] bg-white px-4 py-3 shadow-[0_12px_35px_rgba(23,53,43,0.16)]">
-      <div className="grid grid-cols-4">
+    <nav>
+      <div className="flex items-center justify-around">
         {navItems.map((item) => {
           const Icon = item.icon;
 
@@ -27,6 +46,7 @@ export default function BottomNav() {
               }
             >
               <Icon size={24} strokeWidth={2.2} />
+
               <span>{item.label}</span>
             </NavLink>
           );

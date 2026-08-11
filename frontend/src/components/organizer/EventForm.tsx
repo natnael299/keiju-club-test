@@ -2,6 +2,7 @@ import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { ImagePlus, Trash2 } from "lucide-react";
 
 import Card from "@/components/shared/Card";
+import type { EventAudience, EventCategory } from "@/types";
 
 export type EventFormValues = {
   title: string;
@@ -10,6 +11,9 @@ export type EventFormValues = {
   address: string;
   startsAt: string;
   endsAt: string;
+
+  categories: EventCategory[];
+  audience: EventAudience;
 
   imageFile: File | null;
   imagePreview: string | null;
@@ -23,6 +27,41 @@ type Props = {
   onSubmit: (values: EventFormValues) => void | Promise<void>;
 };
 
+const categoryOptions: {
+  label: string;
+  value: EventCategory;
+}[] = [
+  { label: "Health", value: "health" },
+  { label: "Exercise", value: "exercise" },
+  { label: "Culture", value: "culture" },
+  { label: "Learning", value: "learning" },
+  { label: "Social", value: "social" },
+  { label: "Gaming", value: "gaming" },
+  { label: "Other", value: "other" },
+];
+
+const audienceOptions: {
+  label: string;
+  description: string;
+  value: EventAudience;
+}[] = [
+  {
+    label: "Keiju user",
+    description: "Show this event to the person receiving Keiju services.",
+    value: "owner",
+  },
+  {
+    label: "Caretaker",
+    description: "Show this event to family members and caretakers.",
+    value: "caretaker",
+  },
+  {
+    label: "Both",
+    description: "Show this event to both audiences.",
+    value: "both",
+  },
+];
+
 const emptyValues: EventFormValues = {
   title: "",
   description: "",
@@ -30,6 +69,10 @@ const emptyValues: EventFormValues = {
   address: "",
   startsAt: "",
   endsAt: "",
+
+  categories: [],
+  audience: "both",
+
   imageFile: null,
   imagePreview: null,
 };
@@ -46,8 +89,6 @@ export default function EventForm({
     ...emptyValues,
     ...initialValues,
 
-    // Never initialise an actual File
-    // when editing an existing event.
     imageFile: null,
   }));
 
@@ -58,6 +99,16 @@ export default function EventForm({
     setValues((current) => ({
       ...current,
       [key]: value,
+    }));
+  };
+
+  const toggleCategory = (category: EventCategory) => {
+    setValues((current) => ({
+      ...current,
+
+      categories: current.categories.includes(category)
+        ? current.categories.filter((item) => item !== category)
+        : [...current.categories, category],
     }));
   };
 
@@ -206,6 +257,99 @@ export default function EventForm({
           />
         </div>
 
+        {/* CATEGORY */}
+
+        <div>
+          <div className="mb-3">
+            <h3 className="text-sm font-semibold text-foreground">
+              Categories
+            </h3>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              Select all categories that describe this event.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {categoryOptions.map((category) => {
+              const selected = values.categories.includes(category.value);
+
+              return (
+                <button
+                  key={category.value}
+                  type="button"
+                  onClick={() => toggleCategory(category.value)}
+                  className={[
+                    "rounded-full border px-4 py-2 text-sm font-semibold transition",
+                    selected
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-white text-foreground hover:border-primary/50 hover:bg-primary/5",
+                  ].join(" ")}
+                >
+                  {category.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {values.categories.length === 0 && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              At least one category should be selected.
+            </p>
+          )}
+        </div>
+
+        {/* AUDIENCE */}
+
+        <div>
+          <div className="mb-3">
+            <h3 className="text-sm font-semibold text-foreground">Audience</h3>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              Choose who should be able to see this event.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-3">
+            {audienceOptions.map((option) => {
+              const selected = values.audience === option.value;
+
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => updateField("audience", option.value)}
+                  className={[
+                    "rounded-2xl border p-4 text-left transition",
+                    selected
+                      ? "border-primary bg-primary/10"
+                      : "border-border bg-white hover:border-primary/50",
+                  ].join(" ")}
+                >
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={[
+                        "h-4 w-4 rounded-full border",
+                        selected
+                          ? "border-[5px] border-primary"
+                          : "border-border",
+                      ].join(" ")}
+                    />
+
+                    <span className="font-semibold text-foreground">
+                      {option.label}
+                    </span>
+                  </div>
+
+                  <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                    {option.description}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* LOCATION */}
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -272,7 +416,7 @@ export default function EventForm({
 
         <button
           type="submit"
-          disabled={submitting}
+          disabled={submitting || values.categories.length === 0}
           className="h-12 w-full rounded-full bg-primary text-sm font-semibold text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting ? "Saving..." : submitLabel}

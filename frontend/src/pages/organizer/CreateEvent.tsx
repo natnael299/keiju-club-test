@@ -29,13 +29,9 @@ export default function CreateEvent() {
         startsAt: values.startsAt,
         endsAt: values.endsAt,
 
-        /*
-         * Existing URL can be sent directly.
-         *
-         * A newly selected local image has a
-         * blob: URL, which cannot be stored
-         * permanently on the backend.
-         */
+        categories: values.categories,
+        audience: values.audience,
+
         imageUrl:
           values.imagePreview && !values.imagePreview.startsWith("blob:")
             ? values.imagePreview

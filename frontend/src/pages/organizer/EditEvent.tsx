@@ -49,17 +49,13 @@ export default function EditEvent() {
     try {
       await updateClubEvent(eventId, {
         title: values.title,
-
         description: values.description,
-
         city: values.city,
-
         address: values.address,
-
         startsAt: values.startsAt,
-
+        categories: values.categories,
+        audience: values.audience,
         endsAt: values.endsAt,
-
         imageUrl:
           values.imagePreview && !values.imagePreview.startsWith("blob:")
             ? values.imagePreview

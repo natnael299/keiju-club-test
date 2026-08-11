@@ -12,14 +12,17 @@ import { useTranslation } from "react-i18next";
 
 import Card from "@/components/shared/Card";
 import { useAuthStore } from "@/store/authStore";
+import { type Language, useLanguageStore } from "@/store/languageStore";
 
-type OpenSetting = "notifications" | "language" | "appearance" | null;
+type OpenSetting = "notifications" | "language" | null;
 
 export default function SettingsList() {
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const logout = useAuthStore((state) => state.logout);
+
+  const { language, setLanguage } = useLanguageStore();
 
   const [openSetting, setOpenSetting] = useState<OpenSetting>(null);
 
@@ -39,10 +42,8 @@ export default function SettingsList() {
     localStorage.setItem("keiju-notifications-enabled", String(enabled));
   };
 
-  const handleLanguageChange = async (language: "fi" | "sv" | "en") => {
-    await i18n.changeLanguage(language);
-
-    localStorage.setItem("keiju-language", language);
+  const handleLanguageChange = (nextLanguage: Language) => {
+    setLanguage(nextLanguage);
   };
 
   const handleLogout = () => {
@@ -66,7 +67,9 @@ export default function SettingsList() {
           <div className="flex items-center gap-3">
             <Bell className="h-5 w-5 text-primary" />
 
-            <span className="font-semibold text-foreground">Notifications</span>
+            <span className="font-semibold text-foreground">
+              {t("settings.notifications")}
+            </span>
           </div>
 
           <ChevronDown
@@ -81,11 +84,11 @@ export default function SettingsList() {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="font-semibold text-foreground">
-                  App notifications
+                  {t("settings.appNotifications")}
                 </p>
 
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Receive alerts and important updates.
+                  {t("settings.notificationsDescription")}
                 </p>
               </div>
 
@@ -125,10 +128,12 @@ export default function SettingsList() {
             <Globe className="h-5 w-5 text-primary" />
 
             <div>
-              <p className="font-semibold text-foreground">Language</p>
+              <p className="font-semibold text-foreground">
+                {t("settings.language")}
+              </p>
 
               <p className="text-xs text-muted-foreground">
-                {getLanguageLabel(i18n.language)}
+                {t(`language.${language}`)}
               </p>
             </div>
           </div>
@@ -143,27 +148,28 @@ export default function SettingsList() {
         {openSetting === "language" && (
           <div className="border-t border-border bg-muted/20 p-3">
             <LanguageOption
-              label="Suomi"
-              active={i18n.language.startsWith("fi")}
-              onClick={() => void handleLanguageChange("fi")}
+              label={t("language.fi")}
+              active={language === "fi"}
+              onClick={() => handleLanguageChange("fi")}
             />
 
             <LanguageOption
-              label="Svenska"
-              active={i18n.language.startsWith("sv")}
-              onClick={() => void handleLanguageChange("sv")}
+              label={t("language.sv")}
+              active={language === "sv"}
+              onClick={() => handleLanguageChange("sv")}
             />
 
             <LanguageOption
-              label="English"
-              active={i18n.language.startsWith("en")}
-              onClick={() => void handleLanguageChange("en")}
+              label={t("language.en")}
+              active={language === "en"}
+              onClick={() => handleLanguageChange("en")}
             />
           </div>
         )}
       </div>
 
       {/* Logout */}
+
       <button
         type="button"
         onClick={handleLogout}
@@ -172,7 +178,9 @@ export default function SettingsList() {
         <div className="flex items-center gap-3">
           <LogOut className="h-5 w-5 text-destructive" />
 
-          <span className="font-semibold text-destructive">Log out</span>
+          <span className="font-semibold text-destructive">
+            {t("settings.logout")}
+          </span>
         </div>
 
         <ChevronRight className="h-5 w-5 text-destructive/60" />
@@ -206,16 +214,4 @@ function LanguageOption({
       {active && <Check className="h-4 w-4" />}
     </button>
   );
-}
-
-function getLanguageLabel(language: string) {
-  if (language.startsWith("fi")) {
-    return "Suomi";
-  }
-
-  if (language.startsWith("sv")) {
-    return "Svenska";
-  }
-
-  return "English";
 }
