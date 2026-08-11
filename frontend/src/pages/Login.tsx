@@ -148,14 +148,6 @@ function Login() {
             {isSubmitting ? "Signing in..." : t("login.signIn")}
           </button>
         </form>
-
-        <button
-          type="button"
-          className="mt-6 w-full text-center text-sm font-medium text-primary underline underline-offset-4"
-        >
-          {t("login.forgotPassword")}
-        </button>
-
         <div className="mt-7 flex justify-center gap-4 text-sm font-medium text-muted-foreground">
           {languages.map((item, index) => (
             <span key={item} className="flex gap-4">

@@ -18,7 +18,6 @@ app.use("/api/health", healthRoutes);
 app.use("/api/owners", ownersRoutes);
 app.use("/api/notifications", notificationsRoutes);
 app.use("/api/club-events", clubEventsRoutes);
-app.use("/api/club-events", clubEventsRoutes);
 app.use("/api/reports", reportsRoutes);
 app.get("/api/test", (_req, res) => {
   res.json({ ok: true });

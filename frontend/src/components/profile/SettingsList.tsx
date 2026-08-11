@@ -7,7 +7,6 @@ import {
   Globe,
   LogOut,
   Moon,
-  Shield,
   Sun,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -245,24 +244,7 @@ export default function SettingsList() {
         )}
       </div>
 
-      {/* Privacy */}
-
-      <button
-        type="button"
-        onClick={() => navigate("/privacy")}
-        className="flex w-full items-center justify-between border-b border-border px-4 py-4 text-left transition hover:bg-muted/30"
-      >
-        <div className="flex items-center gap-3">
-          <Shield className="h-5 w-5 text-primary" />
-
-          <span className="font-semibold text-foreground">Privacy</span>
-        </div>
-
-        <ChevronRight className="h-5 w-5 text-muted-foreground" />
-      </button>
-
       {/* Logout */}
-
       <button
         type="button"
         onClick={handleLogout}

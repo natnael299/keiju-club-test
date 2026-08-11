@@ -17,5 +17,6 @@ export const ownersController = {
     if (!owner) {
       return res.status(404).json({ error: "Owner not found" });
     }
+    return res.json(owner);
   },
 };
