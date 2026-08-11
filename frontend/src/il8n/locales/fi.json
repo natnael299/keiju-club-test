@@ -1,18 +1,172 @@
 {
-  "login": {
-    "welcome": "Tervetuloa takaisin",
-    "email": "Sähköposti",
-    "emailPlaceholder": "sahkoposti@yritys.fi",
-    "password": "Salasana",
-    "passwordPlaceholder": "Syötä salasana",
-    "showPassword": "Näytä salasana",
-    "hidePassword": "Piilota salasana",
-    "signIn": "Kirjaudu sisään",
-    "forgotPassword": "Unohditko salasanasi?"
+  "nav": {
+    "home": "Etusivu",
+    "alerts": "Hälytykset",
+    "reports": "Raportit",
+    "club": "Club",
+    "profile": "Profiili"
   },
-  "language": {
-    "fi": "Suomi",
-    "sv": "Svenska",
-    "en": "English"
-  }
+
+  "header": {
+    "openProfile": "Avaa profiili"
+  },
+
+  "greeting": {
+    "morningTitle": "Hyvää huomenta",
+    "morningSubtitle": "Toivotamme sinulle mukavaa päivää.",
+    "afternoonTitle": "Hyvää iltapäivää",
+    "afternoonSubtitle": "Toivotamme sinulle mukavaa iltapäivää.",
+    "eveningTitle": "Hyvää iltaa",
+    "eveningSubtitle": "Toivotamme sinulle rauhallista iltaa."
+  },
+
+  "profile": {
+    "title": "Profiili"
+  },
+
+  "settings": {
+    "notifications": "Ilmoitukset",
+    "appNotifications": "Sovelluksen ilmoitukset",
+    "notificationsDescription": "Vastaanota hälytyksiä ja tärkeitä päivityksiä.",
+    "language": "Kieli",
+    "logout": "Kirjaudu ulos"
+  },
+
+  "home": {
+    "alerts": "Hälytykset",
+    "showAll": "Näytä kaikki",
+    "weeklyReport": "Viikkoraportti",
+    "open": "Avaa",
+    "weeklySummary": "Hoitajan viikkoyhteenveto",
+    "weeklySummaryDescription": "Katso tämän viikon havainnot ja terveydentilan yhteenveto."
+  },
+
+  "alertsPage": {
+    "title": "Hälytykset",
+    "subtitle": "Viimeiset 30 päivää"
+  },
+
+  "reportsPage": {
+    "title": "Raportit"
+  },
+
+  "clubPage": {
+    "subtitle": "Aktiviteetteja ja tapahtumia lähelläsi"
+  },
+
+  "organizer": {
+    "dashboard": "Hallintapaneeli",
+    "events": "Tapahtumat",
+    "create": "Luo",
+    "profile": "Profiili",
+
+    "dashboardTitle": "Hallintapaneeli",
+    "dashboardSubtitle": "Hallinnoi Keiju Club -tapahtumia.",
+
+    "eventsTitle": "Tapahtumat",
+    "eventsSubtitle": "Tarkastele ja hallinnoi julkaistuja aktiviteetteja.",
+
+    "createEvent": "Luo tapahtuma",
+    "createEventDescription": "Lisää uusi Club-aktiviteetti.",
+
+    "manageEvents": "Hallinnoi tapahtumia",
+    "manageEventsDescription": "Muokkaa tulevia aktiviteetteja."
+  },
+
+  "organizerProfile": {
+    "title": "Profiili",
+    "description": "Hallinnoi organisaation tietoja.",
+    "partner": "Keiju Club -kumppani",
+    "contactPerson": "Yhteyshenkilö",
+    "email": "Sähköposti",
+    "city": "Kaupunki"
+  },
+
+  "eventForm": {
+    "photo": "Tapahtuman kuva",
+    "changePhoto": "Vaihda kuva",
+    "remove": "Poista",
+    "addPhoto": "Lisää tapahtuman kuva",
+    "photoFormats": "JPG, PNG tai WEBP",
+
+    "title": "Tapahtuman nimi",
+    "titlePlaceholder": "Tapahtuman nimi",
+
+    "description": "Kuvaus",
+    "descriptionPlaceholder": "Kuvaile tapahtumaa...",
+
+    "categories": "Kategoriat",
+    "categoriesDescription": "Valitse kaikki kategoriat, jotka kuvaavat tapahtumaa.",
+    "categoryRequired": "Valitse vähintään yksi kategoria.",
+
+    "audience": "Kohderyhmä",
+    "audienceDescription": "Valitse kenelle tapahtuma näytetään.",
+
+    "owner": "Keiju-käyttäjä",
+    "ownerDescription": "Näytä tapahtuma Keiju-palvelun käyttäjälle.",
+
+    "caretaker": "Omainen",
+    "caretakerDescription": "Näytä tapahtuma omaisille ja hoivasta vastaaville.",
+
+    "both": "Molemmat",
+    "bothDescription": "Näytä tapahtuma molemmille kohderyhmille.",
+
+    "city": "Kaupunki",
+    "cityPlaceholder": "Turku",
+
+    "address": "Osoite",
+    "addressPlaceholder": "Aurakatu 12",
+
+    "startTime": "Alkamisaika",
+    "endTime": "Päättymisaika",
+
+    "saving": "Tallennetaan...",
+    "save": "Tallenna tapahtuma",
+    "create": "Luo tapahtuma",
+    "update": "Päivitä tapahtuma"
+  },
+
+  "eventCategory": {
+    "health": "Terveys",
+    "exercise": "Liikunta",
+    "culture": "Kulttuuri",
+    "learning": "Oppiminen",
+    "social": "Sosiaalinen",
+    "gaming": "Pelit",
+    "other": "Muu"
+  },
+
+  "createEventPage": {
+    "title": "Luo tapahtuma",
+    "subtitle": "Lisää uusi aktiviteetti Keiju Clubiin.",
+    "error": "Tapahtuman luominen epäonnistui. Yritä uudelleen."
+  },
+
+  "editEventPage": {
+    "title": "Muokkaa tapahtumaa",
+    "subtitle": "Päivitä tapahtuman tietoja.",
+    "loading": "Ladataan tapahtumaa...",
+    "notFoundTitle": "Tapahtumaa ei löytynyt",
+    "notFoundDescription": "Pyydettyä tapahtumaa ei löytynyt.",
+    "back": "Takaisin tapahtumiin",
+    "error": "Tapahtuman päivittäminen epäonnistui. Yritä uudelleen."
+  },
+
+  "login": {
+    "signingIn": "Kirjaudutaan...",
+    "failed": "Kirjautuminen epäonnistui. Tarkista sähköposti ja salasana.",
+    "genericError": "Jokin meni pieleen. Yritä uudelleen."
+  },
+
+  "alertsPreview": {
+    "detailsTitle": "Hälytyksen tiedot",
+    "detailsSubtitle": "Tiedot ja siihen liittyvä aktiivisuus",
+    "close": "Sulje hälytyksen tiedot"
+  },
+
+  "clubPreview": {
+    "openEvent": "Avaa {{title}}"
+  },
+
+  "openWeeklyReport": "Avaa tämän viikon hoitajan raportti"
 }

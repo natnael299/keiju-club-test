@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import EventForm, {
   type EventFormValues,
@@ -10,6 +11,7 @@ import { useClubEventsStore } from "@/store/clubEvents.store";
 
 export default function EditEvent() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const { eventId } = useParams<{
     eventId: string;
@@ -53,9 +55,10 @@ export default function EditEvent() {
         city: values.city,
         address: values.address,
         startsAt: values.startsAt,
+        endsAt: values.endsAt,
         categories: values.categories,
         audience: values.audience,
-        endsAt: values.endsAt,
+
         imageUrl:
           values.imagePreview && !values.imagePreview.startsWith("blob:")
             ? values.imagePreview
@@ -66,16 +69,14 @@ export default function EditEvent() {
     } catch (error) {
       console.error(error);
 
-      setError("Event update failed. Please try again.");
+      setError(t("editEventPage.error"));
     }
   };
 
   if (loading && clubEvents.length === 0) {
     return (
       <OrganizerLayout>
-        <div className="py-12 text-center text-sm text-muted-foreground">
-          Loading event...
-        </div>
+        <p className="text-muted-foreground">{t("editEventPage.loading")}</p>
       </OrganizerLayout>
     );
   }
@@ -84,12 +85,12 @@ export default function EditEvent() {
     return (
       <OrganizerLayout>
         <section>
-          <h1 className="text-3xl font-extrabold text-primary">
-            Event not found
+          <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
+            {t("editEventPage.notFoundTitle")}
           </h1>
 
           <p className="mt-2 text-muted-foreground">
-            The requested event could not be found.
+            {t("editEventPage.notFoundDescription")}
           </p>
 
           <button
@@ -97,7 +98,7 @@ export default function EditEvent() {
             onClick={() => navigate("/organizer/events")}
             className="mt-6 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
           >
-            Back to events
+            {t("editEventPage.back")}
           </button>
         </section>
       </OrganizerLayout>
@@ -107,9 +108,13 @@ export default function EditEvent() {
   return (
     <OrganizerLayout>
       <section>
-        <h1 className="text-3xl font-extrabold text-primary">Edit event</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
+          {t("editEventPage.title")}
+        </h1>
 
-        <p className="mt-2 text-muted-foreground">Update event details.</p>
+        <p className="mt-2 text-muted-foreground">
+          {t("editEventPage.subtitle")}
+        </p>
 
         {error && (
           <div className="mt-5 rounded-2xl bg-destructive/10 px-4 py-3 text-sm font-semibold text-destructive">
@@ -122,20 +127,21 @@ export default function EditEvent() {
             key={event.id}
             initialValues={{
               title: event.title,
-
               description: event.description,
-
               city: event.city,
-
               address: event.address,
 
               startsAt: toDateTimeLocal(event.startsAt),
 
               endsAt: toDateTimeLocal(event.endsAt),
 
+              categories: event.categories,
+
+              audience: event.audience,
+
               imagePreview: event.imageUrl ?? null,
             }}
-            submitLabel="Update event"
+            submitLabel={t("eventForm.update")}
             submitting={loading}
             onSubmit={handleUpdateEvent}
           />

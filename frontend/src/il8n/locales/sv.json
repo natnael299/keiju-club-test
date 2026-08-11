@@ -1,18 +1,172 @@
 {
-  "login": {
-    "welcome": "Välkommen tillbaka",
-    "email": "E-post",
-    "emailPlaceholder": "epost@foretag.fi",
-    "password": "Lösenord",
-    "passwordPlaceholder": "Ange lösenord",
-    "showPassword": "Visa lösenord",
-    "hidePassword": "Dölj lösenord",
-    "signIn": "Logga in",
-    "forgotPassword": "Glömt lösenordet?"
+  "nav": {
+    "home": "Hem",
+    "alerts": "Aviseringar",
+    "reports": "Rapporter",
+    "club": "Club",
+    "profile": "Profil"
   },
-  "language": {
-    "fi": "Suomi",
-    "sv": "Svenska",
-    "en": "English"
-  }
+
+  "header": {
+    "openProfile": "Öppna profil"
+  },
+
+  "greeting": {
+    "morningTitle": "God morgon",
+    "morningSubtitle": "Vi önskar dig en trevlig dag.",
+    "afternoonTitle": "God eftermiddag",
+    "afternoonSubtitle": "Vi önskar dig en trevlig eftermiddag.",
+    "eveningTitle": "God kväll",
+    "eveningSubtitle": "Vi önskar dig en lugn kväll."
+  },
+
+  "profile": {
+    "title": "Profil"
+  },
+
+  "settings": {
+    "notifications": "Notifikationer",
+    "appNotifications": "Appnotifikationer",
+    "notificationsDescription": "Ta emot varningar och viktiga uppdateringar.",
+    "language": "Språk",
+    "logout": "Logga ut"
+  },
+
+  "home": {
+    "alerts": "Aviseringar",
+    "showAll": "Visa alla",
+    "weeklyReport": "Veckorapport",
+    "open": "Öppna",
+    "weeklySummary": "Sjukskötarens veckosammanfattning",
+    "weeklySummaryDescription": "Se veckans observationer och hälsosammanfattning."
+  },
+
+  "alertsPage": {
+    "title": "Aviseringar",
+    "subtitle": "Senaste 30 dagarna"
+  },
+
+  "reportsPage": {
+    "title": "Rapporter"
+  },
+
+  "clubPage": {
+    "subtitle": "Aktiviteter och evenemang nära dig"
+  },
+
+  "organizer": {
+    "dashboard": "Översikt",
+    "events": "Evenemang",
+    "create": "Skapa",
+    "profile": "Profil",
+
+    "dashboardTitle": "Översikt",
+    "dashboardSubtitle": "Hantera dina Keiju Club-evenemang.",
+
+    "eventsTitle": "Evenemang",
+    "eventsSubtitle": "Visa och hantera publicerade aktiviteter.",
+
+    "createEvent": "Skapa evenemang",
+    "createEventDescription": "Lägg till en ny Club-aktivitet.",
+
+    "manageEvents": "Hantera evenemang",
+    "manageEventsDescription": "Redigera kommande aktiviteter."
+  },
+
+  "organizerProfile": {
+    "title": "Profil",
+    "description": "Hantera organisationens uppgifter.",
+    "partner": "Keiju Club-partner",
+    "contactPerson": "Kontaktperson",
+    "email": "E-post",
+    "city": "Stad"
+  },
+
+  "eventForm": {
+    "photo": "Evenemangsbild",
+    "changePhoto": "Byt bild",
+    "remove": "Ta bort",
+    "addPhoto": "Lägg till evenemangsbild",
+    "photoFormats": "JPG, PNG eller WEBP",
+
+    "title": "Evenemangets namn",
+    "titlePlaceholder": "Evenemangets namn",
+
+    "description": "Beskrivning",
+    "descriptionPlaceholder": "Beskriv evenemanget...",
+
+    "categories": "Kategorier",
+    "categoriesDescription": "Välj alla kategorier som beskriver evenemanget.",
+    "categoryRequired": "Välj minst en kategori.",
+
+    "audience": "Målgrupp",
+    "audienceDescription": "Välj vem som ska kunna se evenemanget.",
+
+    "owner": "Keiju-användare",
+    "ownerDescription": "Visa evenemanget för personen som använder Keiju-tjänsten.",
+
+    "caretaker": "Anhörig",
+    "caretakerDescription": "Visa evenemanget för anhöriga och omsorgspersoner.",
+
+    "both": "Båda",
+    "bothDescription": "Visa evenemanget för båda målgrupperna.",
+
+    "city": "Stad",
+    "cityPlaceholder": "Åbo",
+
+    "address": "Adress",
+    "addressPlaceholder": "Auragatan 12",
+
+    "startTime": "Starttid",
+    "endTime": "Sluttid",
+
+    "saving": "Sparar...",
+    "save": "Spara evenemang",
+    "create": "Skapa evenemang",
+    "update": "Uppdatera evenemang"
+  },
+
+  "eventCategory": {
+    "health": "Hälsa",
+    "exercise": "Motion",
+    "culture": "Kultur",
+    "learning": "Lärande",
+    "social": "Socialt",
+    "gaming": "Spel",
+    "other": "Annat"
+  },
+
+  "createEventPage": {
+    "title": "Skapa evenemang",
+    "subtitle": "Lägg till en ny aktivitet i Keiju Club.",
+    "error": "Det gick inte att skapa evenemanget. Försök igen."
+  },
+
+  "editEventPage": {
+    "title": "Redigera evenemang",
+    "subtitle": "Uppdatera evenemangets uppgifter.",
+    "loading": "Laddar evenemang...",
+    "notFoundTitle": "Evenemanget hittades inte",
+    "notFoundDescription": "Det begärda evenemanget kunde inte hittas.",
+    "back": "Tillbaka till evenemang",
+    "error": "Det gick inte att uppdatera evenemanget. Försök igen."
+  },
+
+  "login": {
+    "signingIn": "Loggar in...",
+    "failed": "Inloggningen misslyckades. Kontrollera e-post och lösenord.",
+    "genericError": "Något gick fel. Försök igen."
+  },
+
+  "alertsPreview": {
+    "detailsTitle": "Aviseringsdetaljer",
+    "detailsSubtitle": "Detaljer och relaterad aktivitet",
+    "close": "Stäng aviseringsdetaljer"
+  },
+
+  "clubPreview": {
+    "openEvent": "Öppna {{title}}"
+  },
+
+  "openWeeklyReport": "Öppna veckans sjukskötarrapport"
 }

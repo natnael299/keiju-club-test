@@ -1,11 +1,13 @@
 import { ChevronRight, ClipboardPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import Card from "@/components/shared/Card";
 import SectionHeader from "@/components/shared/SectionHeader";
 
 export default function WeeklyReport() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const openReports = () => {
     navigate("/app/reports");
@@ -14,8 +16,8 @@ export default function WeeklyReport() {
   return (
     <section>
       <SectionHeader
-        title="Weekly Report"
-        actionLabel="Open"
+        title={t("home.weeklyReport")}
+        actionLabel={t("home.open")}
         onActionClick={openReports}
       />
 
@@ -23,7 +25,7 @@ export default function WeeklyReport() {
         type="button"
         onClick={openReports}
         className="block w-full text-left"
-        aria-label="Open this week's nurse report"
+        aria-label={t("home.openWeeklyReport")}
       >
         <Card className="transition hover:bg-muted/30 active:scale-[0.99]">
           <div className="flex items-center justify-between gap-4">
@@ -34,11 +36,11 @@ export default function WeeklyReport() {
 
               <div>
                 <h3 className="font-bold text-foreground">
-                  Nurse Weekly Summary
+                  {t("home.weeklySummary")}
                 </h3>
 
                 <p className="mt-2 text-sm text-muted-foreground">
-                  View this week's observations and health summary.
+                  {t("home.weeklySummaryDescription")}
                 </p>
               </div>
             </div>

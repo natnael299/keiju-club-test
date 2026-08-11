@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import ClubEventCard from "@/components/cards/ClubEventCard";
 import SectionHeader from "@/components/shared/SectionHeader";
@@ -6,6 +7,7 @@ import { useClubEventsStore } from "@/store/clubEvents.store";
 
 export default function ClubPreview() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const clubEvents = useClubEventsStore((state) => state.clubEvents);
 
@@ -17,7 +19,7 @@ export default function ClubPreview() {
     <section>
       <SectionHeader
         title="Keiju Club"
-        actionLabel="Show all"
+        actionLabel={t("home.showAll")}
         onActionClick={() => navigate("/app/club")}
       />
 
@@ -28,7 +30,9 @@ export default function ClubPreview() {
             type="button"
             onClick={() => handleEventClick(event.id)}
             className="block w-full cursor-pointer rounded-2xl text-left transition active:scale-[0.99]"
-            aria-label={`Open ${event.title}`}
+            aria-label={t("clubPreview.openEvent", {
+              title: event.title,
+            })}
           >
             <ClubEventCard event={event} />
           </button>

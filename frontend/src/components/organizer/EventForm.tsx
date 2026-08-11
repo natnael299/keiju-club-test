@@ -1,7 +1,9 @@
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { ImagePlus, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import Card from "@/components/shared/Card";
+
 import type { EventAudience, EventCategory } from "@/types";
 
 export type EventFormValues = {
@@ -27,40 +29,17 @@ type Props = {
   onSubmit: (values: EventFormValues) => void | Promise<void>;
 };
 
-const categoryOptions: {
-  label: string;
-  value: EventCategory;
-}[] = [
-  { label: "Health", value: "health" },
-  { label: "Exercise", value: "exercise" },
-  { label: "Culture", value: "culture" },
-  { label: "Learning", value: "learning" },
-  { label: "Social", value: "social" },
-  { label: "Gaming", value: "gaming" },
-  { label: "Other", value: "other" },
+const categoryOptions: EventCategory[] = [
+  "health",
+  "exercise",
+  "culture",
+  "learning",
+  "social",
+  "gaming",
+  "other",
 ];
 
-const audienceOptions: {
-  label: string;
-  description: string;
-  value: EventAudience;
-}[] = [
-  {
-    label: "Keiju user",
-    description: "Show this event to the person receiving Keiju services.",
-    value: "owner",
-  },
-  {
-    label: "Caretaker",
-    description: "Show this event to family members and caretakers.",
-    value: "caretaker",
-  },
-  {
-    label: "Both",
-    description: "Show this event to both audiences.",
-    value: "both",
-  },
-];
+const audienceOptions: EventAudience[] = ["owner", "caretaker", "both"];
 
 const emptyValues: EventFormValues = {
   title: "",
@@ -79,10 +58,12 @@ const emptyValues: EventFormValues = {
 
 export default function EventForm({
   initialValues,
-  submitLabel = "Save event",
+  submitLabel,
   submitting = false,
   onSubmit,
 }: Props) {
+  const { t } = useTranslation();
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [values, setValues] = useState<EventFormValues>(() => ({
@@ -165,7 +146,7 @@ export default function EventForm({
 
         <div>
           <label className="mb-2 block text-sm font-semibold text-foreground">
-            Event photo
+            {t("eventForm.photo")}
           </label>
 
           <input
@@ -181,7 +162,7 @@ export default function EventForm({
               <div className="aspect-[16/9] w-full overflow-hidden bg-muted">
                 <img
                   src={values.imagePreview}
-                  alt="Event preview"
+                  alt={t("eventForm.photo")}
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -193,7 +174,8 @@ export default function EventForm({
                   className="flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-muted/40"
                 >
                   <ImagePlus className="h-4 w-4" />
-                  Change photo
+
+                  {t("eventForm.changePhoto")}
                 </button>
 
                 <button
@@ -202,7 +184,8 @@ export default function EventForm({
                   className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-destructive transition hover:bg-destructive/10"
                 >
                   <Trash2 className="h-4 w-4" />
-                  Remove
+
+                  {t("eventForm.remove")}
                 </button>
               </div>
             </div>
@@ -216,10 +199,12 @@ export default function EventForm({
                 <ImagePlus className="h-7 w-7 text-primary" />
               </div>
 
-              <p className="mt-3 font-bold text-foreground">Add event photo</p>
+              <p className="mt-3 font-bold text-foreground">
+                {t("eventForm.addPhoto")}
+              </p>
 
               <p className="mt-1 text-sm text-muted-foreground">
-                JPG, PNG or WEBP
+                {t("eventForm.photoFormats")}
               </p>
             </button>
           )}
@@ -229,7 +214,7 @@ export default function EventForm({
 
         <div>
           <label className="mb-2 block text-sm font-semibold text-foreground">
-            Event title
+            {t("eventForm.title")}
           </label>
 
           <input
@@ -237,7 +222,7 @@ export default function EventForm({
             value={values.title}
             onChange={(event) => updateField("title", event.target.value)}
             className="h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm outline-none focus:border-primary"
-            placeholder="Event title"
+            placeholder={t("eventForm.titlePlaceholder")}
           />
         </div>
 
@@ -245,7 +230,7 @@ export default function EventForm({
 
         <div>
           <label className="mb-2 block text-sm font-semibold text-foreground">
-            Description
+            {t("eventForm.description")}
           </label>
 
           <textarea
@@ -253,32 +238,32 @@ export default function EventForm({
             value={values.description}
             onChange={(event) => updateField("description", event.target.value)}
             className="min-h-28 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm outline-none focus:border-primary"
-            placeholder="Describe the event..."
+            placeholder={t("eventForm.descriptionPlaceholder")}
           />
         </div>
 
-        {/* CATEGORY */}
+        {/* CATEGORIES */}
 
         <div>
           <div className="mb-3">
             <h3 className="text-sm font-semibold text-foreground">
-              Categories
+              {t("eventForm.categories")}
             </h3>
 
             <p className="mt-1 text-xs text-muted-foreground">
-              Select all categories that describe this event.
+              {t("eventForm.categoriesDescription")}
             </p>
           </div>
 
           <div className="flex flex-wrap gap-2">
             {categoryOptions.map((category) => {
-              const selected = values.categories.includes(category.value);
+              const selected = values.categories.includes(category);
 
               return (
                 <button
-                  key={category.value}
+                  key={category}
                   type="button"
-                  onClick={() => toggleCategory(category.value)}
+                  onClick={() => toggleCategory(category)}
                   className={[
                     "rounded-full border px-4 py-2 text-sm font-semibold transition",
                     selected
@@ -286,7 +271,7 @@ export default function EventForm({
                       : "border-border bg-white text-foreground hover:border-primary/50 hover:bg-primary/5",
                   ].join(" ")}
                 >
-                  {category.label}
+                  {t(`eventCategory.${category}`)}
                 </button>
               );
             })}
@@ -294,7 +279,7 @@ export default function EventForm({
 
           {values.categories.length === 0 && (
             <p className="mt-2 text-xs text-muted-foreground">
-              At least one category should be selected.
+              {t("eventForm.categoryRequired")}
             </p>
           )}
         </div>
@@ -303,22 +288,24 @@ export default function EventForm({
 
         <div>
           <div className="mb-3">
-            <h3 className="text-sm font-semibold text-foreground">Audience</h3>
+            <h3 className="text-sm font-semibold text-foreground">
+              {t("eventForm.audience")}
+            </h3>
 
             <p className="mt-1 text-xs text-muted-foreground">
-              Choose who should be able to see this event.
+              {t("eventForm.audienceDescription")}
             </p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
-            {audienceOptions.map((option) => {
-              const selected = values.audience === option.value;
+            {audienceOptions.map((audience) => {
+              const selected = values.audience === audience;
 
               return (
                 <button
-                  key={option.value}
+                  key={audience}
                   type="button"
-                  onClick={() => updateField("audience", option.value)}
+                  onClick={() => updateField("audience", audience)}
                   className={[
                     "rounded-2xl border p-4 text-left transition",
                     selected
@@ -337,12 +324,12 @@ export default function EventForm({
                     />
 
                     <span className="font-semibold text-foreground">
-                      {option.label}
+                      {t(`eventForm.${audience}`)}
                     </span>
                   </div>
 
                   <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                    {option.description}
+                    {t(`eventForm.${audience}Description`)}
                   </p>
                 </button>
               );
@@ -355,7 +342,7 @@ export default function EventForm({
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-semibold text-foreground">
-              City
+              {t("eventForm.city")}
             </label>
 
             <input
@@ -363,13 +350,13 @@ export default function EventForm({
               value={values.city}
               onChange={(event) => updateField("city", event.target.value)}
               className="h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm outline-none focus:border-primary"
-              placeholder="Turku"
+              placeholder={t("eventForm.cityPlaceholder")}
             />
           </div>
 
           <div>
             <label className="mb-2 block text-sm font-semibold text-foreground">
-              Address
+              {t("eventForm.address")}
             </label>
 
             <input
@@ -377,7 +364,7 @@ export default function EventForm({
               value={values.address}
               onChange={(event) => updateField("address", event.target.value)}
               className="h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm outline-none focus:border-primary"
-              placeholder="Aurakatu 12"
+              placeholder={t("eventForm.addressPlaceholder")}
             />
           </div>
         </div>
@@ -387,7 +374,7 @@ export default function EventForm({
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-semibold text-foreground">
-              Start time
+              {t("eventForm.startTime")}
             </label>
 
             <input
@@ -401,7 +388,7 @@ export default function EventForm({
 
           <div>
             <label className="mb-2 block text-sm font-semibold text-foreground">
-              End time
+              {t("eventForm.endTime")}
             </label>
 
             <input
@@ -419,7 +406,9 @@ export default function EventForm({
           disabled={submitting || values.categories.length === 0}
           className="h-12 w-full rounded-full bg-primary text-sm font-semibold text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {submitting ? "Saving..." : submitLabel}
+          {submitting
+            ? t("eventForm.saving")
+            : (submitLabel ?? t("eventForm.save"))}
         </button>
       </form>
     </Card>

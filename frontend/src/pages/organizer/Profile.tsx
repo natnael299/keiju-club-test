@@ -1,5 +1,6 @@
 import { Building2, Globe, LogOut, Mail, UserRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import Card from "@/components/shared/Card";
 import OrganizerLayout from "@/layouts/OrganizerLayout";
@@ -7,8 +8,10 @@ import { useAuthStore } from "@/store/authStore";
 
 export default function OrganizerProfile() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const logout = useAuthStore((state) => state.logout);
+
   const user = useAuthStore((state) => state.user);
 
   const handleLogout = () => {
@@ -22,10 +25,12 @@ export default function OrganizerProfile() {
   return (
     <OrganizerLayout>
       <section>
-        <h1 className="text-3xl font-extrabold text-primary">Profile</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
+          {t("organizerProfile.title")}
+        </h1>
 
         <p className="mt-2 text-muted-foreground">
-          Manage organization details.
+          {t("organizerProfile.description")}
         </p>
 
         <Card className="mb-6 mt-6">
@@ -40,7 +45,7 @@ export default function OrganizerProfile() {
               </h2>
 
               <p className="text-sm text-muted-foreground">
-                Keiju Club partner
+                {t("organizerProfile.partner")}
               </p>
             </div>
           </div>
@@ -51,7 +56,9 @@ export default function OrganizerProfile() {
             <UserRound className="h-5 w-5 text-primary" />
 
             <div>
-              <p className="text-sm text-muted-foreground">Contact person</p>
+              <p className="text-sm text-muted-foreground">
+                {t("organizerProfile.contactPerson")}
+              </p>
 
               <p className="font-semibold text-foreground">
                 {user?.fullName ?? "Sari Lahtinen"}
@@ -63,7 +70,9 @@ export default function OrganizerProfile() {
             <Mail className="h-5 w-5 text-primary" />
 
             <div>
-              <p className="text-sm text-muted-foreground">Email</p>
+              <p className="text-sm text-muted-foreground">
+                {t("organizerProfile.email")}
+              </p>
 
               <p className="font-semibold text-foreground">
                 {user?.email ?? "sari@senioriliikunta.fi"}
@@ -75,7 +84,9 @@ export default function OrganizerProfile() {
             <Globe className="h-5 w-5 text-primary" />
 
             <div>
-              <p className="text-sm text-muted-foreground">City</p>
+              <p className="text-sm text-muted-foreground">
+                {t("organizerProfile.city")}
+              </p>
 
               <p className="font-semibold text-foreground">Turku</p>
             </div>
@@ -88,7 +99,7 @@ export default function OrganizerProfile() {
           className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary text-sm font-semibold text-primary-foreground transition hover:opacity-90 active:scale-[0.99]"
         >
           <LogOut className="h-5 w-5" />
-          Log out
+          {t("settings.logout")}
         </button>
       </section>
     </OrganizerLayout>

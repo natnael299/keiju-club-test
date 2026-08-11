@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import NotificationCard from "@/components/cards/NotificationCard";
 import NotificationWidgetRenderer from "@/components/alerts/NotificationWidgetRenderer";
@@ -12,6 +13,7 @@ import type { Notification } from "@/types";
 
 export default function AlertsPreview() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const notifications = useNotificationsStore((state) => state.notifications);
 
@@ -26,8 +28,8 @@ export default function AlertsPreview() {
     <>
       <section>
         <SectionHeader
-          title="Alerts"
-          actionLabel="Show all"
+          title={t("home.alerts")}
+          actionLabel={t("home.showAll")}
           onActionClick={() => navigate("/app/alerts")}
         />
 
@@ -59,18 +61,18 @@ export default function AlertsPreview() {
             <div className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/95 px-5 py-4 backdrop-blur-md sm:px-6">
               <div>
                 <h2 className="text-xl font-extrabold text-foreground">
-                  Alert details
+                  {t("alertsPreview.detailsTitle")}
                 </h2>
 
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Details and related activity
+                  {t("alertsPreview.detailsSubtitle")}
                 </p>
               </div>
 
               <button
                 type="button"
                 onClick={closeNotification}
-                aria-label="Close alert details"
+                aria-label={t("alertsPreview.close")}
                 className="grid h-11 w-11 place-items-center rounded-full bg-secondary text-foreground transition hover:bg-secondary/70 active:scale-95"
               >
                 <X className="h-5 w-5" />

@@ -1,4 +1,8 @@
+import { useTranslation } from "react-i18next";
+
 export default function ClubHeader() {
+  const { t } = useTranslation();
+
   return (
     <section className="mb-5">
       <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
@@ -6,7 +10,7 @@ export default function ClubHeader() {
       </h1>
 
       <p className="mt-2 text-base text-muted-foreground">
-        Discover upcoming activities near you.
+        {t("clubPage.subtitle")}
       </p>
     </section>
   );

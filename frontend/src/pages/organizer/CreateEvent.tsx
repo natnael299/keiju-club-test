@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import EventForm, {
   type EventFormValues,
@@ -10,6 +11,7 @@ import { useClubEventsStore } from "@/store/clubEvents.store";
 
 export default function CreateEvent() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const createClubEvent = useClubEventsStore((state) => state.createClubEvent);
 
@@ -42,17 +44,19 @@ export default function CreateEvent() {
     } catch (error) {
       console.error(error);
 
-      setError("Event creation failed. Please try again.");
+      setError(t("createEventPage.error"));
     }
   };
 
   return (
     <OrganizerLayout>
       <section>
-        <h1 className="text-3xl font-extrabold text-primary">Create event</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
+          {t("createEventPage.title")}
+        </h1>
 
         <p className="mt-2 text-muted-foreground">
-          Add a new activity to Keiju Club.
+          {t("createEventPage.subtitle")}
         </p>
 
         {error && (
@@ -63,7 +67,7 @@ export default function CreateEvent() {
 
         <div className="mt-6">
           <EventForm
-            submitLabel="Create event"
+            submitLabel={t("eventForm.create")}
             submitting={loading}
             onSubmit={handleCreateEvent}
           />

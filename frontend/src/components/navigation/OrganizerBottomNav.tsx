@@ -5,18 +5,37 @@ import {
   UserRound,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
-
-const navItems = [
-  { label: "Dashboard", to: "/organizer/dashboard", icon: LayoutDashboard },
-  { label: "Events", to: "/organizer/events", icon: ListChecks },
-  { label: "Create", to: "/organizer/events/new", icon: CalendarPlus },
-  { label: "Profile", to: "/organizer/profile", icon: UserRound },
-];
+import { useTranslation } from "react-i18next";
 
 export default function OrganizerBottomNav() {
+  const { t } = useTranslation();
+
+  const navItems = [
+    {
+      label: t("organizer.dashboard"),
+      to: "/organizer/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      label: t("organizer.events"),
+      to: "/organizer/events",
+      icon: ListChecks,
+    },
+    {
+      label: t("organizer.create"),
+      to: "/organizer/events/new",
+      icon: CalendarPlus,
+    },
+    {
+      label: t("organizer.profile"),
+      to: "/organizer/profile",
+      icon: UserRound,
+    },
+  ];
+
   return (
-    <nav className="sticky bottom-4 z-20 mx-4 mb-4 rounded-[2rem] bg-white px-4 py-3 shadow-[0_12px_35px_rgba(23,53,43,0.16)]">
-      <div className="grid grid-cols-4">
+    <nav>
+      <div className="flex items-center justify-around">
         {navItems.map((item) => {
           const Icon = item.icon;
 
@@ -32,6 +51,7 @@ export default function OrganizerBottomNav() {
               }
             >
               <Icon size={24} strokeWidth={2.2} />
+
               <span>{item.label}</span>
             </NavLink>
           );

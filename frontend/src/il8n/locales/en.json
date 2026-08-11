@@ -1,18 +1,172 @@
 {
-  "login": {
-    "welcome": "Welcome back",
-    "email": "Email",
-    "emailPlaceholder": "email@company.fi",
-    "password": "Password",
-    "passwordPlaceholder": "Enter password",
-    "showPassword": "Show password",
-    "hidePassword": "Hide password",
-    "signIn": "Sign in",
-    "forgotPassword": "Forgot your password?"
+  "nav": {
+    "home": "Home",
+    "alerts": "Alerts",
+    "reports": "Reports",
+    "club": "Club",
+    "profile": "Profile"
   },
-  "language": {
-    "fi": "Suomi",
-    "sv": "Svenska",
-    "en": "English"
-  }
+
+  "header": {
+    "openProfile": "Open profile"
+  },
+
+  "greeting": {
+    "morningTitle": "Good morning",
+    "morningSubtitle": "We wish you a pleasant day.",
+    "afternoonTitle": "Good afternoon",
+    "afternoonSubtitle": "We wish you a pleasant afternoon.",
+    "eveningTitle": "Good evening",
+    "eveningSubtitle": "We wish you a peaceful evening."
+  },
+
+  "profile": {
+    "title": "Profile"
+  },
+
+  "settings": {
+    "notifications": "Notifications",
+    "appNotifications": "App notifications",
+    "notificationsDescription": "Receive alerts and important updates.",
+    "language": "Language",
+    "logout": "Log out"
+  },
+
+  "home": {
+    "alerts": "Alerts",
+    "showAll": "Show all",
+    "weeklyReport": "Weekly Report",
+    "open": "Open",
+    "weeklySummary": "Nurse Weekly Summary",
+    "weeklySummaryDescription": "View this week's observations and health summary."
+  },
+
+  "alertsPage": {
+    "title": "Alerts",
+    "subtitle": "Last 30 days"
+  },
+
+  "reportsPage": {
+    "title": "Reports"
+  },
+
+  "clubPage": {
+    "subtitle": "Activities and events near you"
+  },
+
+  "organizer": {
+    "dashboard": "Dashboard",
+    "events": "Events",
+    "create": "Create",
+    "profile": "Profile",
+
+    "dashboardTitle": "Dashboard",
+    "dashboardSubtitle": "Manage your Keiju Club events.",
+
+    "eventsTitle": "Events",
+    "eventsSubtitle": "View and manage your published activities.",
+
+    "createEvent": "Create event",
+    "createEventDescription": "Add a new Club activity.",
+
+    "manageEvents": "Manage events",
+    "manageEventsDescription": "Edit upcoming activities."
+  },
+
+  "organizerProfile": {
+    "title": "Profile",
+    "description": "Manage organization details.",
+    "partner": "Keiju Club partner",
+    "contactPerson": "Contact person",
+    "email": "Email",
+    "city": "City"
+  },
+
+  "eventForm": {
+    "photo": "Event photo",
+    "changePhoto": "Change photo",
+    "remove": "Remove",
+    "addPhoto": "Add event photo",
+    "photoFormats": "JPG, PNG or WEBP",
+
+    "title": "Event title",
+    "titlePlaceholder": "Event title",
+
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the event...",
+
+    "categories": "Categories",
+    "categoriesDescription": "Select all categories that describe this event.",
+    "categoryRequired": "At least one category should be selected.",
+
+    "audience": "Audience",
+    "audienceDescription": "Choose who should be able to see this event.",
+
+    "owner": "Keiju user",
+    "ownerDescription": "Show this event to the person receiving Keiju services.",
+
+    "caretaker": "Caretaker",
+    "caretakerDescription": "Show this event to family members and caretakers.",
+
+    "both": "Both",
+    "bothDescription": "Show this event to both audiences.",
+
+    "city": "City",
+    "cityPlaceholder": "Turku",
+
+    "address": "Address",
+    "addressPlaceholder": "Aurakatu 12",
+
+    "startTime": "Start time",
+    "endTime": "End time",
+
+    "saving": "Saving...",
+    "save": "Save event",
+    "create": "Create event",
+    "update": "Update event"
+  },
+
+  "eventCategory": {
+    "health": "Health",
+    "exercise": "Exercise",
+    "culture": "Culture",
+    "learning": "Learning",
+    "social": "Social",
+    "gaming": "Gaming",
+    "other": "Other"
+  },
+
+  "createEventPage": {
+    "title": "Create event",
+    "subtitle": "Add a new activity to Keiju Club.",
+    "error": "Event creation failed. Please try again."
+  },
+
+  "editEventPage": {
+    "title": "Edit event",
+    "subtitle": "Update event details.",
+    "loading": "Loading event...",
+    "notFoundTitle": "Event not found",
+    "notFoundDescription": "The requested event could not be found.",
+    "back": "Back to events",
+    "error": "Event update failed. Please try again."
+  },
+
+  "login": {
+    "signingIn": "Signing in...",
+    "failed": "Login failed. Please check your email and password.",
+    "genericError": "Something went wrong. Please try again."
+  },
+
+  "alertsPreview": {
+    "detailsTitle": "Alert details",
+    "detailsSubtitle": "Details and related activity",
+    "close": "Close alert details"
+  },
+
+  "clubPreview": {
+    "openEvent": "Open {{title}}"
+  },
+
+  "openWeeklyReport": "Open this week's nurse report"
 }

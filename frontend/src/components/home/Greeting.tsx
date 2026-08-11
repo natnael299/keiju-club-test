@@ -1,58 +1,68 @@
 import { CalendarDays, Clock3, Sun } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
-function getGreeting() {
+type GreetingKey = "morning" | "afternoon" | "evening";
+
+function getGreetingKey(): GreetingKey {
   const hour = new Date().getHours();
 
   if (hour < 12) {
-    return {
-      title: "Hyvää huomenta",
-      subtitle: "Toivotamme sinulle mukavaa päivää.",
-    };
+    return "morning";
   }
 
   if (hour < 18) {
-    return {
-      title: "Hyvää iltapäivää",
-      subtitle: "Toivotamme sinulle mukavaa iltapäivää.",
-    };
+    return "afternoon";
   }
 
-  return {
-    title: "Hyvää iltaa",
-    subtitle: "Toivotamme sinulle rauhallista iltaa.",
-  };
+  return "evening";
 }
 
-function formatDate() {
-  return new Intl.DateTimeFormat("fi-FI", {
+function getLocale(language: string) {
+  if (language.startsWith("sv")) {
+    return "sv-FI";
+  }
+
+  if (language.startsWith("en")) {
+    return "en-FI";
+  }
+
+  return "fi-FI";
+}
+
+function formatDate(locale: string) {
+  return new Intl.DateTimeFormat(locale, {
     weekday: "long",
     day: "numeric",
     month: "long",
   }).format(new Date());
 }
 
-function formatTime() {
-  return new Intl.DateTimeFormat("fi-FI", {
+function formatTime(locale: string) {
+  return new Intl.DateTimeFormat(locale, {
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date());
 }
 
 export default function Greeting() {
-  const greeting = getGreeting();
+  const { t, i18n } = useTranslation();
+
+  const greetingKey = getGreetingKey();
+
+  const locale = getLocale(i18n.language);
 
   return (
-    <section className="relative mb-10 overflow-hidden rounded-[36px] bg-gradient-to-b from-[#eef6ec] via-[#f5f7ef] to-[#e7f2e4] px-6 pb-8 pt-12 shadow-sm">
+    <section className="relative mb-10 overflow-hidden rounded-[32px] bg-[#f4f8f1] px-6 py-14 sm:px-10">
       {/* Background hills */}
-      <div className="absolute inset-x-0 bottom-0 h-52">
-        <div className="absolute bottom-0 left-[-10%] h-40 w-[65%] rounded-[100%] bg-[#dcebd7]" />
 
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute bottom-0 right-[-15%] h-48 w-[70%] rounded-[100%] bg-[#e4f1df]" />
 
         <div className="absolute bottom-0 left-[20%] h-28 w-[70%] rounded-[100%] bg-[#d5e6d2]" />
       </div>
 
       {/* Decorative trees */}
+
       <div className="absolute bottom-8 right-10 flex items-end gap-4 opacity-40">
         <div className="h-14 w-6 rounded-full bg-[#6a9775]" />
 
@@ -67,18 +77,18 @@ export default function Greeting() {
         </div>
 
         <h1 className="text-5xl font-extrabold text-primary">
-          {greeting.title}!
+          {t(`greeting.${greetingKey}Title`)}!
         </h1>
 
         <p className="mt-4 max-w-xl text-xl text-muted-foreground">
-          {greeting.subtitle}
+          {t(`greeting.${greetingKey}Subtitle`)}
         </p>
 
         <div className="mt-8 flex items-center gap-5 rounded-full bg-white px-7 py-4 shadow-lg">
           <div className="flex items-center gap-2">
             <CalendarDays className="h-5 w-5 text-primary" />
 
-            <span className="font-medium capitalize">{formatDate()}</span>
+            <span className="font-medium capitalize">{formatDate(locale)}</span>
           </div>
 
           <div className="h-2 w-2 rounded-full bg-[#E6A43B]" />
@@ -86,7 +96,7 @@ export default function Greeting() {
           <div className="flex items-center gap-2">
             <Clock3 className="h-5 w-5 text-primary" />
 
-            <span className="font-medium">{formatTime()}</span>
+            <span className="font-medium">{formatTime(locale)}</span>
           </div>
         </div>
       </div>
