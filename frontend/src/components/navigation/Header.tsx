@@ -1,4 +1,3 @@
-import { Moon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { useOwnerStore } from "@/store/owner.store";
@@ -24,14 +23,6 @@ export default function Header() {
       <img src={logo} alt="Keiju Club" className="h-20 w-auto" />
 
       <div className="flex items-center gap-3">
-        <button
-          type="button"
-          aria-label="Vaihda tumma tila"
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-primary shadow-sm"
-        >
-          <Moon size={21} strokeWidth={2.2} />
-        </button>
-
         <button
           type="button"
           onClick={() => navigate("/app/profile")}
