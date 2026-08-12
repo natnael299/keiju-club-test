@@ -2,7 +2,7 @@ import { Navigate, Outlet } from "react-router-dom";
 
 import { useAuthStore } from "@/store/authStore";
 
-type AllowedRole = "caretaker" | "organizer";
+type AllowedRole = "caretaker" | "organizationRep";
 
 type Props = {
   allowedRoles: AllowedRole[];

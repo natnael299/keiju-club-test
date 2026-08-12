@@ -5,23 +5,33 @@ import AlertsFilters, { type Filter } from "@/components/alerts/AlertsFilters";
 import AlertsHeader from "@/components/alerts/AlertsHeader";
 import AlertsList from "@/components/alerts/AlertsList";
 import AppLayout from "@/layouts/AppLayout";
+
+import { useOwnerStore } from "@/store/owner.store";
 import { useNotificationsStore } from "@/store/notifications.store";
+
 import type { Notification } from "@/types";
 
 export default function Alerts() {
   const [activeFilter, setActiveFilter] = useState<Filter>("all");
+
   const [selectedNotification, setSelectedNotification] =
     useState<Notification | null>(null);
 
+  const selectedOwnerId = useOwnerStore((state) => state.selectedOwnerId);
+
   const notifications = useNotificationsStore((state) => state.notifications);
 
-  const fetchNotifications = useNotificationsStore(
-    (state) => state.fetchNotifications,
+  const fetchOwnerNotifications = useNotificationsStore(
+    (state) => state.fetchOwnerNotifications,
   );
 
   useEffect(() => {
-    fetchNotifications();
-  }, [fetchNotifications]);
+    if (!selectedOwnerId) {
+      return;
+    }
+
+    void fetchOwnerNotifications(selectedOwnerId);
+  }, [selectedOwnerId, fetchOwnerNotifications]);
 
   useEffect(() => {
     document.body.style.overflow = selectedNotification ? "hidden" : "";

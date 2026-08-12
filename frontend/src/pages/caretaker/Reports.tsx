@@ -4,16 +4,26 @@ import ReportsHeader from "@/components/reports/ReportsHeader";
 import LatestReport from "@/components/reports/LatestReport";
 import PreviousReports from "@/components/reports/PreviousReports";
 import AppLayout from "@/layouts/AppLayout";
+
+import { useOwnerStore } from "@/store/owner.store";
 import { useReportsStore } from "@/store/reports.store";
 
 export default function Reports() {
+  const selectedOwnerId = useOwnerStore((state) => state.selectedOwnerId);
+
   const reports = useReportsStore((state) => state.reports);
+
   const loading = useReportsStore((state) => state.loading);
-  const fetchReports = useReportsStore((state) => state.fetchReports);
+
+  const fetchOwnerReports = useReportsStore((state) => state.fetchOwnerReports);
 
   useEffect(() => {
-    void fetchReports();
-  }, [fetchReports]);
+    if (!selectedOwnerId) {
+      return;
+    }
+
+    void fetchOwnerReports(selectedOwnerId);
+  }, [selectedOwnerId, fetchOwnerReports]);
 
   const currentReport = useMemo(() => {
     return reports.find((report) => report.isCurrent) ?? reports[0] ?? null;

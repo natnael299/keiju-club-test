@@ -6,6 +6,7 @@ import Alerts from "@/pages/caretaker/Alerts";
 import Reports from "@/pages/caretaker/Reports";
 import Club from "@/pages/caretaker/Club";
 import Profile from "@/pages/caretaker/Profile";
+import SelectOwner from "@/pages/SelectOwner";
 
 import OrganizerDashboard from "@/pages/organizer/Dashboard";
 import OrganizerEvents from "@/pages/organizer/Events";
@@ -22,6 +23,7 @@ function App() {
 
       <Route element={<ProtectedRoute allowedRoles={["caretaker"]} />}>
         <Route path="/app" element={<Navigate to="/app/home" replace />} />
+        <Route path="/app/select-owner" element={<SelectOwner />} />
         <Route path="/app/home" element={<Home />} />
         <Route path="/app/alerts" element={<Alerts />} />
         <Route path="/app/reports" element={<Reports />} />
@@ -29,7 +31,7 @@ function App() {
         <Route path="/app/profile" element={<Profile />} />
       </Route>
 
-      <Route element={<ProtectedRoute allowedRoles={["organizer"]} />}>
+      <Route element={<ProtectedRoute allowedRoles={["organizationRep"]} />}>
         <Route
           path="/organizer"
           element={<Navigate to="/organizer/dashboard" replace />}

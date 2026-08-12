@@ -3,7 +3,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState, type SubmitEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-
+import { useOwnerStore } from "@/store/owner.store";
 import logo from "@/assets/logo.png";
 import bg from "@/assets/bg.png";
 import { login as loginRequest } from "@/services/auth.service";
@@ -47,6 +47,24 @@ function Login() {
         });
 
         return;
+      }
+
+      const ownerIds = response.user.ownerIds ?? [];
+
+      if (ownerIds.length > 1) {
+        navigate("/app/select-owner", {
+          replace: true,
+        });
+
+        return;
+      }
+
+      if (ownerIds.length === 1) {
+        const ownerStore = useOwnerStore.getState();
+
+        await ownerStore.fetchOwners(ownerIds);
+
+        ownerStore.setSelectedOwnerId(ownerIds[0]);
       }
 
       navigate("/app/home", {

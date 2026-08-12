@@ -11,19 +11,25 @@ import { useNotificationsStore } from "@/store/notifications.store";
 import { useClubEventsStore } from "@/store/clubEvents.store";
 
 export default function Home() {
-  const fetchOwners = useOwnerStore((state) => state.fetchOwners);
+  const selectedOwnerId = useOwnerStore((state) => state.selectedOwnerId);
 
-  const fetchNotifications = useNotificationsStore(
-    (state) => state.fetchNotifications,
+  const fetchOwnerNotifications = useNotificationsStore(
+    (state) => state.fetchOwnerNotifications,
   );
 
   const fetchClubEvents = useClubEventsStore((state) => state.fetchClubEvents);
 
   useEffect(() => {
-    fetchOwners();
-    fetchNotifications();
-    fetchClubEvents();
-  }, [fetchOwners, fetchNotifications, fetchClubEvents]);
+    if (!selectedOwnerId) {
+      return;
+    }
+
+    void fetchOwnerNotifications(selectedOwnerId);
+  }, [selectedOwnerId, fetchOwnerNotifications]);
+
+  useEffect(() => {
+    void fetchClubEvents();
+  }, [fetchClubEvents]);
 
   return (
     <AppLayout>
