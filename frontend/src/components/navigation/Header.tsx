@@ -23,15 +23,19 @@ export default function Header() {
   const selectedOwner = useOwnerStore((state) => state.getSelectedOwner());
 
   return (
-    <header className="flex items-center justify-between">
-      <img src={logo} alt="Keiju Club" className="h-10 w-auto" />
+    <header className="mb-8 overflow-hidden rounded-[28px] border border-primary/5 bg-gradient-to-r from-[#f5faf4] via-[#eef7ec] to-[#e6f2e3] shadow-[0_8px_30px_rgba(41,78,60,0.06)]">
+      <div className="flex items-center justify-between px-5 py-4 sm:px-7">
+        <img
+          src={logo}
+          alt="Keiju"
+          className="h-12 w-auto object-contain sm:h-14"
+        />
 
-      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => navigate("/app/profile")}
           aria-label={t("header.openProfile")}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-accent text-sm font-extrabold text-primary shadow-sm"
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-primary/10 bg-primary/10 text-sm font-extrabold text-primary transition hover:bg-primary/15 active:scale-95"
         >
           {getInitials(selectedOwner?.fullName)}
         </button>

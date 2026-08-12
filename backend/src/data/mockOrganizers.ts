@@ -10,6 +10,7 @@ export const mockOrganizers: Organizer[] = [
     cdt: "2026-06-01T10:00:00.000Z",
     ldt: "2026-06-01T10:00:00.000Z",
   },
+
   {
     id: "org38bfa916c0e241a79d45e3ac763a22",
     organizationName: "Kulttuurikeskus Aamu",

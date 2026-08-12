@@ -8,6 +8,7 @@ export const mockOwners: Owner[] = [
     cdt: "2026-06-01T08:00:00.000Z",
     ldt: "2026-06-01T08:00:00.000Z",
   },
+
   {
     id: "me9c4a23d1ab44f21b98371c2fd6ab42",
     fullName: "Pentti Korhonen",
