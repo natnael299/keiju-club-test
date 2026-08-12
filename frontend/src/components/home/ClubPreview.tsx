@@ -16,7 +16,7 @@ export default function ClubPreview() {
   };
 
   return (
-    <section>
+    <section className="mt-8">
       <SectionHeader
         title="Keiju Club"
         actionLabel={t("home.showAll")}

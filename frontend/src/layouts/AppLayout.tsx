@@ -34,7 +34,9 @@ export default function AppLayout({ children }: Props) {
       <div className="mx-auto w-full max-w-5xl px-4 pb-28 pt-4 sm:px-6">
         <Header />
 
-        <main>{children}</main>
+        <main className="flex-1 px-5 pb-28 pt-8 sm:px-6 sm:pt-10">
+          {children}
+        </main>
       </div>
 
       <BottomNav />

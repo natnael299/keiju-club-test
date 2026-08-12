@@ -14,7 +14,7 @@ export default function WeeklyReport() {
   };
 
   return (
-    <section>
+    <section className="mt-8">
       <SectionHeader
         title={t("home.weeklyReport")}
         actionLabel={t("home.open")}

@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 import { ownersApi } from "@/services/owners.api";
 import type { Owner } from "@/types";
@@ -15,52 +16,61 @@ type OwnerStore = {
   getSelectedOwner: () => Owner | undefined;
 };
 
-export const useOwnerStore = create<OwnerStore>()((set, get) => ({
-  owners: [],
-  selectedOwnerId: null,
-  loading: false,
+export const useOwnerStore = create<OwnerStore>()(
+  persist(
+    (set, get) => ({
+      owners: [],
+      selectedOwnerId: null,
+      loading: false,
 
-  async fetchOwners(ownerIds) {
-    set({
-      loading: true,
-    });
+      async fetchOwners(ownerIds) {
+        set({
+          loading: true,
+        });
 
-    try {
-      const owners = await Promise.all(
-        ownerIds.map((ownerId) => ownersApi.getById(ownerId)),
-      );
+        try {
+          const owners = await Promise.all(
+            ownerIds.map((ownerId) => ownersApi.getById(ownerId)),
+          );
 
-      set((state) => ({
-        owners,
+          set((state) => ({
+            owners,
 
-        selectedOwnerId:
-          state.selectedOwnerId &&
-          owners.some((owner) => owner.id === state.selectedOwnerId)
-            ? state.selectedOwnerId
-            : (owners[0]?.id ?? null),
+            selectedOwnerId:
+              state.selectedOwnerId &&
+              owners.some((owner) => owner.id === state.selectedOwnerId)
+                ? state.selectedOwnerId
+                : (owners[0]?.id ?? null),
 
-        loading: false,
-      }));
-    } catch (error) {
-      console.error("OWNER FETCH ERROR:", error);
+            loading: false,
+          }));
+        } catch (error) {
+          console.error("OWNER FETCH ERROR:", error);
 
-      set({
-        owners: [],
-        selectedOwnerId: null,
-        loading: false,
-      });
-    }
-  },
+          set({
+            owners: [],
+            loading: false,
+          });
+        }
+      },
 
-  setSelectedOwnerId(ownerId) {
-    set({
-      selectedOwnerId: ownerId,
-    });
-  },
+      setSelectedOwnerId(ownerId) {
+        set({
+          selectedOwnerId: ownerId,
+        });
+      },
 
-  getSelectedOwner() {
-    const { owners, selectedOwnerId } = get();
+      getSelectedOwner() {
+        const { owners, selectedOwnerId } = get();
 
-    return owners.find((owner) => owner.id === selectedOwnerId);
-  },
-}));
+        return owners.find((owner) => owner.id === selectedOwnerId);
+      },
+    }),
+    {
+      name: "keiju-owner",
+      partialize: (state) => ({
+        selectedOwnerId: state.selectedOwnerId,
+      }),
+    },
+  ),
+);
