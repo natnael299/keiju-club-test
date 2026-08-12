@@ -15,17 +15,22 @@ function Login() {
   const navigate = useNavigate();
 
   const { language, setLanguage } = useLanguageStore();
+
   const login = useAuthStore((state) => state.login);
 
   const [email, setEmail] = useState("");
+
   const [password, setPassword] = useState("");
+
   const [showPassword, setShowPassword] = useState(false);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [error, setError] = useState("");
 
   const languages: Language[] = ["fi", "sv", "en"];
 
-  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SubmitEvent) => {
     event.preventDefault();
 
     setError("");
@@ -36,20 +41,22 @@ function Login() {
 
       login(response.token, response.user);
 
-      if (response.user.role === "organizer") {
-        navigate("/organizer/dashboard");
+      if (response.user.role === "organizationRep") {
+        navigate("/organizer/dashboard", {
+          replace: true,
+        });
+
         return;
       }
 
-      navigate("/app/home");
+      navigate("/app/home", {
+        replace: true,
+      });
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(
-          error.response?.data?.message ??
-            "Login failed. Please check your email and password.",
-        );
+        setError(error.response?.data?.message ?? t("login.failed"));
       } else {
-        setError("Something went wrong. Please try again.");
+        setError(t("login.genericError"));
       }
     } finally {
       setIsSubmitting(false);
@@ -57,14 +64,14 @@ function Login() {
   };
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-8 font-sans">
-      <img
-        src={bg}
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover"
-      />
-
+    <main
+      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-cover bg-center px-4 py-8"
+      style={{
+        backgroundImage: `url(${bg})`,
+      }}
+    >
       <div className="absolute inset-0 bg-black/10" />
+
       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-background/95 via-background/70 to-transparent" />
 
       <section className="relative w-full max-w-[360px] rounded-[24px] bg-card px-6 py-5 shadow-[0_12px_40px_rgba(23,53,43,0.18)]">
@@ -145,9 +152,10 @@ function Login() {
             disabled={isSubmitting}
             className="mt-6 h-13 w-full rounded-full bg-primary text-[15px] font-semibold text-primary-foreground shadow-sm transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isSubmitting ? "Signing in..." : t("login.signIn")}
+            {isSubmitting ? t("login.signingIn") : t("login.signIn")}
           </button>
         </form>
+
         <div className="mt-7 flex justify-center gap-4 text-sm font-medium text-muted-foreground">
           {languages.map((item, index) => (
             <span key={item} className="flex gap-4">

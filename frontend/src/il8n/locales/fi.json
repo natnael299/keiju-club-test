@@ -183,5 +183,9 @@
     "openEvent": "Avaa {{title}}"
   },
 
-  "openWeeklyReport": "Avaa tämän viikon hoitajan raportti"
+  "openWeeklyReport": "Avaa tämän viikon hoitajan raportti",
+  "ownerSwitcher": {
+    "title": "Tarkasteltava henkilö",
+    "currentlyViewing": "Tällä hetkellä tarkastellaan"
+  }
 }

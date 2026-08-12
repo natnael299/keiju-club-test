@@ -7,9 +7,10 @@ type LoginResponse = {
   user: {
     id: string;
     email: string;
-    role: "caretaker" | "organizer";
-    fullName?: string;
-    organizationName?: string;
+    role: "caretaker" | "organizationRep";
+    fullName: string;
+    ownerIds?: string[];
+    organizationId?: string;
   };
 };
 

@@ -1,14 +1,17 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { mockOrganizers, mockUsers } from "../data/index.js";
-type AuthRole = "caretaker" | "organizer";
+
+import { mockUsers } from "../data/index.js";
+import type { UserRole } from "../types/index.js";
 
 type AuthenticatedUser = {
   id: string;
   email: string;
-  role: AuthRole;
-  fullName?: string;
-  organizationName?: string;
+  role: UserRole;
+  fullName: string;
+
+  ownerIds?: string[];
+  organizationId?: string;
 };
 
 type LoginResult = {
@@ -25,6 +28,7 @@ const createServiceError = (
   statusCode: number,
 ): ServiceError => {
   const error: ServiceError = new Error(message);
+
   error.statusCode = statusCode;
 
   return error;
@@ -40,57 +44,34 @@ export const loginAccount = async (
     (candidate) => candidate.email.toLowerCase() === normalizedEmail,
   );
 
-  if (user) {
-    const passwordMatches = await verifyPassword(password, user.passwordHash);
-
-    if (!passwordMatches) {
-      throw createServiceError("Invalid email or password.", 401);
-    }
-
-    const token = createToken(user.id, user.role);
-
-    return {
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        fullName: user.fullName,
-      },
-    };
-  }
-
-  const organizer = mockOrganizers.find(
-    (candidate) => candidate.email.toLowerCase() === normalizedEmail,
-  );
-
-  if (!organizer) {
+  if (!user) {
     throw createServiceError("Invalid email or password.", 401);
   }
 
-  const passwordMatches = await verifyPassword(
-    password,
-    organizer.passwordHash,
-  );
+  const passwordMatches = await verifyPassword(password, user.passwordHash);
 
   if (!passwordMatches) {
     throw createServiceError("Invalid email or password.", 401);
   }
 
-  const token = createToken(organizer.id, "organizer");
+  const token = createToken(user.id, user.role);
 
   return {
     token,
+
     user: {
-      id: organizer.id,
-      email: organizer.email,
-      role: "organizer",
-      organizationName: organizer.organizationName,
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      fullName: user.fullName,
+
+      ownerIds: user.ownerIds,
+      organizationId: user.organizationId,
     },
   };
 };
 
-const createToken = (userId: string, role: AuthRole): string => {
+const createToken = (userId: string, role: UserRole): string => {
   const jwtSecret = process.env.JWT_SECRET;
 
   if (!jwtSecret) {

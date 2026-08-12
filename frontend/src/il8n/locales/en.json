@@ -183,5 +183,9 @@
     "openEvent": "Open {{title}}"
   },
 
-  "openWeeklyReport": "Open this week's nurse report"
+  "openWeeklyReport": "Open this week's nurse report",
+  "ownerSwitcher": {
+    "title": "Person being viewed",
+    "currentlyViewing": "Currently viewing"
+  }
 }

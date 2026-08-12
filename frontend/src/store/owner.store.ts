@@ -1,4 +1,5 @@
 import { create } from "zustand";
+
 import { ownersApi } from "@/services/owners.api";
 import type { Owner } from "@/types";
 
@@ -7,39 +8,59 @@ type OwnerStore = {
   selectedOwnerId: string | null;
   loading: boolean;
 
-  fetchOwners: () => Promise<void>;
-  setSelectedOwnerId: (ownerId: string | null) => void;
+  fetchOwners: (ownerIds: string[]) => Promise<void>;
+
+  setSelectedOwnerId: (ownerId: string) => void;
+
   getSelectedOwner: () => Owner | undefined;
 };
 
-export const useOwnerStore = create<OwnerStore>((set, get) => ({
+export const useOwnerStore = create<OwnerStore>()((set, get) => ({
   owners: [],
   selectedOwnerId: null,
   loading: false,
 
-  async fetchOwners() {
-    set({ loading: true });
+  async fetchOwners(ownerIds) {
+    set({
+      loading: true,
+    });
 
     try {
-      const owners = await ownersApi.getAll();
+      const owners = await Promise.all(
+        ownerIds.map((ownerId) => ownersApi.getById(ownerId)),
+      );
 
       set((state) => ({
         owners,
-        selectedOwnerId: state.selectedOwnerId ?? owners[0]?.id ?? null,
+
+        selectedOwnerId:
+          state.selectedOwnerId &&
+          owners.some((owner) => owner.id === state.selectedOwnerId)
+            ? state.selectedOwnerId
+            : (owners[0]?.id ?? null),
+
         loading: false,
       }));
     } catch (error) {
-      console.error(error);
-      set({ loading: false });
+      console.error("OWNER FETCH ERROR:", error);
+
+      set({
+        owners: [],
+        selectedOwnerId: null,
+        loading: false,
+      });
     }
   },
 
-  setSelectedOwnerId: (ownerId) => {
-    set({ selectedOwnerId: ownerId });
+  setSelectedOwnerId(ownerId) {
+    set({
+      selectedOwnerId: ownerId,
+    });
   },
 
   getSelectedOwner() {
     const { owners, selectedOwnerId } = get();
+
     return owners.find((owner) => owner.id === selectedOwnerId);
   },
 }));

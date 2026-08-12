@@ -183,5 +183,9 @@
     "openEvent": "Öppna {{title}}"
   },
 
-  "openWeeklyReport": "Öppna veckans sjukskötarrapport"
+  "openWeeklyReport": "Öppna veckans sjukskötarrapport",
+  "ownerSwitcher": {
+    "title": "Person som visas",
+    "currentlyViewing": "Visar för närvarande"
+  }
 }

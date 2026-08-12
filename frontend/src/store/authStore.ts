@@ -3,14 +3,16 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type AuthRole = "caretaker" | "organizer";
+type AuthRole = "caretaker" | "organizationRep";
 
 type AuthUser = {
   id: string;
   email: string;
   role: AuthRole;
-  fullName?: string;
-  organizationName?: string;
+  fullName: string;
+
+  ownerIds?: string[];
+  organizationId?: string;
 };
 
 type AuthState = {
