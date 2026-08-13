@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import { mockUsers } from "../data/index.js";
+import { usersRepository } from "../repositories/users.repository.js";
 import type { UserRole } from "../types/index.js";
 
 type AuthenticatedUser = {
@@ -40,9 +40,7 @@ export const loginAccount = async (
 ): Promise<LoginResult> => {
   const normalizedEmail = email.trim().toLowerCase();
 
-  const user = mockUsers.find(
-    (candidate) => candidate.email.toLowerCase() === normalizedEmail,
-  );
+  const user = await usersRepository.findByEmail(normalizedEmail);
 
   if (!user) {
     throw createServiceError("Invalid email or password.", 401);

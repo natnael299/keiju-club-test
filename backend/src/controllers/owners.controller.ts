@@ -7,17 +7,37 @@ type OwnerParams = {
 };
 
 export const ownersController = {
-  getAllOwners(_req: Request, res: Response) {
-    const owners = ownersService.getAllOwners();
-    res.json(owners.map(toClientDoc));
+  async getAllOwners(_req: Request, res: Response) {
+    try {
+      const owners = await ownersService.getAllOwners();
+
+      return res.json(owners.map(toClientDoc));
+    } catch (error) {
+      console.error("Failed to fetch owners:", error);
+
+      return res.status(500).json({
+        error: "Failed to fetch owners",
+      });
+    }
   },
 
-  getOwnerById(req: Request<OwnerParams>, res: Response) {
-    const owner = ownersService.getOwnerById(req.params.ownerId);
+  async getOwnerById(req: Request<OwnerParams>, res: Response) {
+    try {
+      const owner = await ownersService.getOwnerById(req.params.ownerId);
 
-    if (!owner) {
-      return res.status(404).json({ error: "Owner not found" });
+      if (!owner) {
+        return res.status(404).json({
+          error: "Owner not found",
+        });
+      }
+
+      return res.json(toClientDoc(owner));
+    } catch (error) {
+      console.error("Failed to fetch owner:", error);
+
+      return res.status(500).json({
+        error: "Failed to fetch owner",
+      });
     }
-    return res.json(toClientDoc(owner));
   },
 };

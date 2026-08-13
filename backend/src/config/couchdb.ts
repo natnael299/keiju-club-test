@@ -1,32 +1,34 @@
 import Nano from "nano";
 
-const couchDbUrl = process.env.COUCHDB_URL;
-const couchDbUsername = process.env.COUCHDB_USERNAME;
-const couchDbPassword = process.env.COUCHDB_PASSWORD;
-const couchDbDatabase = process.env.COUCHDB_DATABASE;
+import {
+  COUCHDB_URL,
+  COUCHDB_USERNAME,
+  COUCHDB_PASSWORD,
+  COUCHDB_DATABASE,
+} from "./env.js";
 
-if (!couchDbUrl) {
+if (!COUCHDB_URL) {
   throw new Error("COUCHDB_URL is missing from environment variables.");
 }
 
-if (!couchDbUsername) {
+if (!COUCHDB_USERNAME) {
   throw new Error("COUCHDB_USERNAME is missing from environment variables.");
 }
 
-if (!couchDbPassword) {
+if (!COUCHDB_PASSWORD) {
   throw new Error("COUCHDB_PASSWORD is missing from environment variables.");
 }
 
-if (!couchDbDatabase) {
+if (!COUCHDB_DATABASE) {
   throw new Error("COUCHDB_DATABASE is missing from environment variables.");
 }
 
-export const couch = Nano(couchDbUrl);
+export const couch = Nano(COUCHDB_URL);
 
-export const databaseName = couchDbDatabase;
+export const databaseName = COUCHDB_DATABASE;
 
-export const authenticateCouchDb = async () => {
-  await couch.auth(couchDbUsername, couchDbPassword);
-};
+export async function authenticateCouchDb() {
+  await couch.auth(COUCHDB_USERNAME, COUCHDB_PASSWORD);
+}
 
 export const db = couch.use(databaseName);

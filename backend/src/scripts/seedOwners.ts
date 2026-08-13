@@ -1,21 +1,21 @@
-import "dotenv/config";
 import { authenticateCouchDb, db } from "../config/couchdb.js";
-import { mockUsers } from "../data/index.js";
 
-async function seedUsers() {
+import { mockOwners } from "../data/index.js";
+
+async function seedOwners() {
   try {
     await authenticateCouchDb();
 
-    console.log("Seeding users...");
+    console.log("Seeding owners...");
 
-    for (const user of mockUsers) {
+    for (const owner of mockOwners) {
       try {
-        await db.insert(user);
+        await db.insert(owner);
 
-        console.log(`Inserted user: ${user.email}`);
+        console.log(`Inserted owner: ${owner.fullName}`);
       } catch (error) {
         if (isConflictError(error)) {
-          console.log(`User already exists: ${user.email}`);
+          console.log(`Owner already exists: ${owner.fullName}`);
 
           continue;
         }
@@ -24,9 +24,9 @@ async function seedUsers() {
       }
     }
 
-    console.log("User seed completed.");
+    console.log("Owner seed completed.");
   } catch (error) {
-    console.error("User seed failed:", error);
+    console.error("Owner seed failed:", error);
 
     process.exitCode = 1;
   }
@@ -40,4 +40,4 @@ function isConflictError(error: unknown) {
   return "statusCode" in error && error.statusCode === 409;
 }
 
-void seedUsers();
+void seedOwners();

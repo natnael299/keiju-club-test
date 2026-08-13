@@ -1,11 +1,11 @@
-import { mockOwners } from "../data/index.js";
+import { ownersRepository } from "../repositories/owners.repository.js";
 
 export const ownersService = {
-  getAllOwners() {
-    return mockOwners;
+  async getAllOwners() {
+    return ownersRepository.findAll();
   },
 
-  getOwnerById(ownerId: string) {
-    return mockOwners.find((owner) => owner._id === ownerId);
+  async getOwnerById(ownerId: string) {
+    return ownersRepository.findById(ownerId);
   },
 };
