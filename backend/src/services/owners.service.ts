@@ -6,6 +6,6 @@ export const ownersService = {
   },
 
   getOwnerById(ownerId: string) {
-    return mockOwners.find((owner) => owner.id === ownerId);
+    return mockOwners.find((owner) => owner._id === ownerId);
   },
 };

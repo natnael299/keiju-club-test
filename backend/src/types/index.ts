@@ -1,32 +1,42 @@
 export type UserRole = "caretaker" | "organizationRep";
 
 export type User = {
-  id: string;
+  _id: string;
+  _rev?: string;
+
   role: UserRole;
   fullName: string;
   email: string;
   passwordHash: string;
+
   ownerIds?: string[];
   organizationId?: string;
+
   cdt: string;
   ldt: string;
 };
 
 export type Owner = {
-  id: string;
+  _id: string;
+  _rev?: string;
+
   fullName: string;
   birthDate: string;
+
   cdt: string;
   ldt: string;
 };
 
 export type Organization = {
-  id: string;
+  _id: string;
+  _rev?: string;
+
   name: string;
   address: string;
   city: string;
   email: string;
   phone: string;
+
   cdt: string;
   ldt: string;
 };
@@ -43,7 +53,8 @@ export type EventCategory =
 export type EventAudience = "owner" | "caretaker" | "both";
 
 export type ClubEvent = {
-  id: string;
+  _id: string;
+  _rev?: string;
   organizationId: string;
   title: string;
   description: string;
@@ -104,7 +115,8 @@ export type RawNotification = {
 };
 
 export type WeeklyReport = {
-  id: string;
+  _id: string;
+  _rev?: string;
   ownerId: string;
 
   week: number;

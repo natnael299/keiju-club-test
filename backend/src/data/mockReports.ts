@@ -4,7 +4,7 @@ export const mockReports: WeeklyReport[] = [
   // MAIJA - PREVIOUS REPORT
 
   {
-    id: "report-maija-2026-31",
+    _id: "report-maija-2026-31",
 
     ownerId: "me675d10f00ca1ee103726e36f3d235c",
 
@@ -36,7 +36,7 @@ export const mockReports: WeeklyReport[] = [
   // MAIJA - CURRENT REPORT
 
   {
-    id: "report-maija-2026-32",
+    _id: "report-maija-2026-32",
 
     ownerId: "me675d10f00ca1ee103726e36f3d235c",
 
@@ -68,7 +68,7 @@ export const mockReports: WeeklyReport[] = [
   // PENTTI - PREVIOUS REPORT
 
   {
-    id: "report-pentti-2026-31",
+    _id: "report-pentti-2026-31",
 
     ownerId: "me9c4a23d1ab44f21b98371c2fd6ab42",
 
@@ -99,7 +99,7 @@ export const mockReports: WeeklyReport[] = [
   // PENTTI - CURRENT REPORT
 
   {
-    id: "report-pentti-2026-32",
+    _id: "report-pentti-2026-32",
 
     ownerId: "me9c4a23d1ab44f21b98371c2fd6ab42",
 

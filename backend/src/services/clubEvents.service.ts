@@ -33,6 +33,6 @@ export const clubEventsService = {
   },
 
   getClubEventById(eventId: string) {
-    return mockClubEvents.find((event) => event.id === eventId);
+    return mockClubEvents.find((event) => event._id === eventId);
   },
 };

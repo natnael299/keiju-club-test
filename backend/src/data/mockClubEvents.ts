@@ -2,7 +2,7 @@ import type { ClubEvent } from "../types/index.js";
 
 export const mockClubEvents: ClubEvent[] = [
   {
-    id: "evt3b7f9c2a81d94e6fa2450b13c8a7d1",
+    _id: "evt3b7f9c2a81d94e6fa2450b13c8a7d1",
 
     organizationId: "org91c7de4a8f234c2ea6b1d920a4f70c",
 
@@ -29,7 +29,7 @@ export const mockClubEvents: ClubEvent[] = [
   },
 
   {
-    id: "evt84d2e9a64f764c3ea8b214de9235ca",
+    _id: "evt84d2e9a64f764c3ea8b214de9235ca",
 
     organizationId: "org38bfa916c0e241a79d45e3ac763a22",
 
@@ -56,7 +56,7 @@ export const mockClubEvents: ClubEvent[] = [
   },
 
   {
-    id: "evtd0a31c9b4e7e4b5f81c6028f2a5d9e",
+    _id: "evtd0a31c9b4e7e4b5f81c6028f2a5d9e",
 
     organizationId: "org91c7de4a8f234c2ea6b1d920a4f70c",
 

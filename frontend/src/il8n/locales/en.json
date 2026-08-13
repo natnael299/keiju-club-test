@@ -17,7 +17,9 @@
     "afternoonTitle": "Good afternoon",
     "afternoonSubtitle": "We wish you a pleasant afternoon.",
     "eveningTitle": "Good evening",
-    "eveningSubtitle": "We wish you a peaceful evening."
+    "eveningSubtitle": "We wish you a peaceful evening.",
+    "nightTitle": "Good night",
+    "nightSubtitle": "We wish you a peaceful night."
   },
 
   "profile": {

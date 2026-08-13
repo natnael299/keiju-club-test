@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { mockReports } from "../data/mockReports.js";
+import { toClientDoc } from "../utils/documents.js";
 
 export const reportsController = {
   getAllReports(req: Request, res: Response) {
@@ -15,6 +16,6 @@ export const reportsController = {
         new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
     );
 
-    return res.json(sortedReports);
+    return res.json(sortedReports.map(toClientDoc));
   },
 };

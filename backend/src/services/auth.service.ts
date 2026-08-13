@@ -54,13 +54,13 @@ export const loginAccount = async (
     throw createServiceError("Invalid email or password.", 401);
   }
 
-  const token = createToken(user.id, user.role);
+  const token = createToken(user._id, user.role);
 
   return {
     token,
 
     user: {
-      id: user.id,
+      id: user._id,
       email: user.email,
       role: user.role,
       fullName: user.fullName,

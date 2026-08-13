@@ -17,7 +17,9 @@
     "afternoonTitle": "Hyvää iltapäivää",
     "afternoonSubtitle": "Toivotamme sinulle mukavaa iltapäivää.",
     "eveningTitle": "Hyvää iltaa",
-    "eveningSubtitle": "Toivotamme sinulle rauhallista iltaa."
+    "eveningSubtitle": "Toivotamme sinulle rauhallista iltaa.",
+    "nightTitle": "Hyvää yötä",
+    "nightSubtitle": "Toivotamme sinulle rauhallista yötä."
   },
 
   "profile": {

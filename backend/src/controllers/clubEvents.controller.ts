@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { clubEventsService } from "../services/clubEvents.service.js";
 import type { EventAudience, EventCategory } from "../types/index.js";
+import { toClientDoc } from "../utils/documents.js";
 
 type ClubEventParams = {
   eventId: string;
@@ -23,7 +24,7 @@ export const clubEventsController = {
       audience: req.query.audience,
     });
 
-    return res.json(events);
+    return res.json(events.map(toClientDoc));
   },
 
   getClubEventById(req: Request<ClubEventParams>, res: Response) {
@@ -33,6 +34,6 @@ export const clubEventsController = {
       return res.status(404).json({ error: "Club event not found" });
     }
 
-    return res.json(event);
+    return res.json(toClientDoc(event));
   },
 };

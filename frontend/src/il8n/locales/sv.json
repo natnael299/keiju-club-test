@@ -17,7 +17,9 @@
     "afternoonTitle": "God eftermiddag",
     "afternoonSubtitle": "Vi önskar dig en trevlig eftermiddag.",
     "eveningTitle": "God kväll",
-    "eveningSubtitle": "Vi önskar dig en lugn kväll."
+    "eveningSubtitle": "Vi önskar dig en lugn kväll.",
+    "nightTitle": "God natt",
+    "nightSubtitle": "Vi önskar dig en lugn natt."
   },
 
   "profile": {

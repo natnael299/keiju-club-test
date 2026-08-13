@@ -1,4 +1,4 @@
-import { authenticateCouchDb, couch, databaseName } from "./couchDb.js";
+import { authenticateCouchDb, couch, databaseName } from "./couchdb.js";
 
 export async function initDatabase() {
   await authenticateCouchDb();
