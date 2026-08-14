@@ -24,7 +24,11 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "seed:users": "tsx src/scripts/seedUsers.ts",
-    "seed:owners": "tsx src/scripts/seedOwners.ts"
+    "seed:owners": "tsx src/scripts/seedOwners.ts",
+    "seed:organizations": "tsx src/scripts/seedOrganizations.ts",
+    "seed:events": "tsx src/scripts/seedClubEvents.ts",
+    "seed:reports": "tsx src/scripts/seedReports.ts",
+    "seed:notifications": "tsx src/scripts/seedNotifications.ts"
   },
   "keywords": [],
   "author": "",
