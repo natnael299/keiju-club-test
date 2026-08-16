@@ -1,4 +1,5 @@
-import { mockClubEvents } from "../data/index.js";
+import { clubEventsRepository } from "../repositories/clubEvents.repository.js";
+
 import type { EventAudience, EventCategory } from "../types/index.js";
 
 type GetClubEventsFilters = {
@@ -8,8 +9,8 @@ type GetClubEventsFilters = {
 };
 
 export const clubEventsService = {
-  getAllClubEvents(filters: GetClubEventsFilters = {}) {
-    let events = [...mockClubEvents];
+  async getAllClubEvents(filters: GetClubEventsFilters = {}) {
+    let events = await clubEventsRepository.findAll();
 
     if (filters.city) {
       events = events.filter(
@@ -32,7 +33,7 @@ export const clubEventsService = {
     );
   },
 
-  getClubEventById(eventId: string) {
-    return mockClubEvents.find((event) => event._id === eventId);
+  async getClubEventById(eventId: string) {
+    return clubEventsRepository.findById(eventId);
   },
 };

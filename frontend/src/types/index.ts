@@ -1,3 +1,5 @@
+export type UserRole = "caretaker" | "organizationRep";
+
 export type Owner = {
   id: string;
   fullName: string;
@@ -8,21 +10,24 @@ export type Owner = {
 
 export type User = {
   id: string;
-  role: "caretaker";
+  role: UserRole;
   fullName: string;
   email: string;
-  passwordHash: string;
-  ownerIds: string[];
+
+  ownerIds?: string[];
+  organizationId?: string;
+
   cdt: string;
   ldt: string;
 };
 
-export type Organizer = {
+export type Organization = {
   id: string;
-  organizationName: string;
-  contactPerson: string;
+  name: string;
+  address: string;
+  city: string;
   email: string;
-  passwordHash: string;
+  phone: string;
   cdt: string;
   ldt: string;
 };
@@ -40,16 +45,22 @@ export type EventAudience = "owner" | "caretaker" | "both";
 
 export type ClubEvent = {
   id: string;
-  organizerId: string;
+
+  organizationId: string;
+
   title: string;
   description: string;
   imageUrl?: string;
+
   categories: EventCategory[];
   audience: EventAudience;
+
   address: string;
   city: string;
+
   startsAt: string;
   endsAt: string;
+
   cdt: string;
   ldt: string;
 };
@@ -86,6 +97,7 @@ export type Notification = {
   _rev?: string;
 
   type: "notif";
+
   ownerId: string;
   ownerName: string;
 
@@ -97,19 +109,11 @@ export type Notification = {
   level: NotificationLevel;
   term: string;
   category?: NotificationCategory;
+
   reviewed: boolean;
+
   content: Record<string, unknown>;
   position?: NotificationPosition;
-
-  // BeneCare platform fields.
-  // cId?: string;
-  // subjectId?: string;
-  // subjectName?: string;
-  // subjectType?: string[];
-  // projectId?: string;
-  // projectName?: string;
-  // siteId?: string;
-  // siteName?: string;
 };
 
 export type NotificationView = {
@@ -125,17 +129,19 @@ export type WeeklyReport = {
   ownerId: string;
 
   week: number;
+
   startDate: string;
   endDate: string;
 
-  createdAt: string;
   isCurrent: boolean;
 
   status: "stable" | "attention" | "concern";
 
   summary: string;
-
   observations: string[];
 
   recommendation?: string;
+
+  cdt: string;
+  ldt: string;
 };

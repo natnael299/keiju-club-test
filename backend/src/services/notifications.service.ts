@@ -1,4 +1,4 @@
-import { mockNotifications } from "../data/index.js";
+import { notificationsRepository } from "../repositories/notifications.repository.js";
 
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -8,14 +8,10 @@ type GetNotificationsFilters = {
 };
 
 export const notificationsService = {
-  getAllNotifications(filters: GetNotificationsFilters = {}) {
-    let notifications = [...mockNotifications];
-
-    if (filters.ownerId) {
-      notifications = notifications.filter(
-        (notification) => notification.ownerId === filters.ownerId,
-      );
-    }
+  async getAllNotifications(filters: GetNotificationsFilters = {}) {
+    let notifications = filters.ownerId
+      ? await notificationsRepository.findByOwnerId(filters.ownerId)
+      : await notificationsRepository.findAll();
 
     if (filters.days) {
       const cutoff = Date.now() - filters.days * ONE_DAY_IN_MS;
@@ -30,9 +26,7 @@ export const notificationsService = {
     );
   },
 
-  getNotificationById(notificationId: string) {
-    return mockNotifications.find(
-      (notification) => notification._id === notificationId,
-    );
+  async getNotificationById(notificationId: string) {
+    return notificationsRepository.findById(notificationId);
   },
 };
