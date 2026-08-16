@@ -1,18 +1,49 @@
+import { useEffect, useState } from "react";
 import { Building2, Globe, LogOut, Mail, UserRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import Card from "@/components/shared/Card";
 import OrganizerLayout from "@/layouts/OrganizerLayout";
+import { organizationsApi } from "@/services/organizations.api";
 import { useAuthStore } from "@/store/authStore";
+import type { Organization } from "@/types";
 
 export default function OrganizerProfile() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  const user = useAuthStore((state) => state.user);
+
   const logout = useAuthStore((state) => state.logout);
 
-  const user = useAuthStore((state) => state.user);
+  const [organization, setOrganization] = useState<Organization | null>(null);
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user?.role !== "organizationRep" || !user.organizationId) {
+      return;
+    }
+
+    const fetchOrganization = async () => {
+      try {
+        setLoading(true);
+
+        const organizationData = await organizationsApi.getById(
+          user.organizationId!,
+        );
+
+        setOrganization(organizationData);
+      } catch (error) {
+        console.error("Failed to fetch organization:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void fetchOrganization();
+  }, [user]);
 
   const handleLogout = () => {
     logout();
@@ -41,7 +72,7 @@ export default function OrganizerProfile() {
 
             <div>
               <h2 className="text-xl font-extrabold text-foreground">
-                {user?.organizationName ?? "Turku Senioriliikunta ry"}
+                {loading ? "..." : (organization?.name ?? "-")}
               </h2>
 
               <p className="text-sm text-muted-foreground">
@@ -61,7 +92,7 @@ export default function OrganizerProfile() {
               </p>
 
               <p className="font-semibold text-foreground">
-                {user?.fullName ?? "Sari Lahtinen"}
+                {user?.fullName ?? "-"}
               </p>
             </div>
           </div>
@@ -75,7 +106,7 @@ export default function OrganizerProfile() {
               </p>
 
               <p className="font-semibold text-foreground">
-                {user?.email ?? "sari@senioriliikunta.fi"}
+                {user?.email ?? "-"}
               </p>
             </div>
           </div>
@@ -88,7 +119,9 @@ export default function OrganizerProfile() {
                 {t("organizerProfile.city")}
               </p>
 
-              <p className="font-semibold text-foreground">Turku</p>
+              <p className="font-semibold text-foreground">
+                {loading ? "..." : (organization?.city ?? "-")}
+              </p>
             </div>
           </div>
         </Card>
@@ -99,6 +132,7 @@ export default function OrganizerProfile() {
           className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary text-sm font-semibold text-primary-foreground transition hover:opacity-90 active:scale-[0.99]"
         >
           <LogOut className="h-5 w-5" />
+
           {t("settings.logout")}
         </button>
       </section>

@@ -12,6 +12,7 @@ export type CreateClubEventPayload = {
 
   address: string;
   city: string;
+
   startsAt: string;
   endsAt: string;
 };
@@ -23,17 +24,27 @@ export const clubEventsApi = {
     return api<ClubEvent[]>("/club-events");
   },
 
-  create(event: CreateClubEventPayload) {
+  getById(eventId: string) {
+    return api<ClubEvent>(`/club-events/${eventId}`);
+  },
+
+  create(payload: CreateClubEventPayload) {
     return api<ClubEvent>("/club-events", {
       method: "POST",
-      body: JSON.stringify(event),
+      body: JSON.stringify(payload),
     });
   },
 
-  update(eventId: string, event: UpdateClubEventPayload) {
+  update(eventId: string, payload: UpdateClubEventPayload) {
     return api<ClubEvent>(`/club-events/${eventId}`, {
       method: "PUT",
-      body: JSON.stringify(event),
+      body: JSON.stringify(payload),
+    });
+  },
+
+  delete(eventId: string) {
+    return api<void>(`/club-events/${eventId}`, {
+      method: "DELETE",
     });
   },
 };

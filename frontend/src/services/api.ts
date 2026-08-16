@@ -1,19 +1,55 @@
-const BASE_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
+
+type ApiOptions = RequestInit & {
+  skipAuth?: boolean;
+};
 
 export async function api<T>(
-  endpoint: string,
-  options?: RequestInit,
+  path: string,
+  options: ApiOptions = {},
 ): Promise<T> {
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
+  const { skipAuth = false, headers, ...requestOptions } = options;
+
+  const authData = localStorage.getItem("keiju-auth");
+
+  let token: string | null = null;
+
+  if (authData) {
+    try {
+      const parsed = JSON.parse(authData);
+
+      token = parsed?.state?.token ?? null;
+    } catch {
+      token = null;
+    }
+  }
+
+  const response = await fetch(`${API_URL}${path}`, {
+    ...requestOptions,
+
     headers: {
       "Content-Type": "application/json",
-      ...(options?.headers ?? {}),
+
+      ...(token && !skipAuth
+        ? {
+            Authorization: `Bearer ${token}`,
+          }
+        : {}),
+
+      ...headers,
     },
-    ...options,
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch data.");
+    const errorBody = await response.json().catch(() => null);
+
+    throw new Error(
+      errorBody?.error ?? `Request failed with status ${response.status}`,
+    );
+  }
+
+  if (response.status === 204) {
+    return undefined as T;
   }
 
   return response.json() as Promise<T>;

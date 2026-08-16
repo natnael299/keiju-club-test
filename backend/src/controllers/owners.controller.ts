@@ -1,17 +1,36 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
+
+import type { AuthenticatedRequest } from "../middleware/auth.middleware.js";
+
 import { ownersService } from "../services/owners.service.js";
 import { toClientDoc } from "../utils/documents.js";
 
-type OwnerParams = {
-  ownerId: string;
-};
-
 export const ownersController = {
-  async getAllOwners(_req: Request, res: Response) {
+  async getAllOwners(req: AuthenticatedRequest, res: Response) {
     try {
+      const user = req.authUser;
+
+      if (!user) {
+        return res.status(401).json({
+          error: "Authentication required",
+        });
+      }
+
+      if (user.role !== "caretaker") {
+        return res.status(403).json({
+          error: "Only caretakers can access owner information",
+        });
+      }
+
+      const allowedOwnerIds = user.ownerIds ?? [];
+
       const owners = await ownersService.getAllOwners();
 
-      return res.json(owners.map(toClientDoc));
+      const allowedOwners = owners.filter((owner) =>
+        allowedOwnerIds.includes(owner._id),
+      );
+
+      return res.json(allowedOwners.map(toClientDoc));
     } catch (error) {
       console.error("Failed to fetch owners:", error);
 
@@ -21,9 +40,33 @@ export const ownersController = {
     }
   },
 
-  async getOwnerById(req: Request<OwnerParams>, res: Response) {
+  async getOwnerById(req: AuthenticatedRequest, res: Response) {
     try {
-      const owner = await ownersService.getOwnerById(req.params.ownerId);
+      const user = req.authUser;
+
+      if (!user) {
+        return res.status(401).json({
+          error: "Authentication required",
+        });
+      }
+
+      if (user.role !== "caretaker") {
+        return res.status(403).json({
+          error: "Only caretakers can access owner information",
+        });
+      }
+
+      const ownerId = req.params.ownerId as string;
+
+      const allowed = user.ownerIds?.includes(ownerId);
+
+      if (!allowed) {
+        return res.status(403).json({
+          error: "You do not have access to this owner",
+        });
+      }
+
+      const owner = await ownersService.getOwnerById(ownerId);
 
       if (!owner) {
         return res.status(404).json({

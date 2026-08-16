@@ -7,6 +7,7 @@ import notificationsRoutes from "./routes/notifications.routes.js";
 import clubEventsRoutes from "./routes/clubEvents.routes.js";
 import authRouter from "./routes/auth.routes.js";
 import reportsRoutes from "./routes/reports.routes.js";
+import organizationsRoutes from "./routes/organizations.routes.js";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use("/api/owners", ownersRoutes);
 app.use("/api/notifications", notificationsRoutes);
 app.use("/api/club-events", clubEventsRoutes);
 app.use("/api/reports", reportsRoutes);
+app.use("/api/organizations", organizationsRoutes);
 app.get("/api/test", (_req, res) => {
   res.json({ ok: true });
 });
