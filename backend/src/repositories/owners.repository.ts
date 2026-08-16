@@ -5,12 +5,7 @@ export const ownersRepository = {
   async findAll(): Promise<Owner[]> {
     const result = await db.find({
       selector: {
-        fullName: {
-          $exists: true,
-        },
-        birthDate: {
-          $exists: true,
-        },
+        docType: "owner",
       },
     });
 
@@ -21,7 +16,13 @@ export const ownersRepository = {
     try {
       const document = await db.get(ownerId);
 
-      return document as unknown as Owner;
+      const owner = document as unknown as Owner;
+
+      if (owner.docType !== "owner") {
+        return null;
+      }
+
+      return owner;
     } catch (error) {
       if (isNotFoundError(error)) {
         return null;
@@ -33,9 +34,10 @@ export const ownersRepository = {
 };
 
 function isNotFoundError(error: unknown) {
-  if (typeof error !== "object" || error === null) {
-    return false;
-  }
-
-  return "statusCode" in error && error.statusCode === 404;
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "statusCode" in error &&
+    error.statusCode === 404
+  );
 }

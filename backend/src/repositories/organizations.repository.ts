@@ -5,9 +5,7 @@ export const organizationsRepository = {
   async findAll(): Promise<Organization[]> {
     const result = await db.find({
       selector: {
-        name: { $exists: true },
-        phone: { $exists: true },
-        address: { $exists: true },
+        docType: "organization",
       },
     });
 
@@ -18,7 +16,13 @@ export const organizationsRepository = {
     try {
       const document = await db.get(organizationId);
 
-      return document as unknown as Organization;
+      const organization = document as unknown as Organization;
+
+      if (organization.docType !== "organization") {
+        return null;
+      }
+
+      return organization;
     } catch (error) {
       if (isNotFoundError(error)) {
         return null;

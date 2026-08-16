@@ -5,7 +5,7 @@ export const notificationsRepository = {
   async findAll(): Promise<RawNotification[]> {
     const result = await db.find({
       selector: {
-        type: "notif",
+        docType: "notification",
       },
     });
 
@@ -15,7 +15,7 @@ export const notificationsRepository = {
   async findByOwnerId(ownerId: string): Promise<RawNotification[]> {
     const result = await db.find({
       selector: {
-        type: "notif",
+        docType: "notification",
         ownerId,
       },
     });
@@ -27,7 +27,13 @@ export const notificationsRepository = {
     try {
       const document = await db.get(notificationId);
 
-      return document as unknown as RawNotification;
+      const notification = document as unknown as RawNotification;
+
+      if (notification.docType !== "notification") {
+        return null;
+      }
+
+      return notification;
     } catch (error) {
       if (isNotFoundError(error)) {
         return null;

@@ -7,6 +7,7 @@ export const usersRepository = {
 
     const result = await db.find({
       selector: {
+        docType: "user",
         email: normalizedEmail,
       },
       limit: 1,
@@ -21,7 +22,13 @@ export const usersRepository = {
     try {
       const document = await db.get(userId);
 
-      return document as unknown as User;
+      const user = document as unknown as User;
+
+      if (user.docType !== "user") {
+        return null;
+      }
+
+      return user;
     } catch (error) {
       if (isNotFoundError(error)) {
         return null;
@@ -33,9 +40,10 @@ export const usersRepository = {
 };
 
 function isNotFoundError(error: unknown) {
-  if (typeof error !== "object" || error === null) {
-    return false;
-  }
-
-  return "statusCode" in error && error.statusCode === 404;
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "statusCode" in error &&
+    error.statusCode === 404
+  );
 }

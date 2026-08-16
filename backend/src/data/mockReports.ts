@@ -5,7 +5,7 @@ export const mockReports: WeeklyReport[] = [
 
   {
     _id: "report-maija-2026-31",
-
+    docType: "weeklyReport",
     ownerId: "me675d10f00ca1ee103726e36f3d235c",
 
     week: 31,
@@ -37,7 +37,7 @@ export const mockReports: WeeklyReport[] = [
 
   {
     _id: "report-maija-2026-32",
-
+    docType: "weeklyReport",
     ownerId: "me675d10f00ca1ee103726e36f3d235c",
 
     week: 32,
@@ -69,7 +69,7 @@ export const mockReports: WeeklyReport[] = [
 
   {
     _id: "report-pentti-2026-31",
-
+    docType: "weeklyReport",
     ownerId: "me9c4a23d1ab44f21b98371c2fd6ab42",
 
     week: 31,
@@ -100,7 +100,7 @@ export const mockReports: WeeklyReport[] = [
 
   {
     _id: "report-pentti-2026-32",
-
+    docType: "weeklyReport",
     ownerId: "me9c4a23d1ab44f21b98371c2fd6ab42",
 
     week: 32,

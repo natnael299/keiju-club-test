@@ -5,15 +5,7 @@ export const clubEventsRepository = {
   async findAll(): Promise<ClubEvent[]> {
     const result = await db.find({
       selector: {
-        organizationId: {
-          $exists: true,
-        },
-        startsAt: {
-          $exists: true,
-        },
-        categories: {
-          $exists: true,
-        },
+        docType: "clubEvent",
       },
     });
 
@@ -24,7 +16,13 @@ export const clubEventsRepository = {
     try {
       const document = await db.get(eventId);
 
-      return document as unknown as ClubEvent;
+      const event = document as unknown as ClubEvent;
+
+      if (event.docType !== "clubEvent") {
+        return null;
+      }
+
+      return event;
     } catch (error) {
       if (isNotFoundError(error)) {
         return null;
@@ -37,10 +35,8 @@ export const clubEventsRepository = {
   async findByOrganizationId(organizationId: string): Promise<ClubEvent[]> {
     const result = await db.find({
       selector: {
+        docType: "clubEvent",
         organizationId,
-        startsAt: {
-          $exists: true,
-        },
       },
     });
 
@@ -48,15 +44,24 @@ export const clubEventsRepository = {
   },
 
   async create(event: ClubEvent): Promise<ClubEvent> {
-    await db.insert(event);
+    const response = await db.insert(event);
 
-    return event;
+    return {
+      ...event,
+      _rev: response.rev,
+    };
   },
 
   async update(event: ClubEvent): Promise<ClubEvent> {
     const current = await db.get(event._id);
 
-    const updatedEvent = {
+    const currentEvent = current as unknown as ClubEvent;
+
+    if (currentEvent.docType !== "clubEvent") {
+      throw new Error("Document is not a club event.");
+    }
+
+    const updatedEvent: ClubEvent = {
       ...event,
       _rev: current._rev,
     };
@@ -71,6 +76,12 @@ export const clubEventsRepository = {
 
   async remove(eventId: string): Promise<void> {
     const document = await db.get(eventId);
+
+    const event = document as unknown as ClubEvent;
+
+    if (event.docType !== "clubEvent") {
+      throw new Error("Document is not a club event.");
+    }
 
     await db.destroy(eventId, document._rev);
   },

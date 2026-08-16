@@ -4,6 +4,7 @@ export const mockUsers: User[] = [
   // CARETAKER
   {
     _id: "usr7f52c9a21e84c4aa8d16d0b5e30291",
+    docType: "user",
     role: "caretaker",
     fullName: "Aino Korhonen",
     email: "aino@example.com",
@@ -20,6 +21,7 @@ export const mockUsers: User[] = [
 
   {
     _id: "usr283ac47149fb47f590cb413f84cbb0",
+    docType: "user",
     role: "caretaker",
     fullName: "Liisa Virtanen",
     email: "liisa@example.com",
@@ -33,6 +35,7 @@ export const mockUsers: User[] = [
 
   {
     _id: "usr9c258e71fd904d24b89c374c51a7aa",
+    docType: "user",
     role: "caretaker",
     fullName: "Jari Korhonen",
     email: "jari@example.com",
@@ -47,6 +50,7 @@ export const mockUsers: User[] = [
   // ORGANIZATION REPRESENTATIVES
   {
     _id: "usrorg91f4ab302cfe44aa893b4614f73a01",
+    docType: "user",
     role: "organizationRep",
     fullName: "Sari Lahtinen",
     email: "sari@senioriliikunta.fi",
@@ -60,6 +64,7 @@ export const mockUsers: User[] = [
 
   {
     _id: "usrorg82f45cb789d84dad9553c10e47c822",
+    docType: "user",
     role: "organizationRep",
     fullName: "Kevin James",
     email: "kevin12@senioriliikunta.fi",
@@ -73,6 +78,7 @@ export const mockUsers: User[] = [
 
   {
     _id: "usrorg36b5f767eaa44af08bcccf74bde829",
+    docType: "user",
     role: "organizationRep",
     fullName: "Mikko Salonen",
     email: "mikko@kulttuuriaamu.fi",

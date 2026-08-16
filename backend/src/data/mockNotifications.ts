@@ -3,7 +3,7 @@ import type { RawNotification } from "../types/index.js";
 export const mockNotifications: RawNotification[] = [
   {
     _id: "2026-08-08:9f3a2b8c7d1e4a6b",
-
+    docType: "notification",
     type: "notif",
 
     ownerId: "me675d10f00ca1ee103726e36f3d235c",
@@ -39,7 +39,7 @@ export const mockNotifications: RawNotification[] = [
 
   {
     _id: "2026-08-09:4e8d2a91bc6f43e0",
-
+    docType: "notification",
     type: "notif",
 
     ownerId: "me675d10f00ca1ee103726e36f3d235c",
@@ -75,7 +75,7 @@ export const mockNotifications: RawNotification[] = [
 
   {
     _id: "2026-08-10:7c1b6e28f90d4a12",
-
+    docType: "notification",
     type: "notif",
 
     ownerId: "me9c4a23d1ab44f21b98371c2fd6ab42",
@@ -110,7 +110,7 @@ export const mockNotifications: RawNotification[] = [
 
   {
     _id: "2026-08-11:93d6c7a20e4b4f18",
-
+    docType: "notification",
     type: "notif",
 
     ownerId: "me9c4a23d1ab44f21b98371c2fd6ab42",

@@ -3,7 +3,7 @@ import type { Organization } from "../types/index.js";
 export const mockOrganizations: Organization[] = [
   {
     _id: "org91c7de4a8f234c2ea6b1d920a4f70c",
-
+    docType: "organization",
     name: "Turku Senioriliikunta ry",
 
     address: "Aurakatu 12",
@@ -18,7 +18,7 @@ export const mockOrganizations: Organization[] = [
 
   {
     _id: "org38bfa916c0e241a79d45e3ac763a22",
-
+    docType: "organization",
     name: "Kulttuurikeskus Aamu",
 
     address: "Linnankatu 80",

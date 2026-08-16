@@ -5,10 +5,7 @@ export const reportsRepository = {
   async findAll(): Promise<WeeklyReport[]> {
     const result = await db.find({
       selector: {
-        week: { $exists: true },
-        startDate: { $exists: true },
-        endDate: { $exists: true },
-        summary: { $exists: true },
+        docType: "weeklyReport",
       },
     });
 
@@ -18,13 +15,8 @@ export const reportsRepository = {
   async findByOwnerId(ownerId: string): Promise<WeeklyReport[]> {
     const result = await db.find({
       selector: {
+        docType: "weeklyReport",
         ownerId,
-        week: {
-          $exists: true,
-        },
-        summary: {
-          $exists: true,
-        },
       },
     });
 
@@ -35,7 +27,13 @@ export const reportsRepository = {
     try {
       const document = await db.get(reportId);
 
-      return document as unknown as WeeklyReport;
+      const report = document as unknown as WeeklyReport;
+
+      if (report.docType !== "weeklyReport") {
+        return null;
+      }
+
+      return report;
     } catch (error) {
       if (isNotFoundError(error)) {
         return null;
