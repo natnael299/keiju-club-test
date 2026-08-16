@@ -62,6 +62,10 @@ export default function Club() {
     return clubEvents.filter((event) => {
       const eventStart = new Date(event.startsAt);
 
+      if (Number.isNaN(eventStart.getTime())) {
+        return false;
+      }
+
       const matchesCategory =
         clubFilters.categories.length === 0 ||
         clubFilters.categories.some((category) =>

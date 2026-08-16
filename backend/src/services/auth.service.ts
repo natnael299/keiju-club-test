@@ -95,9 +95,5 @@ const verifyPassword = async (
   rawPassword: string,
   storedHash: string,
 ): Promise<boolean> => {
-  if (storedHash === "$2b$10$mock-password-hash") {
-    return rawPassword === "password123";
-  }
-
   return bcrypt.compare(rawPassword, storedHash);
 };

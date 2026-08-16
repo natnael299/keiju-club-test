@@ -1,15 +1,8 @@
+import { useState } from "react";
+import type { ReactNode } from "react";
 import { CalendarDays, ChevronDown, Filter, RotateCcw } from "lucide-react";
-import { useState, type ReactNode } from "react";
-
 import type { EventCategory } from "@/types";
-
-import {
-  defaultClubFilters,
-  type ClubFiltersValue,
-  type ClubLanguage,
-  type ClubOtherFilter,
-} from "./clubFilters.types";
-
+import { defaultClubFilters, type ClubFiltersValue } from "./clubFilters.types";
 type Props = {
   value: ClubFiltersValue;
   onChange: (filters: ClubFiltersValue) => void;
@@ -20,65 +13,39 @@ const categoryOptions: {
   label: string;
   value: EventCategory;
 }[] = [
-  { label: "Health", value: "health" },
-  { label: "Exercise", value: "exercise" },
-  { label: "Culture", value: "culture" },
-  { label: "Learning", value: "learning" },
-  { label: "Social", value: "social" },
-];
-
-const organizerOptions = [
-  "Benete",
-  "Turku City",
-  "Local Association",
-  "Red Cross",
-  "Other",
-];
-
-const languageOptions: {
-  label: string;
-  value: ClubLanguage;
-}[] = [
-  { label: "Finnish", value: "fi" },
-  { label: "Swedish", value: "sv" },
-  { label: "English", value: "en" },
-];
-
-const otherOptions: {
-  label: string;
-  value: ClubOtherFilter;
-}[] = [
   {
-    label: "Indoor events",
-    value: "indoor",
+    label: "Health",
+    value: "health",
   },
   {
-    label: "Outdoor events",
-    value: "outdoor",
+    label: "Exercise",
+    value: "exercise",
   },
   {
-    label: "Wheelchair accessible",
-    value: "wheelchair",
+    label: "Culture",
+    value: "culture",
   },
   {
-    label: "Family friendly",
-    value: "familyFriendly",
+    label: "Learning",
+    value: "learning",
   },
   {
-    label: "Senior friendly",
-    value: "seniorFriendly",
+    label: "Social",
+    value: "social",
   },
   {
-    label: "Available spots only",
-    value: "available",
+    label: "Gaming",
+    value: "gaming",
+  },
+  {
+    label: "Other",
+    value: "other",
   },
 ];
 
 export default function ClubFilters({ value, onChange, resultCount }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-
   const [draftFilters, setDraftFilters] = useState<ClubFiltersValue>(value);
-
   const updateDraft = <Key extends keyof ClubFiltersValue>(
     key: Key,
     nextValue: ClubFiltersValue[Key],
@@ -89,15 +56,19 @@ export default function ClubFilters({ value, onChange, resultCount }: Props) {
     }));
   };
 
-  const toggleArrayValue = <Item extends string>(
-    currentValues: Item[],
-    selectedValue: Item,
-  ): Item[] => {
-    if (currentValues.includes(selectedValue)) {
-      return currentValues.filter((item) => item !== selectedValue);
+  const toggleCategory = (category: EventCategory) => {
+    const categories = draftFilters.categories;
+
+    if (categories.includes(category)) {
+      updateDraft(
+        "categories",
+        categories.filter((item) => item !== category),
+      );
+
+      return;
     }
 
-    return [...currentValues, selectedValue];
+    updateDraft("categories", [...categories, category]);
   };
 
   const handleApply = () => {
@@ -112,17 +83,12 @@ export default function ClubFilters({ value, onChange, resultCount }: Props) {
 
   const handleClear = () => {
     setDraftFilters(defaultClubFilters);
+
     onChange(defaultClubFilters);
   };
 
   const activeFilterCount =
-    value.categories.length +
-    value.organizers.length +
-    value.languages.length +
-    value.other.length +
-    Number(value.date !== "all") +
-    Number(value.price !== "all") +
-    Number(value.distance !== "all");
+    value.categories.length + Number(value.date !== "all");
 
   return (
     <section className="mb-6 overflow-hidden rounded-[24px] border border-border bg-card">
@@ -163,7 +129,7 @@ export default function ClubFilters({ value, onChange, resultCount }: Props) {
 
       {isOpen && (
         <div className="border-t border-border px-4 py-5 sm:px-5">
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2">
             <FilterGroup title="Categories">
               <div className="grid gap-2 sm:grid-cols-2">
                 {categoryOptions.map((category) => (
@@ -171,15 +137,7 @@ export default function ClubFilters({ value, onChange, resultCount }: Props) {
                     key={category.value}
                     label={category.label}
                     checked={draftFilters.categories.includes(category.value)}
-                    onChange={() =>
-                      updateDraft(
-                        "categories",
-                        toggleArrayValue(
-                          draftFilters.categories,
-                          category.value,
-                        ),
-                      )
-                    }
+                    onChange={() => toggleCategory(category.value)}
                   />
                 ))}
               </div>
@@ -238,149 +196,6 @@ export default function ClubFilters({ value, onChange, resultCount }: Props) {
                   />
                 </div>
               )}
-            </FilterGroup>
-
-            <FilterGroup title="Price">
-              <div className="space-y-2">
-                <RadioOption
-                  name="club-price-filter"
-                  label="All prices"
-                  checked={draftFilters.price === "all"}
-                  onChange={() => updateDraft("price", "all")}
-                />
-
-                <RadioOption
-                  name="club-price-filter"
-                  label="Free"
-                  checked={draftFilters.price === "free"}
-                  onChange={() => updateDraft("price", "free")}
-                />
-
-                <RadioOption
-                  name="club-price-filter"
-                  label="Paid"
-                  checked={draftFilters.price === "paid"}
-                  onChange={() => updateDraft("price", "paid")}
-                />
-              </div>
-            </FilterGroup>
-
-            <FilterGroup title="Distance">
-              <div className="space-y-2">
-                <RadioOption
-                  name="club-distance-filter"
-                  label="Any distance"
-                  checked={draftFilters.distance === "all"}
-                  onChange={() => updateDraft("distance", "all")}
-                />
-
-                <RadioOption
-                  name="club-distance-filter"
-                  label="Within 2 km"
-                  checked={draftFilters.distance === "2"}
-                  onChange={() => updateDraft("distance", "2")}
-                />
-
-                <RadioOption
-                  name="club-distance-filter"
-                  label="Within 5 km"
-                  checked={draftFilters.distance === "5"}
-                  onChange={() => updateDraft("distance", "5")}
-                />
-
-                <RadioOption
-                  name="club-distance-filter"
-                  label="Within 10 km"
-                  checked={draftFilters.distance === "10"}
-                  onChange={() => updateDraft("distance", "10")}
-                />
-
-                <RadioOption
-                  name="club-distance-filter"
-                  label="Custom distance"
-                  checked={draftFilters.distance === "custom"}
-                  onChange={() => updateDraft("distance", "custom")}
-                />
-              </div>
-
-              {draftFilters.distance === "custom" && (
-                <label className="mt-4 block">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    Maximum distance
-                  </span>
-
-                  <div className="mt-1 flex h-11 items-center rounded-xl border border-border bg-white px-3">
-                    <input
-                      type="number"
-                      min="1"
-                      value={draftFilters.customDistance}
-                      onChange={(event) =>
-                        updateDraft("customDistance", event.target.value)
-                      }
-                      className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none"
-                    />
-
-                    <span className="text-sm text-muted-foreground">km</span>
-                  </div>
-                </label>
-              )}
-            </FilterGroup>
-
-            <FilterGroup title="Organizer">
-              <div className="space-y-2">
-                {organizerOptions.map((organizer) => (
-                  <CheckboxOption
-                    key={organizer}
-                    label={organizer}
-                    checked={draftFilters.organizers.includes(organizer)}
-                    onChange={() =>
-                      updateDraft(
-                        "organizers",
-                        toggleArrayValue(draftFilters.organizers, organizer),
-                      )
-                    }
-                  />
-                ))}
-              </div>
-            </FilterGroup>
-
-            <FilterGroup title="Language">
-              <div className="space-y-2">
-                {languageOptions.map((language) => (
-                  <CheckboxOption
-                    key={language.value}
-                    label={language.label}
-                    checked={draftFilters.languages.includes(language.value)}
-                    onChange={() =>
-                      updateDraft(
-                        "languages",
-                        toggleArrayValue(
-                          draftFilters.languages,
-                          language.value,
-                        ),
-                      )
-                    }
-                  />
-                ))}
-              </div>
-            </FilterGroup>
-
-            <FilterGroup title="Other">
-              <div className="grid gap-2 sm:grid-cols-2">
-                {otherOptions.map((option) => (
-                  <CheckboxOption
-                    key={option.value}
-                    label={option.label}
-                    checked={draftFilters.other.includes(option.value)}
-                    onChange={() =>
-                      updateDraft(
-                        "other",
-                        toggleArrayValue(draftFilters.other, option.value),
-                      )
-                    }
-                  />
-                ))}
-              </div>
             </FilterGroup>
           </div>
 
