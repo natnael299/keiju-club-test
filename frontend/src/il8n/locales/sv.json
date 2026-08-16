@@ -11,6 +11,14 @@
     "openProfile": "Öppna profil"
   },
 
+  "selectOwner": {
+    "title": "Välj person",
+    "description": "Välj vems uppgifter du vill visa.",
+    "loading": "Laddar personer...",
+    "emptyTitle": "Inga personer hittades",
+    "emptyDescription": "Det finns för närvarande inga personer kopplade till ditt konto."
+  },
+
   "greeting": {
     "morningTitle": "God morgon",
     "morningSubtitle": "Vi önskar dig en trevlig dag.",

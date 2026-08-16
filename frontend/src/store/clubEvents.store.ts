@@ -11,15 +11,13 @@ import type { ClubEvent } from "@/types";
 type ClubEventsStore = {
   clubEvents: ClubEvent[];
   loading: boolean;
-
   fetchClubEvents: () => Promise<void>;
-
   createClubEvent: (event: CreateClubEventPayload) => Promise<ClubEvent>;
-
   updateClubEvent: (
     eventId: string,
     event: UpdateClubEventPayload,
   ) => Promise<ClubEvent>;
+  reset: () => void;
 };
 
 export const useClubEventsStore = create<ClubEventsStore>((set) => ({
@@ -78,5 +76,11 @@ export const useClubEventsStore = create<ClubEventsStore>((set) => ({
       set({ loading: false });
       throw error;
     }
+  },
+  reset() {
+    set({
+      clubEvents: [],
+      loading: false,
+    });
   },
 }));

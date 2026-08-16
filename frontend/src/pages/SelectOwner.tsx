@@ -1,5 +1,6 @@
 import { Check, ChevronRight } from "lucide-react";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import logo from "@/assets/logo.png";
@@ -20,6 +21,7 @@ function getInitials(name: string) {
 
 export default function SelectOwner() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   const user = useAuthStore((state) => state.user);
 
@@ -38,9 +40,15 @@ export default function SelectOwner() {
       return;
     }
 
-    if (owners.length === 0) {
-      void fetchOwners(user.ownerIds);
+    /*
+     * If owners are already loaded,
+     * don't fetch them again.
+     */
+    if (owners.length > 0) {
+      return;
     }
+
+    void fetchOwners(user.ownerIds);
   }, [user, owners.length, fetchOwners]);
 
   const handleSelectOwner = (ownerId: string) => {
@@ -57,19 +65,29 @@ export default function SelectOwner() {
         <div className="mb-8 text-center">
           <img src={logo} alt="Keiju Club" className="mx-auto h-12 w-auto" />
 
-          <h1 className="mt-6 text-3xl font-extrabold text-foreground">
-            Select person
+          <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-foreground">
+            {t("selectOwner.title")}
           </h1>
 
           <p className="mt-2 text-muted-foreground">
-            Choose whose information you want to view.
+            {t("selectOwner.description")}
           </p>
         </div>
 
-        {loading ? (
+        {loading && owners.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground">
-            Loading...
+            {t("selectOwner.loading")}
           </p>
+        ) : owners.length === 0 ? (
+          <div className="rounded-2xl border border-border bg-card px-5 py-6 text-center">
+            <p className="font-semibold text-foreground">
+              {t("selectOwner.emptyTitle")}
+            </p>
+
+            <p className="mt-2 text-sm text-muted-foreground">
+              {t("selectOwner.emptyDescription")}
+            </p>
+          </div>
         ) : (
           <Card className="space-y-2 p-2">
             {owners.map((owner) => {
@@ -80,28 +98,38 @@ export default function SelectOwner() {
                   key={owner.id}
                   type="button"
                   onClick={() => handleSelectOwner(owner.id)}
-                  className="flex w-full items-center justify-between gap-4 rounded-2xl px-4 py-4 text-left transition hover:bg-primary/5"
+                  className={[
+                    "flex w-full items-center justify-between gap-4 rounded-2xl px-4 py-4 text-left transition",
+                    selected ? "bg-primary/10" : "hover:bg-muted/40",
+                  ].join(" ")}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-sm font-extrabold text-primary">
+                  <div className="flex min-w-0 items-center gap-4">
+                    <div
+                      className={[
+                        "flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-sm font-extrabold",
+                        selected
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-primary/10 text-primary",
+                      ].join(" ")}
+                    >
                       {getInitials(owner.fullName)}
                     </div>
 
-                    <div>
-                      <p className="font-extrabold text-foreground">
+                    <div className="min-w-0">
+                      <p className="truncate font-extrabold text-foreground">
                         {owner.fullName}
                       </p>
 
                       <p className="mt-1 text-sm text-muted-foreground">
-                        {owner.birthDate}
+                        {formatBirthDate(owner.birthDate, i18n.language)}
                       </p>
                     </div>
                   </div>
 
                   {selected ? (
-                    <Check className="h-5 w-5 text-primary" />
+                    <Check className="h-5 w-5 shrink-0 text-primary" />
                   ) : (
-                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                    <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
                   )}
                 </button>
               );
@@ -111,4 +139,28 @@ export default function SelectOwner() {
       </section>
     </main>
   );
+}
+
+function formatBirthDate(birthDate: string, language: string) {
+  const date = new Date(`${birthDate}T00:00:00`);
+
+  if (Number.isNaN(date.getTime())) {
+    return birthDate;
+  }
+
+  let locale = "fi-FI";
+
+  if (language.startsWith("sv")) {
+    locale = "sv-FI";
+  }
+
+  if (language.startsWith("en")) {
+    locale = "en-FI";
+  }
+
+  return new Intl.DateTimeFormat(locale, {
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+  }).format(date);
 }

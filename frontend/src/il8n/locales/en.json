@@ -11,6 +11,14 @@
     "openProfile": "Open profile"
   },
 
+  "selectOwner": {
+    "title": "Select person",
+    "description": "Choose whose information you want to view.",
+    "loading": "Loading people...",
+    "emptyTitle": "No people found",
+    "emptyDescription": "There are currently no people connected to your account."
+  },
+
   "greeting": {
     "morningTitle": "Good morning",
     "morningSubtitle": "We wish you a pleasant day.",

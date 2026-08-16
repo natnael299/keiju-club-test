@@ -11,6 +11,14 @@
     "openProfile": "Avaa profiili"
   },
 
+  "selectOwner": {
+    "title": "Valitse henkilö",
+    "description": "Valitse, kenen tietoja haluat tarkastella.",
+    "loading": "Ladataan henkilöitä...",
+    "emptyTitle": "Henkilöitä ei löytynyt",
+    "emptyDescription": "Tilillesi ei ole tällä hetkellä liitetty henkilöitä."
+  },
+
   "greeting": {
     "morningTitle": "Hyvää huomenta",
     "morningSubtitle": "Toivotamme sinulle mukavaa päivää.",

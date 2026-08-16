@@ -6,9 +6,9 @@ import type { WeeklyReport } from "@/types";
 type ReportsStore = {
   reports: WeeklyReport[];
   loading: boolean;
-
   fetchReports: () => Promise<void>;
   fetchOwnerReports: (ownerId: string) => Promise<void>;
+  reset: () => void;
 };
 
 export const useReportsStore = create<ReportsStore>((set) => ({
@@ -52,5 +52,11 @@ export const useReportsStore = create<ReportsStore>((set) => ({
         loading: false,
       });
     }
+  },
+  reset() {
+    set({
+      reports: [],
+      loading: false,
+    });
   },
 }));

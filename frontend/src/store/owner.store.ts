@@ -10,10 +10,10 @@ type OwnerStore = {
   loading: boolean;
 
   fetchOwners: (ownerIds: string[]) => Promise<void>;
-
   setSelectedOwnerId: (ownerId: string) => void;
-
   getSelectedOwner: () => Owner | undefined;
+
+  reset: () => void;
 };
 
 export const useOwnerStore = create<OwnerStore>()(
@@ -64,6 +64,13 @@ export const useOwnerStore = create<OwnerStore>()(
         const { owners, selectedOwnerId } = get();
 
         return owners.find((owner) => owner.id === selectedOwnerId);
+      },
+      reset() {
+        set({
+          owners: [],
+          selectedOwnerId: null,
+          loading: false,
+        });
       },
     }),
     {

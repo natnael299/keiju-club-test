@@ -9,23 +9,17 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
 import Card from "@/components/shared/Card";
-import { useAuthStore } from "@/store/authStore";
 import { type Language, useLanguageStore } from "@/store/languageStore";
+import { logoutUser } from "@/utils/logout";
 
 type OpenSetting = "notifications" | "language" | null;
 
 export default function SettingsList() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-
-  const logout = useAuthStore((state) => state.logout);
-
   const { language, setLanguage } = useLanguageStore();
-
   const [openSetting, setOpenSetting] = useState<OpenSetting>(null);
-
   const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
     const saved = localStorage.getItem("keiju-notifications-enabled");
 
@@ -47,8 +41,7 @@ export default function SettingsList() {
   };
 
   const handleLogout = () => {
-    logout();
-
+    logoutUser();
     navigate("/login", {
       replace: true,
     });

@@ -5,9 +5,9 @@ import type { Notification } from "@/types";
 type NotificationsStore = {
   notifications: Notification[];
   loading: boolean;
-
   fetchNotifications: () => Promise<void>;
   fetchOwnerNotifications: (ownerId: string) => Promise<void>;
+  reset: () => void;
 };
 
 export const useNotificationsStore = create<NotificationsStore>((set) => ({
@@ -44,5 +44,11 @@ export const useNotificationsStore = create<NotificationsStore>((set) => ({
       console.error(error);
       set({ loading: false });
     }
+  },
+  reset() {
+    set({
+      notifications: [],
+      loading: false,
+    });
   },
 }));

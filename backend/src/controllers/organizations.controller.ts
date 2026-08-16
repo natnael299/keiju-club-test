@@ -1,32 +1,37 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 
+import type { AuthenticatedRequest } from "../middleware/auth.middleware.js";
 import { organizationsService } from "../services/organizations.service.js";
 import { toClientDoc } from "../utils/documents.js";
 
-type OrganizationParams = {
-  organizationId: string;
-};
-
 export const organizationsController = {
-  async getAllOrganizations(_req: Request, res: Response) {
+  async getOrganizationById(req: AuthenticatedRequest, res: Response) {
     try {
-      const organizations = await organizationsService.getAllOrganizations();
+      const user = req.authUser;
 
-      return res.json(organizations.map(toClientDoc));
-    } catch (error) {
-      console.error("Failed to fetch organizations:", error);
+      if (!user) {
+        return res.status(401).json({
+          error: "Authentication required",
+        });
+      }
 
-      return res.status(500).json({
-        error: "Failed to fetch organizations",
-      });
-    }
-  },
+      if (user.role !== "organizationRep") {
+        return res.status(403).json({
+          error:
+            "Only organization representatives can access organization details",
+        });
+      }
 
-  async getOrganizationById(req: Request<OrganizationParams>, res: Response) {
-    try {
-      const organization = await organizationsService.getOrganizationById(
-        req.params.organizationId,
-      );
+      const organizationId = req.params.organizationId as string;
+
+      if (user.organizationId !== organizationId) {
+        return res.status(403).json({
+          error: "You do not have access to this organization",
+        });
+      }
+
+      const organization =
+        await organizationsService.getOrganizationById(organizationId);
 
       if (!organization) {
         return res.status(404).json({
