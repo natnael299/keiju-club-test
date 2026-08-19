@@ -65,6 +65,7 @@ export const clubEventsService = {
 
     const event: ClubEvent = {
       _id: `evt-${randomUUID()}`,
+      docType: "clubEvent",
 
       organizationId: input.organizationId,
 
@@ -101,6 +102,7 @@ export const clubEventsService = {
 
       _id: existingEvent._id,
       _rev: existingEvent._rev,
+      docType: "clubEvent",
 
       organizationId: existingEvent.organizationId,
 

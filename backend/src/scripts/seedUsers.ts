@@ -1,30 +1,60 @@
 import "dotenv/config";
+import bcrypt from "bcryptjs";
+
 import { authenticateCouchDb, db } from "../config/couchdb.js";
 import { mockUsers } from "../data/index.js";
+import type { User } from "../types/index.js";
+
+const TEST_PASSWORD = "password123";
 
 async function seedUsers() {
   try {
     await authenticateCouchDb();
 
+    console.log("Connected to CouchDB.");
     console.log("Seeding users...");
 
-    for (const user of mockUsers) {
-      try {
-        await db.insert(user);
+    const passwordHash = await bcrypt.hash(TEST_PASSWORD, 10);
 
-        console.log(`Inserted user: ${user.email}`);
-      } catch (error) {
-        if (isConflictError(error)) {
-          console.log(`User already exists: ${user.email}`);
+    for (const mockUser of mockUsers) {
+      const existingUser = await findUserById(mockUser._id);
 
-          continue;
-        }
+      if (existingUser) {
+        const updatedUser: User = {
+          ...mockUser,
 
-        throw error;
+          _id: existingUser._id,
+          _rev: existingUser._rev,
+
+          email: mockUser.email.trim().toLowerCase(),
+          passwordHash,
+
+          cdt: existingUser.cdt ?? mockUser.cdt,
+          ldt: new Date().toISOString(),
+        };
+
+        await db.insert(updatedUser);
+
+        console.log(`Updated user: ${updatedUser.email}`);
+        continue;
       }
+
+      const newUser: User = {
+        ...mockUser,
+
+        email: mockUser.email.trim().toLowerCase(),
+        passwordHash,
+
+        ldt: new Date().toISOString(),
+      };
+
+      await db.insert(newUser);
+
+      console.log(`Inserted user: ${newUser.email}`);
     }
 
-    console.log("User seed completed.");
+    console.log("User seed completed successfully.");
+    console.log("Test password: password123");
   } catch (error) {
     console.error("User seed failed:", error);
 
@@ -32,12 +62,27 @@ async function seedUsers() {
   }
 }
 
-function isConflictError(error: unknown) {
-  if (typeof error !== "object" || error === null) {
-    return false;
-  }
+async function findUserById(userId: string): Promise<User | null> {
+  try {
+    const document = await db.get(userId);
 
-  return "statusCode" in error && error.statusCode === 409;
+    return document as unknown as User;
+  } catch (error) {
+    if (isNotFoundError(error)) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+function isNotFoundError(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "statusCode" in error &&
+    error.statusCode === 404
+  );
 }
 
 void seedUsers();
