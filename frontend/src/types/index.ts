@@ -43,6 +43,8 @@ export type EventCategory =
 
 export type EventAudience = "owner" | "caretaker" | "both";
 
+export type RegistrationStatus = "open" | "full" | "closed";
+
 export type ClubEvent = {
   id: string;
 
@@ -52,7 +54,9 @@ export type ClubEvent = {
   description: string;
 
   imageUrl?: string;
+
   registrationUrl?: string;
+  registrationStatus?: RegistrationStatus;
 
   categories: EventCategory[];
   audience: EventAudience;

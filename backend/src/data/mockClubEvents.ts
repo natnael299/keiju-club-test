@@ -4,6 +4,7 @@ export const mockClubEvents: ClubEvent[] = [
   {
     _id: "evt3b7f9c2a81d94e6fa2450b13c8a7d1",
     docType: "clubEvent",
+
     organizationId: "org91c7de4a8f234c2ea6b1d920a4f70c",
 
     title: "Gentle chair yoga",
@@ -13,6 +14,10 @@ export const mockClubEvents: ClubEvent[] = [
 
     imageUrl: "https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b",
 
+    registrationUrl: "https://example.com/register/chair-yoga",
+
+    registrationStatus: "open",
+
     categories: ["exercise", "health"],
 
     audience: "owner",
@@ -20,17 +25,19 @@ export const mockClubEvents: ClubEvent[] = [
     address: "Aurakatu 12",
     city: "Turku",
 
-    startsAt: "2026-08-20T10:00:00.000Z",
+    startsAt: "2026-08-25T10:00:00.000Z",
 
-    endsAt: "2026-08-20T11:00:00.000Z",
+    endsAt: "2026-08-25T11:00:00.000Z",
 
     cdt: "2026-08-01T09:00:00.000Z",
-    ldt: "2026-08-01T09:00:00.000Z",
+
+    ldt: "2026-08-20T09:00:00.000Z",
   },
 
   {
     _id: "evt84d2e9a64f764c3ea8b214de9235ca",
     docType: "clubEvent",
+
     organizationId: "org38bfa916c0e241a79d45e3ac763a22",
 
     title: "Guided museum visit",
@@ -40,6 +47,10 @@ export const mockClubEvents: ClubEvent[] = [
 
     imageUrl: "https://images.unsplash.com/photo-1564399579883-451a5d44ec08",
 
+    registrationUrl: "https://example.com/register/museum-visit",
+
+    registrationStatus: "full",
+
     categories: ["culture", "social"],
 
     audience: "both",
@@ -47,17 +58,19 @@ export const mockClubEvents: ClubEvent[] = [
     address: "Linnankatu 80",
     city: "Turku",
 
-    startsAt: "2026-08-24T12:00:00.000Z",
+    startsAt: "2026-08-27T12:00:00.000Z",
 
-    endsAt: "2026-08-24T14:00:00.000Z",
+    endsAt: "2026-08-27T14:00:00.000Z",
 
     cdt: "2026-08-01T09:20:00.000Z",
-    ldt: "2026-08-01T09:20:00.000Z",
+
+    ldt: "2026-08-20T09:10:00.000Z",
   },
 
   {
     _id: "evtd0a31c9b4e7e4b5f81c6028f2a5d9e",
     docType: "clubEvent",
+
     organizationId: "org91c7de4a8f234c2ea6b1d920a4f70c",
 
     title: "Family caregiver support evening",
@@ -72,11 +85,12 @@ export const mockClubEvents: ClubEvent[] = [
     address: "Yliopistonkatu 24",
     city: "Turku",
 
-    startsAt: "2026-08-27T16:30:00.000Z",
+    startsAt: "2026-09-02T16:30:00.000Z",
 
-    endsAt: "2026-08-27T18:00:00.000Z",
+    endsAt: "2026-09-02T18:00:00.000Z",
 
     cdt: "2026-08-02T08:00:00.000Z",
-    ldt: "2026-08-02T08:00:00.000Z",
+
+    ldt: "2026-08-20T09:20:00.000Z",
   },
 ];

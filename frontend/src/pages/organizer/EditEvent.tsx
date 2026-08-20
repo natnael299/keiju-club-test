@@ -53,21 +53,30 @@ export default function EditEvent() {
 
     setError(null);
 
+    const registrationUrl = values.registrationUrl.trim();
+
     try {
       await updateClubEvent(eventId, {
         title: values.title,
+
         description: values.description,
 
         city: values.city,
         address: values.address,
 
         startsAt: values.startsAt,
+
         endsAt: values.endsAt,
 
         categories: values.categories,
+
         audience: values.audience,
 
-        registrationUrl: values.registrationUrl || undefined,
+        registrationUrl,
+
+        registrationStatus: registrationUrl
+          ? values.registrationStatus
+          : undefined,
 
         imageUrl:
           values.imagePreview && !values.imagePreview.startsWith("blob:")
@@ -139,9 +148,11 @@ export default function EditEvent() {
             key={event.id}
             initialValues={{
               title: event.title,
+
               description: event.description,
 
               city: event.city,
+
               address: event.address,
 
               startsAt: toDateTimeLocal(event.startsAt),
@@ -149,9 +160,12 @@ export default function EditEvent() {
               endsAt: toDateTimeLocal(event.endsAt),
 
               categories: event.categories,
+
               audience: event.audience,
 
               registrationUrl: event.registrationUrl ?? "",
+
+              registrationStatus: event.registrationStatus ?? "open",
 
               imagePreview: event.imageUrl ?? null,
             }}

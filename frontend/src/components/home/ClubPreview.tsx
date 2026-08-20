@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import ClubEventCard from "@/components/cards/ClubEventCard";
 import SectionHeader from "@/components/shared/SectionHeader";
+
 import { useClubEventsStore } from "@/store/clubEvents.store";
 
 export default function ClubPreview() {
@@ -25,17 +26,11 @@ export default function ClubPreview() {
 
       <div className="space-y-4">
         {clubEvents.slice(0, 3).map((event) => (
-          <button
+          <ClubEventCard
             key={event.id}
-            type="button"
+            event={event}
             onClick={() => handleEventClick(event.id)}
-            className="block w-full cursor-pointer rounded-2xl text-left transition active:scale-[0.99]"
-            aria-label={t("clubPreview.openEvent", {
-              title: event.title,
-            })}
-          >
-            <ClubEventCard event={event} />
-          </button>
+          />
         ))}
       </div>
     </section>

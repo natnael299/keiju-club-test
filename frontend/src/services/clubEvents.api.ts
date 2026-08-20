@@ -1,13 +1,20 @@
 import { api } from "./api";
 
-import type { ClubEvent, EventAudience, EventCategory } from "@/types";
+import type {
+  ClubEvent,
+  EventAudience,
+  EventCategory,
+  RegistrationStatus,
+} from "@/types";
 
 export type CreateClubEventPayload = {
   title: string;
   description: string;
 
   imageUrl?: string;
+
   registrationUrl?: string;
+  registrationStatus?: RegistrationStatus;
 
   categories: EventCategory[];
   audience: EventAudience;

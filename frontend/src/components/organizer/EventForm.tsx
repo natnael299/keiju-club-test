@@ -1,12 +1,19 @@
 import { useRef, useState, type ChangeEvent, type SubmitEvent } from "react";
 
-import { ExternalLink, ImagePlus, Trash2 } from "lucide-react";
+import {
+  CircleCheck,
+  CircleX,
+  ExternalLink,
+  ImagePlus,
+  TicketX,
+  Trash2,
+} from "lucide-react";
 
 import { useTranslation } from "react-i18next";
 
 import Card from "@/components/shared/Card";
 
-import type { EventAudience, EventCategory } from "@/types";
+import type { EventAudience, EventCategory, RegistrationStatus } from "@/types";
 
 export type EventFormValues = {
   title: string;
@@ -19,6 +26,7 @@ export type EventFormValues = {
   endsAt: string;
 
   registrationUrl: string;
+  registrationStatus: RegistrationStatus;
 
   categories: EventCategory[];
   audience: EventAudience;
@@ -47,6 +55,32 @@ const categoryOptions: EventCategory[] = [
 
 const audienceOptions: EventAudience[] = ["owner", "caretaker", "both"];
 
+const registrationStatusOptions: Array<{
+  value: RegistrationStatus;
+  label: string;
+  description: string;
+  icon: typeof CircleCheck;
+}> = [
+  {
+    value: "open",
+    label: "Registration open",
+    description: "People can follow the link and register.",
+    icon: CircleCheck,
+  },
+  {
+    value: "full",
+    label: "Sold out",
+    description: "All available places have been reserved.",
+    icon: TicketX,
+  },
+  {
+    value: "closed",
+    label: "Registration closed",
+    description: "Registration has been manually closed.",
+    icon: CircleX,
+  },
+];
+
 const emptyValues: EventFormValues = {
   title: "",
   description: "",
@@ -58,6 +92,7 @@ const emptyValues: EventFormValues = {
   endsAt: "",
 
   registrationUrl: "",
+  registrationStatus: "open",
 
   categories: [],
   audience: "both",
@@ -148,9 +183,16 @@ export default function EventForm({
 
     await onSubmit({
       ...values,
+
       registrationUrl: values.registrationUrl.trim(),
+
+      registrationStatus: values.registrationUrl.trim()
+        ? values.registrationStatus
+        : "open",
     });
   };
+
+  const hasRegistrationUrl = values.registrationUrl.trim().length > 0;
 
   return (
     <Card>
@@ -382,7 +424,7 @@ export default function EventForm({
           </div>
         </div>
 
-        {/* TIMES */}
+        {/* EVENT TIMES */}
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
@@ -450,6 +492,77 @@ export default function EventForm({
             })}
           </p>
         </div>
+
+        {/* REGISTRATION STATUS */}
+
+        {hasRegistrationUrl && (
+          <div>
+            <div className="mb-3">
+              <h3 className="text-sm font-semibold text-foreground">
+                {t("eventForm.registrationStatus", {
+                  defaultValue: "Registration status",
+                })}
+              </h3>
+
+              <p className="mt-1 text-xs text-muted-foreground">
+                {t("eventForm.registrationStatusDescription", {
+                  defaultValue:
+                    "Control whether people can currently register.",
+                })}
+              </p>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              {registrationStatusOptions.map(
+                ({ value, label, description, icon: Icon }) => {
+                  const selected = values.registrationStatus === value;
+
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => updateField("registrationStatus", value)}
+                      className={[
+                        "rounded-2xl border p-4 text-left transition",
+                        selected
+                          ? "border-primary bg-primary/10"
+                          : "border-border bg-white hover:border-primary/50",
+                      ].join(" ")}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Icon
+                          className={[
+                            "h-5 w-5",
+                            selected ? "text-primary" : "text-muted-foreground",
+                          ].join(" ")}
+                        />
+
+                        <span className="font-semibold text-foreground">
+                          {t(`eventForm.registrationStatus.${value}`, {
+                            defaultValue: label,
+                          })}
+                        </span>
+                      </div>
+
+                      <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                        {t(`eventForm.registrationStatus.${value}Description`, {
+                          defaultValue: description,
+                        })}
+                      </p>
+                    </button>
+                  );
+                },
+              )}
+            </div>
+
+            <p className="mt-3 text-xs text-muted-foreground">
+              {t("eventForm.registrationAutomaticClosing", {
+                defaultValue:
+                  "Registration will also close automatically when the event starts.",
+              })}
+            </p>
+          </div>
+        )}
 
         <button
           type="submit"

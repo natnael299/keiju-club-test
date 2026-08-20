@@ -6,6 +6,7 @@ import type {
   ClubEvent,
   EventAudience,
   EventCategory,
+  RegistrationStatus,
 } from "../types/index.js";
 
 type GetClubEventsFilters = {
@@ -20,8 +21,11 @@ type CreateClubEventInput = {
 
   title: string;
   description: string;
+
   imageUrl?: string;
+
   registrationUrl?: string;
+  registrationStatus?: RegistrationStatus;
 
   categories: EventCategory[];
   audience: EventAudience;
@@ -63,22 +67,14 @@ export const clubEventsService = {
       events = events.filter((event) => event.audience === filters.audience);
     }
 
-    return events.sort(
-      (firstEvent, secondEvent) =>
-        new Date(firstEvent.startsAt).getTime() -
-        new Date(secondEvent.startsAt).getTime(),
-    );
+    return sortEvents(events);
   },
 
   async getClubEventsByOrganizationId(organizationId: string) {
     const events =
       await clubEventsRepository.findByOrganizationId(organizationId);
 
-    return events.sort(
-      (firstEvent, secondEvent) =>
-        new Date(firstEvent.startsAt).getTime() -
-        new Date(secondEvent.startsAt).getTime(),
-    );
+    return sortEvents(events);
   },
 
   async getClubEventById(eventId: string) {
@@ -87,6 +83,8 @@ export const clubEventsService = {
 
   async createClubEvent(input: CreateClubEventInput) {
     const now = new Date().toISOString();
+
+    const registrationUrl = normalizeRegistrationUrl(input.registrationUrl);
 
     const event: ClubEvent = {
       _id: `evt-${randomUUID()}`,
@@ -98,7 +96,12 @@ export const clubEventsService = {
       description: input.description.trim(),
 
       imageUrl: normalizeOptionalValue(input.imageUrl),
-      registrationUrl: normalizeRegistrationUrl(input.registrationUrl),
+
+      registrationUrl,
+
+      registrationStatus: registrationUrl
+        ? (input.registrationStatus ?? "open")
+        : undefined,
 
       categories: input.categories,
       audience: input.audience,
@@ -122,6 +125,17 @@ export const clubEventsService = {
     if (!existingEvent) {
       return null;
     }
+
+    const registrationUrl =
+      updates.registrationUrl !== undefined
+        ? normalizeRegistrationUrl(updates.registrationUrl)
+        : existingEvent.registrationUrl;
+
+    const registrationStatus = getRegistrationStatus(
+      registrationUrl,
+      updates.registrationStatus,
+      existingEvent.registrationStatus,
+    );
 
     const updatedEvent: ClubEvent = {
       ...existingEvent,
@@ -148,10 +162,8 @@ export const clubEventsService = {
           ? normalizeOptionalValue(updates.imageUrl)
           : existingEvent.imageUrl,
 
-      registrationUrl:
-        updates.registrationUrl !== undefined
-          ? normalizeRegistrationUrl(updates.registrationUrl)
-          : existingEvent.registrationUrl,
+      registrationUrl,
+      registrationStatus,
 
       address:
         updates.address !== undefined
@@ -180,6 +192,26 @@ export const clubEventsService = {
     return true;
   },
 };
+
+function sortEvents(events: ClubEvent[]): ClubEvent[] {
+  return events.sort(
+    (firstEvent, secondEvent) =>
+      new Date(firstEvent.startsAt).getTime() -
+      new Date(secondEvent.startsAt).getTime(),
+  );
+}
+
+function getRegistrationStatus(
+  registrationUrl: string | undefined,
+  newStatus: RegistrationStatus | undefined,
+  existingStatus: RegistrationStatus | undefined,
+): RegistrationStatus | undefined {
+  if (!registrationUrl) {
+    return undefined;
+  }
+
+  return newStatus ?? existingStatus ?? "open";
+}
 
 function normalizeOptionalValue(value: string | undefined): string | undefined {
   const normalizedValue = value?.trim();

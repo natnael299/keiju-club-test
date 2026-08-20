@@ -52,6 +52,8 @@ export type Organization = {
   ldt: string;
 };
 
+export type RegistrationStatus = "open" | "full" | "closed";
+
 export type ClubEvent = {
   _id: string;
   _rev?: string;
@@ -61,8 +63,11 @@ export type ClubEvent = {
 
   title: string;
   description: string;
+
   imageUrl?: string;
+
   registrationUrl?: string;
+  registrationStatus?: RegistrationStatus;
 
   categories: EventCategory[];
   audience: EventAudience;
