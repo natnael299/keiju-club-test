@@ -50,7 +50,9 @@ export type ClubEvent = {
 
   title: string;
   description: string;
+
   imageUrl?: string;
+  registrationUrl?: string;
 
   categories: EventCategory[];
   audience: EventAudience;

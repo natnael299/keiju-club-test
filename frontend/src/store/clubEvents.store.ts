@@ -11,21 +11,33 @@ import type { ClubEvent } from "@/types";
 type ClubEventsStore = {
   clubEvents: ClubEvent[];
   loading: boolean;
+  error: string | null;
+
   fetchClubEvents: () => Promise<void>;
+  fetchOrganizationClubEvents: () => Promise<void>;
+
   createClubEvent: (event: CreateClubEventPayload) => Promise<ClubEvent>;
+
   updateClubEvent: (
     eventId: string,
     event: UpdateClubEventPayload,
   ) => Promise<ClubEvent>;
+
+  deleteClubEvent: (eventId: string) => Promise<void>;
+
   reset: () => void;
 };
 
 export const useClubEventsStore = create<ClubEventsStore>((set) => ({
   clubEvents: [],
   loading: false,
+  error: null,
 
   async fetchClubEvents() {
-    set({ loading: true });
+    set({
+      loading: true,
+      error: null,
+    });
 
     try {
       const clubEvents = await clubEventsApi.getAll();
@@ -35,13 +47,51 @@ export const useClubEventsStore = create<ClubEventsStore>((set) => ({
         loading: false,
       });
     } catch (error) {
-      console.error(error);
-      set({ loading: false });
+      console.error("CLUB EVENTS FETCH ERROR:", error);
+
+      set({
+        clubEvents: [],
+        loading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch Club events",
+      });
+    }
+  },
+
+  async fetchOrganizationClubEvents() {
+    set({
+      loading: true,
+      error: null,
+    });
+
+    try {
+      const clubEvents = await clubEventsApi.getOrganizationEvents();
+
+      set({
+        clubEvents,
+        loading: false,
+      });
+    } catch (error) {
+      console.error("ORGANIZATION CLUB EVENTS FETCH ERROR:", error);
+
+      set({
+        clubEvents: [],
+        loading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch organization events",
+      });
     }
   },
 
   async createClubEvent(event) {
-    set({ loading: true });
+    set({
+      loading: true,
+      error: null,
+    });
 
     try {
       const createdEvent = await clubEventsApi.create(event);
@@ -53,13 +103,23 @@ export const useClubEventsStore = create<ClubEventsStore>((set) => ({
 
       return createdEvent;
     } catch (error) {
-      set({ loading: false });
+      set({
+        loading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to create Club event",
+      });
+
       throw error;
     }
   },
 
   async updateClubEvent(eventId, event) {
-    set({ loading: true });
+    set({
+      loading: true,
+      error: null,
+    });
 
     try {
       const updatedEvent = await clubEventsApi.update(eventId, event);
@@ -68,19 +128,56 @@ export const useClubEventsStore = create<ClubEventsStore>((set) => ({
         clubEvents: state.clubEvents.map((clubEvent) =>
           clubEvent.id === eventId ? updatedEvent : clubEvent,
         ),
+
         loading: false,
       }));
 
       return updatedEvent;
     } catch (error) {
-      set({ loading: false });
+      set({
+        loading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to update Club event",
+      });
+
       throw error;
     }
   },
+
+  async deleteClubEvent(eventId) {
+    set({
+      loading: true,
+      error: null,
+    });
+
+    try {
+      await clubEventsApi.delete(eventId);
+
+      set((state) => ({
+        clubEvents: state.clubEvents.filter((event) => event.id !== eventId),
+
+        loading: false,
+      }));
+    } catch (error) {
+      set({
+        loading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to delete Club event",
+      });
+
+      throw error;
+    }
+  },
+
   reset() {
     set({
       clubEvents: [],
       loading: false,
+      error: null,
     });
   },
 }));

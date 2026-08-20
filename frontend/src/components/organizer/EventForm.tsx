@@ -1,5 +1,7 @@
-import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
-import { ImagePlus, Trash2 } from "lucide-react";
+import { useRef, useState, type ChangeEvent, type SubmitEvent } from "react";
+
+import { ExternalLink, ImagePlus, Trash2 } from "lucide-react";
+
 import { useTranslation } from "react-i18next";
 
 import Card from "@/components/shared/Card";
@@ -9,10 +11,14 @@ import type { EventAudience, EventCategory } from "@/types";
 export type EventFormValues = {
   title: string;
   description: string;
+
   city: string;
   address: string;
+
   startsAt: string;
   endsAt: string;
+
+  registrationUrl: string;
 
   categories: EventCategory[];
   audience: EventAudience;
@@ -44,10 +50,14 @@ const audienceOptions: EventAudience[] = ["owner", "caretaker", "both"];
 const emptyValues: EventFormValues = {
   title: "",
   description: "",
+
   city: "",
   address: "",
+
   startsAt: "",
   endsAt: "",
+
+  registrationUrl: "",
 
   categories: [],
   audience: "both",
@@ -133,10 +143,13 @@ export default function EventForm({
     }
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    await onSubmit(values);
+    await onSubmit({
+      ...values,
+      registrationUrl: values.registrationUrl.trim(),
+    });
   };
 
   return (
@@ -399,6 +412,43 @@ export default function EventForm({
               className="h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm outline-none focus:border-primary"
             />
           </div>
+        </div>
+
+        {/* REGISTRATION LINK */}
+
+        <div>
+          <label
+            htmlFor="registrationUrl"
+            className="mb-2 block text-sm font-semibold text-foreground"
+          >
+            {t("eventForm.registrationUrl", {
+              defaultValue: "Registration link",
+            })}
+          </label>
+
+          <div className="relative">
+            <ExternalLink className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
+            <input
+              id="registrationUrl"
+              type="url"
+              value={values.registrationUrl}
+              onChange={(event) =>
+                updateField("registrationUrl", event.target.value)
+              }
+              className="h-12 w-full rounded-2xl border border-border bg-white pl-11 pr-4 text-sm outline-none focus:border-primary"
+              placeholder={t("eventForm.registrationUrlPlaceholder", {
+                defaultValue: "https://example.com/register",
+              })}
+            />
+          </div>
+
+          <p className="mt-2 text-xs text-muted-foreground">
+            {t("eventForm.registrationUrlDescription", {
+              defaultValue:
+                "Optional. People will be directed to this website to register.",
+            })}
+          </p>
         </div>
 
         <button

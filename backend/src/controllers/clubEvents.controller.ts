@@ -1,8 +1,11 @@
 import type { Request, Response } from "express";
-import { clubEventsService } from "../services/clubEvents.service.js";
-import type { EventAudience, EventCategory } from "../types/index.js";
-import { toClientDoc } from "../utils/documents.js";
+
 import type { AuthenticatedRequest } from "../middleware/auth.middleware.js";
+import { clubEventsService } from "../services/clubEvents.service.js";
+
+import type { EventAudience, EventCategory } from "../types/index.js";
+
+import { toClientDoc } from "../utils/documents.js";
 
 type ClubEventParams = {
   eventId: string;
@@ -17,16 +20,21 @@ type ClubEventQuery = {
 type CreateClubEventBody = {
   title: string;
   description: string;
+
   imageUrl?: string;
+  registrationUrl?: string;
+
   categories: EventCategory[];
   audience: EventAudience;
+
   address: string;
   city: string;
+
   startsAt: string;
   endsAt: string;
 };
 
-type UpdateClubEventBody = Partial<Omit<CreateClubEventBody, "organizationId">>;
+type UpdateClubEventBody = Partial<CreateClubEventBody>;
 
 export const clubEventsController = {
   async getAllClubEvents(
@@ -42,10 +50,47 @@ export const clubEventsController = {
 
       return res.json(events.map(toClientDoc));
     } catch (error) {
-      console.error("Failed to fetch club events:", error);
+      console.error("Failed to fetch Club events:", error);
 
       return res.status(500).json({
-        error: "Failed to fetch club events",
+        error: "Failed to fetch Club events",
+      });
+    }
+  },
+
+  async getOrganizationClubEvents(req: AuthenticatedRequest, res: Response) {
+    try {
+      const user = req.authUser;
+
+      if (!user) {
+        return res.status(401).json({
+          error: "Authentication required",
+        });
+      }
+
+      if (user.role !== "organizationRep") {
+        return res.status(403).json({
+          error:
+            "Only organization representatives can access organization events",
+        });
+      }
+
+      if (!user.organizationId) {
+        return res.status(403).json({
+          error: "Organization is missing from this account",
+        });
+      }
+
+      const events = await clubEventsService.getClubEventsByOrganizationId(
+        user.organizationId,
+      );
+
+      return res.json(events.map(toClientDoc));
+    } catch (error) {
+      console.error("Failed to fetch organization Club events:", error);
+
+      return res.status(500).json({
+        error: "Failed to fetch organization Club events",
       });
     }
   },
@@ -64,10 +109,10 @@ export const clubEventsController = {
 
       return res.json(toClientDoc(event));
     } catch (error) {
-      console.error("Failed to fetch club event:", error);
+      console.error("Failed to fetch Club event:", error);
 
       return res.status(500).json({
-        error: "Failed to fetch club event",
+        error: "Failed to fetch Club event",
       });
     }
   },
@@ -96,18 +141,23 @@ export const clubEventsController = {
 
       const body = req.body as CreateClubEventBody;
 
+      if (body.registrationUrl && !isValidHttpUrl(body.registrationUrl)) {
+        return res.status(400).json({
+          error: "Registration URL must be a valid HTTP or HTTPS address",
+        });
+      }
+
       const event = await clubEventsService.createClubEvent({
         ...body,
-
         organizationId: user.organizationId,
       });
 
       return res.status(201).json(toClientDoc(event));
     } catch (error) {
-      console.error("Failed to create club event:", error);
+      console.error("Failed to create Club event:", error);
 
       return res.status(500).json({
-        error: "Failed to create club event",
+        error: "Failed to create Club event",
       });
     }
   },
@@ -150,7 +200,15 @@ export const clubEventsController = {
         });
       }
 
-      const event = await clubEventsService.updateClubEvent(eventId, req.body);
+      const updates = req.body as UpdateClubEventBody;
+
+      if (updates.registrationUrl && !isValidHttpUrl(updates.registrationUrl)) {
+        return res.status(400).json({
+          error: "Registration URL must be a valid HTTP or HTTPS address",
+        });
+      }
+
+      const event = await clubEventsService.updateClubEvent(eventId, updates);
 
       if (!event) {
         return res.status(404).json({
@@ -160,10 +218,10 @@ export const clubEventsController = {
 
       return res.json(toClientDoc(event));
     } catch (error) {
-      console.error("Failed to update club event:", error);
+      console.error("Failed to update Club event:", error);
 
       return res.status(500).json({
-        error: "Failed to update club event",
+        error: "Failed to update Club event",
       });
     }
   },
@@ -216,11 +274,21 @@ export const clubEventsController = {
 
       return res.status(204).send();
     } catch (error) {
-      console.error("Failed to delete club event:", error);
+      console.error("Failed to delete Club event:", error);
 
       return res.status(500).json({
-        error: "Failed to delete club event",
+        error: "Failed to delete Club event",
       });
     }
   },
 };
+
+function isValidHttpUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}

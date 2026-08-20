@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -7,6 +8,7 @@ import EventForm, {
 } from "@/components/organizer/EventForm";
 
 import OrganizerLayout from "@/layouts/OrganizerLayout";
+
 import { useClubEventsStore } from "@/store/clubEvents.store";
 
 export default function CreateEvent() {
@@ -26,13 +28,17 @@ export default function CreateEvent() {
       await createClubEvent({
         title: values.title,
         description: values.description,
+
         city: values.city,
         address: values.address,
+
         startsAt: values.startsAt,
         endsAt: values.endsAt,
 
         categories: values.categories,
         audience: values.audience,
+
+        registrationUrl: values.registrationUrl || undefined,
 
         imageUrl:
           values.imagePreview && !values.imagePreview.startsWith("blob:")
@@ -42,9 +48,11 @@ export default function CreateEvent() {
 
       navigate("/organizer/events");
     } catch (error) {
-      console.error(error);
+      console.error("CREATE EVENT ERROR:", error);
 
-      setError(t("createEventPage.error"));
+      setError(
+        error instanceof Error ? error.message : t("createEventPage.error"),
+      );
     }
   };
 

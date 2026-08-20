@@ -12,28 +12,40 @@ type GetClubEventsFilters = {
   city?: string;
   category?: EventCategory;
   audience?: EventAudience;
+  organizationId?: string;
 };
 
 type CreateClubEventInput = {
   organizationId: string;
+
   title: string;
   description: string;
   imageUrl?: string;
+  registrationUrl?: string;
+
   categories: EventCategory[];
   audience: EventAudience;
+
   address: string;
   city: string;
+
   startsAt: string;
   endsAt: string;
 };
 
 type UpdateClubEventInput = Partial<
-  Omit<ClubEvent, "_id" | "_rev" | "cdt" | "organizationId">
+  Omit<ClubEvent, "_id" | "_rev" | "docType" | "cdt" | "ldt" | "organizationId">
 >;
 
 export const clubEventsService = {
   async getAllClubEvents(filters: GetClubEventsFilters = {}) {
     let events = await clubEventsRepository.findAll();
+
+    if (filters.organizationId) {
+      events = events.filter(
+        (event) => event.organizationId === filters.organizationId,
+      );
+    }
 
     if (filters.city) {
       events = events.filter(
@@ -52,7 +64,20 @@ export const clubEventsService = {
     }
 
     return events.sort(
-      (a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime(),
+      (firstEvent, secondEvent) =>
+        new Date(firstEvent.startsAt).getTime() -
+        new Date(secondEvent.startsAt).getTime(),
+    );
+  },
+
+  async getClubEventsByOrganizationId(organizationId: string) {
+    const events =
+      await clubEventsRepository.findByOrganizationId(organizationId);
+
+    return events.sort(
+      (firstEvent, secondEvent) =>
+        new Date(firstEvent.startsAt).getTime() -
+        new Date(secondEvent.startsAt).getTime(),
     );
   },
 
@@ -69,15 +94,17 @@ export const clubEventsService = {
 
       organizationId: input.organizationId,
 
-      title: input.title,
-      description: input.description,
-      imageUrl: input.imageUrl,
+      title: input.title.trim(),
+      description: input.description.trim(),
+
+      imageUrl: normalizeOptionalValue(input.imageUrl),
+      registrationUrl: normalizeRegistrationUrl(input.registrationUrl),
 
       categories: input.categories,
       audience: input.audience,
 
-      address: input.address,
-      city: input.city,
+      address: input.address.trim(),
+      city: input.city.trim(),
 
       startsAt: input.startsAt,
       endsAt: input.endsAt,
@@ -106,6 +133,34 @@ export const clubEventsService = {
 
       organizationId: existingEvent.organizationId,
 
+      title:
+        updates.title !== undefined
+          ? updates.title.trim()
+          : existingEvent.title,
+
+      description:
+        updates.description !== undefined
+          ? updates.description.trim()
+          : existingEvent.description,
+
+      imageUrl:
+        updates.imageUrl !== undefined
+          ? normalizeOptionalValue(updates.imageUrl)
+          : existingEvent.imageUrl,
+
+      registrationUrl:
+        updates.registrationUrl !== undefined
+          ? normalizeRegistrationUrl(updates.registrationUrl)
+          : existingEvent.registrationUrl,
+
+      address:
+        updates.address !== undefined
+          ? updates.address.trim()
+          : existingEvent.address,
+
+      city:
+        updates.city !== undefined ? updates.city.trim() : existingEvent.city,
+
       cdt: existingEvent.cdt,
       ldt: new Date().toISOString(),
     };
@@ -125,3 +180,27 @@ export const clubEventsService = {
     return true;
   },
 };
+
+function normalizeOptionalValue(value: string | undefined): string | undefined {
+  const normalizedValue = value?.trim();
+
+  return normalizedValue || undefined;
+}
+
+function normalizeRegistrationUrl(
+  value: string | undefined,
+): string | undefined {
+  const normalizedValue = value?.trim();
+
+  if (!normalizedValue) {
+    return undefined;
+  }
+
+  const url = new URL(normalizedValue);
+
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    throw new Error("Registration URL must use the HTTP or HTTPS protocol.");
+  }
+
+  return url.toString();
+}

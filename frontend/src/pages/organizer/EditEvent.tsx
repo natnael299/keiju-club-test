@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+
 import { useNavigate, useParams } from "react-router-dom";
+
 import { useTranslation } from "react-i18next";
 
 import EventForm, {
@@ -7,6 +9,7 @@ import EventForm, {
 } from "@/components/organizer/EventForm";
 
 import OrganizerLayout from "@/layouts/OrganizerLayout";
+
 import { useClubEventsStore } from "@/store/clubEvents.store";
 
 export default function EditEvent() {
@@ -21,7 +24,9 @@ export default function EditEvent() {
 
   const loading = useClubEventsStore((state) => state.loading);
 
-  const fetchClubEvents = useClubEventsStore((state) => state.fetchClubEvents);
+  const fetchOrganizationClubEvents = useClubEventsStore(
+    (state) => state.fetchOrganizationClubEvents,
+  );
 
   const updateClubEvent = useClubEventsStore((state) => state.updateClubEvent);
 
@@ -37,9 +42,9 @@ export default function EditEvent() {
 
   useEffect(() => {
     if (!event && clubEvents.length === 0) {
-      void fetchClubEvents();
+      void fetchOrganizationClubEvents();
     }
-  }, [event, clubEvents.length, fetchClubEvents]);
+  }, [event, clubEvents.length, fetchOrganizationClubEvents]);
 
   const handleUpdateEvent = async (values: EventFormValues) => {
     if (!eventId) {
@@ -52,12 +57,17 @@ export default function EditEvent() {
       await updateClubEvent(eventId, {
         title: values.title,
         description: values.description,
+
         city: values.city,
         address: values.address,
+
         startsAt: values.startsAt,
         endsAt: values.endsAt,
+
         categories: values.categories,
         audience: values.audience,
+
+        registrationUrl: values.registrationUrl || undefined,
 
         imageUrl:
           values.imagePreview && !values.imagePreview.startsWith("blob:")
@@ -67,9 +77,11 @@ export default function EditEvent() {
 
       navigate("/organizer/events");
     } catch (error) {
-      console.error(error);
+      console.error("UPDATE EVENT ERROR:", error);
 
-      setError(t("editEventPage.error"));
+      setError(
+        error instanceof Error ? error.message : t("editEventPage.error"),
+      );
     }
   };
 
@@ -128,6 +140,7 @@ export default function EditEvent() {
             initialValues={{
               title: event.title,
               description: event.description,
+
               city: event.city,
               address: event.address,
 
@@ -136,8 +149,9 @@ export default function EditEvent() {
               endsAt: toDateTimeLocal(event.endsAt),
 
               categories: event.categories,
-
               audience: event.audience,
+
+              registrationUrl: event.registrationUrl ?? "",
 
               imagePreview: event.imageUrl ?? null,
             }}

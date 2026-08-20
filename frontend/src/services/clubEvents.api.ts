@@ -5,7 +5,9 @@ import type { ClubEvent, EventAudience, EventCategory } from "@/types";
 export type CreateClubEventPayload = {
   title: string;
   description: string;
+
   imageUrl?: string;
+  registrationUrl?: string;
 
   categories: EventCategory[];
   audience: EventAudience;
@@ -22,6 +24,10 @@ export type UpdateClubEventPayload = Partial<CreateClubEventPayload>;
 export const clubEventsApi = {
   getAll() {
     return api<ClubEvent[]>("/club-events");
+  },
+
+  getOrganizationEvents() {
+    return api<ClubEvent[]>("/club-events/organization");
   },
 
   getById(eventId: string) {

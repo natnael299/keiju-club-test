@@ -7,6 +7,12 @@ const router = Router();
 
 router.get("/", clubEventsController.getAllClubEvents);
 
+router.get(
+  "/organization",
+  requireAuth,
+  clubEventsController.getOrganizationClubEvents,
+);
+
 router.get("/:eventId", clubEventsController.getClubEventById);
 
 router.post("/", requireAuth, clubEventsController.createClubEvent);
