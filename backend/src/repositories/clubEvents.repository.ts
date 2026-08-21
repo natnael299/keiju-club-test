@@ -1,5 +1,8 @@
 import { db } from "../config/couchdb.js";
+
 import type { ClubEvent } from "../types/index.js";
+
+const MAX_UPDATE_ATTEMPTS = 3;
 
 export const clubEventsRepository = {
   async findAll(): Promise<ClubEvent[]> {
@@ -53,25 +56,38 @@ export const clubEventsRepository = {
   },
 
   async update(event: ClubEvent): Promise<ClubEvent> {
-    const current = await db.get(event._id);
+    for (let attempt = 1; attempt <= MAX_UPDATE_ATTEMPTS; attempt += 1) {
+      const currentDocument = await db.get(event._id);
 
-    const currentEvent = current as unknown as ClubEvent;
+      const currentEvent = currentDocument as unknown as ClubEvent;
 
-    if (currentEvent.docType !== "clubEvent") {
-      throw new Error("Document is not a club event.");
+      if (currentEvent.docType !== "clubEvent") {
+        throw new Error("Document is not a club event.");
+      }
+
+      const updatedEvent: ClubEvent = {
+        ...event,
+        _rev: currentDocument._rev,
+      };
+
+      try {
+        const response = await db.insert(updatedEvent);
+
+        return {
+          ...updatedEvent,
+          _rev: response.rev,
+        };
+      } catch (error) {
+        const shouldRetry =
+          isConflictError(error) && attempt < MAX_UPDATE_ATTEMPTS;
+
+        if (!shouldRetry) {
+          throw error;
+        }
+      }
     }
 
-    const updatedEvent: ClubEvent = {
-      ...event,
-      _rev: current._rev,
-    };
-
-    const response = await db.insert(updatedEvent);
-
-    return {
-      ...updatedEvent,
-      _rev: response.rev,
-    };
+    throw new Error("The event could not be updated after multiple attempts.");
   },
 
   async remove(eventId: string): Promise<void> {
@@ -87,11 +103,19 @@ export const clubEventsRepository = {
   },
 };
 
-function isNotFoundError(error: unknown) {
+function isNotFoundError(error: unknown): boolean {
+  return hasStatusCode(error, 404);
+}
+
+function isConflictError(error: unknown): boolean {
+  return hasStatusCode(error, 409);
+}
+
+function hasStatusCode(error: unknown, expectedStatusCode: number): boolean {
   return (
     typeof error === "object" &&
     error !== null &&
     "statusCode" in error &&
-    error.statusCode === 404
+    error.statusCode === expectedStatusCode
   );
 }

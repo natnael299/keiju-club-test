@@ -142,10 +142,9 @@ export function validateClubEventInput(
     data: {
       title: title.data,
       description: description.data,
+      imageUrl: imageUrl.data ?? "",
 
-      imageUrl: imageUrl.data,
-
-      registrationUrl: registrationUrl.data,
+      registrationUrl: registrationUrl.data ?? "",
       registrationStatus: registrationStatus.data,
 
       categories: categories.data,

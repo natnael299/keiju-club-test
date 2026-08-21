@@ -39,6 +39,7 @@ type Props = {
   initialValues?: Partial<EventFormValues>;
   submitLabel?: string;
   submitting?: boolean;
+  error?: string | null;
 
   onSubmit: (values: EventFormValues) => void | Promise<void>;
 };
@@ -105,6 +106,7 @@ export default function EventForm({
   initialValues,
   submitLabel,
   submitting = false,
+  error = null,
   onSubmit,
 }: Props) {
   const { t } = useTranslation();
@@ -114,7 +116,6 @@ export default function EventForm({
   const [values, setValues] = useState<EventFormValues>(() => ({
     ...emptyValues,
     ...initialValues,
-
     imageFile: null,
   }));
 
@@ -141,11 +142,7 @@ export default function EventForm({
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
-    if (!file) {
-      return;
-    }
-
-    if (!file.type.startsWith("image/")) {
+    if (!file || !file.type.startsWith("image/")) {
       return;
     }
 
@@ -197,8 +194,6 @@ export default function EventForm({
   return (
     <Card>
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* PHOTO */}
-
         <div>
           <label className="mb-2 block text-sm font-semibold text-foreground">
             {t("eventForm.photo")}
@@ -265,8 +260,6 @@ export default function EventForm({
           )}
         </div>
 
-        {/* TITLE */}
-
         <div>
           <label className="mb-2 block text-sm font-semibold text-foreground">
             {t("eventForm.title")}
@@ -281,8 +274,6 @@ export default function EventForm({
           />
         </div>
 
-        {/* DESCRIPTION */}
-
         <div>
           <label className="mb-2 block text-sm font-semibold text-foreground">
             {t("eventForm.description")}
@@ -296,8 +287,6 @@ export default function EventForm({
             placeholder={t("eventForm.descriptionPlaceholder")}
           />
         </div>
-
-        {/* CATEGORIES */}
 
         <div>
           <div className="mb-3">
@@ -338,8 +327,6 @@ export default function EventForm({
             </p>
           )}
         </div>
-
-        {/* AUDIENCE */}
 
         <div>
           <div className="mb-3">
@@ -392,8 +379,6 @@ export default function EventForm({
           </div>
         </div>
 
-        {/* LOCATION */}
-
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-semibold text-foreground">
@@ -424,8 +409,6 @@ export default function EventForm({
           </div>
         </div>
 
-        {/* EVENT TIMES */}
-
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-semibold text-foreground">
@@ -455,8 +438,6 @@ export default function EventForm({
             />
           </div>
         </div>
-
-        {/* REGISTRATION LINK */}
 
         <div>
           <label
@@ -492,8 +473,6 @@ export default function EventForm({
             })}
           </p>
         </div>
-
-        {/* REGISTRATION STATUS */}
 
         {hasRegistrationUrl && (
           <div>
@@ -573,6 +552,12 @@ export default function EventForm({
             ? t("eventForm.saving")
             : (submitLabel ?? t("eventForm.save"))}
         </button>
+
+        {error && (
+          <p role="alert" className="text-sm font-medium text-red-600">
+            {error}
+          </p>
+        )}
       </form>
     </Card>
   );

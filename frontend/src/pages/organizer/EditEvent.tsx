@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
+import type { TFunction } from "i18next";
+
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useTranslation } from "react-i18next";
@@ -14,6 +16,7 @@ import { useClubEventsStore } from "@/store/clubEvents.store";
 
 export default function EditEvent() {
   const navigate = useNavigate();
+
   const { t } = useTranslation();
 
   const { eventId } = useParams<{
@@ -46,8 +49,8 @@ export default function EditEvent() {
     }
   }, [event, clubEvents.length, fetchOrganizationClubEvents]);
 
-  const handleUpdateEvent = async (values: EventFormValues) => {
-    if (!eventId) {
+  const handleUpdateEvent = async (values: EventFormValues): Promise<void> => {
+    if (!eventId || !event) {
       return;
     }
 
@@ -57,12 +60,13 @@ export default function EditEvent() {
 
     try {
       await updateClubEvent(eventId, {
-        title: values.title,
+        title: values.title.trim(),
 
-        description: values.description,
+        description: values.description.trim(),
 
-        city: values.city,
-        address: values.address,
+        city: values.city.trim(),
+
+        address: values.address.trim(),
 
         startsAt: values.startsAt,
 
@@ -81,16 +85,16 @@ export default function EditEvent() {
         imageUrl:
           values.imagePreview && !values.imagePreview.startsWith("blob:")
             ? values.imagePreview
-            : event?.imageUrl,
+            : event.imageUrl,
       });
 
-      navigate("/organizer/events");
-    } catch (error) {
-      console.error("UPDATE EVENT ERROR:", error);
+      navigate("/organizer/events", {
+        replace: true,
+      });
+    } catch (caughtError) {
+      console.error("UPDATE EVENT ERROR:", caughtError);
 
-      setError(
-        error instanceof Error ? error.message : t("editEventPage.error"),
-      );
+      setError(getLocalizedError(caughtError, t));
     }
   };
 
@@ -137,12 +141,6 @@ export default function EditEvent() {
           {t("editEventPage.subtitle")}
         </p>
 
-        {error && (
-          <div className="mt-5 rounded-2xl bg-destructive/10 px-4 py-3 text-sm font-semibold text-destructive">
-            {error}
-          </div>
-        )}
-
         <div className="mt-6">
           <EventForm
             key={event.id}
@@ -171,6 +169,7 @@ export default function EditEvent() {
             }}
             submitLabel={t("eventForm.update")}
             submitting={loading}
+            error={error}
             onSubmit={handleUpdateEvent}
           />
         </div>
@@ -179,7 +178,22 @@ export default function EditEvent() {
   );
 }
 
-function toDateTimeLocal(value: string) {
+function getLocalizedError(error: unknown, t: TFunction): string {
+  if (
+    error instanceof Error &&
+    error.message === "The event end date must be after its start date."
+  ) {
+    return t("createEventPage.invalidDateRange");
+  }
+
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  return t("editEventPage.error");
+}
+
+function toDateTimeLocal(value: string): string {
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {

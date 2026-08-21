@@ -140,7 +140,9 @@
   "createEventPage": {
     "title": "Luo tapahtuma",
     "subtitle": "Lisää uusi aktiviteetti Keiju Clubiin.",
-    "error": "Tapahtuman luominen epäonnistui. Yritä uudelleen."
+    "error": "Tapahtuman luominen epäonnistui. Yritä uudelleen.",
+    "validationError": "Tapahtumaa ei voitu luoda",
+    "invalidDateRange": "Tapahtuman päättymisajan täytyy olla alkamisajan jälkeen."
   },
 
   "editEventPage": {

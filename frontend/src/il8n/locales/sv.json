@@ -140,7 +140,9 @@
   "createEventPage": {
     "title": "Skapa evenemang",
     "subtitle": "Lägg till en ny aktivitet i Keiju Club.",
-    "error": "Det gick inte att skapa evenemanget. Försök igen."
+    "error": "Det gick inte att skapa evenemanget. Försök igen.",
+    "validationError": "Evenemanget kunde inte skapas",
+    "invalidDateRange": "Evenemangets sluttid måste vara efter starttiden."
   },
 
   "editEventPage": {

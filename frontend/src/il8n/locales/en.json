@@ -150,7 +150,9 @@
   "createEventPage": {
     "title": "Create event",
     "subtitle": "Add a new activity to Keiju Club.",
-    "error": "Event creation failed. Please try again."
+    "error": "Event creation failed. Please try again.",
+    "validationError": "The event could not be created",
+    "invalidDateRange": "The event end date must be after its start date."
   },
 
   "editEventPage": {

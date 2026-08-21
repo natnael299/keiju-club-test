@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import type { TFunction } from "i18next";
+
 import { useNavigate } from "react-router-dom";
 
 import { useTranslation } from "react-i18next";
@@ -64,13 +66,7 @@ export default function CreateEvent() {
     } catch (caughtError) {
       console.error("CREATE EVENT ERROR:", caughtError);
 
-      setError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : t("createEventPage.error", {
-              defaultValue: "The event could not be created.",
-            }),
-      );
+      setError(getLocalizedError(caughtError, t));
     }
   };
 
@@ -78,37 +74,37 @@ export default function CreateEvent() {
     <OrganizerLayout>
       <section>
         <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
-          {t("createEventPage.title", {
-            defaultValue: "Create event",
-          })}
+          {t("createEventPage.title")}
         </h1>
 
         <p className="mt-2 text-muted-foreground">
-          {t("createEventPage.subtitle", {
-            defaultValue:
-              "Add an event and make it available through Keiju Club.",
-          })}
+          {t("createEventPage.subtitle")}
         </p>
-
-        {error && (
-          <div
-            role="alert"
-            className="mt-5 rounded-2xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm font-semibold text-destructive"
-          >
-            {error}
-          </div>
-        )}
 
         <div className="mt-6">
           <EventForm
-            submitLabel={t("eventForm.create", {
-              defaultValue: "Create event",
-            })}
+            submitLabel={t("eventForm.create")}
             submitting={loading}
+            error={error}
             onSubmit={handleCreateEvent}
           />
         </div>
       </section>
     </OrganizerLayout>
   );
+}
+
+function getLocalizedError(error: unknown, t: TFunction): string {
+  if (
+    error instanceof Error &&
+    error.message === "The event end date must be after its start date."
+  ) {
+    return t("createEventPage.invalidDateRange");
+  }
+
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  return t("createEventPage.error");
 }

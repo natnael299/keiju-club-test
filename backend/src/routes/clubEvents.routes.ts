@@ -1,7 +1,10 @@
 import { Router } from "express";
 
 import { clubEventsController } from "../controllers/clubEvents.controller.js";
+
 import { requireAuth } from "../middleware/auth.middleware.js";
+
+import { validateCreateClubEvent } from "../middleware/clubEvents.validation.middleware.js";
 
 const router = Router();
 
@@ -15,9 +18,19 @@ router.get(
 
 router.get("/:eventId", clubEventsController.getClubEventById);
 
-router.post("/", requireAuth, clubEventsController.createClubEvent);
+router.post(
+  "/",
+  requireAuth,
+  validateCreateClubEvent,
+  clubEventsController.createClubEvent,
+);
 
-router.put("/:eventId", requireAuth, clubEventsController.updateClubEvent);
+router.put(
+  "/:eventId",
+  requireAuth,
+  validateCreateClubEvent,
+  clubEventsController.updateClubEvent,
+);
 
 router.delete("/:eventId", requireAuth, clubEventsController.deleteClubEvent);
 
