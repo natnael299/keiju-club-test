@@ -199,5 +199,11 @@
   "ownerSwitcher": {
     "title": "Person som visas",
     "currentlyViewing": "Visar för närvarande"
+  },
+  "notFound": {
+    "title": "Sidan hittades inte",
+    "description": "Sidan kan ha flyttats eller tagits bort, eller så kan adressen vara felaktig.",
+    "back": "Gå tillbaka",
+    "home": "Gå till startsidan"
   }
 }

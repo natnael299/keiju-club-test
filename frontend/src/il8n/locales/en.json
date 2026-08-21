@@ -199,5 +199,11 @@
   "ownerSwitcher": {
     "title": "Person being viewed",
     "currentlyViewing": "Currently viewing"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page may have been moved, removed or the address may be incorrect.",
+    "back": "Go back",
+    "home": "Go to home"
   }
 }

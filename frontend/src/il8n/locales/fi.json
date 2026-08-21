@@ -199,5 +199,11 @@
   "ownerSwitcher": {
     "title": "Tarkasteltava henkilö",
     "currentlyViewing": "Tällä hetkellä tarkastellaan"
+  },
+  "notFound": {
+    "title": "Sivua ei löytynyt",
+    "description": "Sivu on ehkä siirretty tai poistettu, tai osoite saattaa olla virheellinen.",
+    "back": "Palaa takaisin",
+    "home": "Siirry etusivulle"
   }
 }
