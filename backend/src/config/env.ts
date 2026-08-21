@@ -1,7 +1,7 @@
 import "dotenv/config";
 
-function getEnv(name: string): string {
-  const value = process.env[name];
+function getRequiredEnv(name: string): string {
+  const value = process.env[name]?.trim();
 
   if (!value) {
     throw new Error(`${name} is missing from environment variables.`);
@@ -10,14 +10,24 @@ function getEnv(name: string): string {
   return value;
 }
 
-export const PORT = Number(process.env.PORT) || 3001;
+function getPort(): number {
+  const port = Number(process.env.PORT ?? 3001);
 
-export const JWT_SECRET = getEnv("JWT_SECRET");
+  if (!Number.isInteger(port) || port <= 0 || port > 65_535) {
+    throw new Error("PORT must be a valid port number.");
+  }
 
-export const COUCHDB_URL = getEnv("COUCHDB_URL");
+  return port;
+}
 
-export const COUCHDB_USERNAME = getEnv("COUCHDB_USERNAME");
+export const PORT = getPort();
 
-export const COUCHDB_PASSWORD = getEnv("COUCHDB_PASSWORD");
+export const JWT_SECRET = getRequiredEnv("JWT_SECRET");
 
-export const COUCHDB_DATABASE = getEnv("COUCHDB_DATABASE");
+export const COUCHDB_URL = getRequiredEnv("COUCHDB_URL");
+
+export const COUCHDB_USERNAME = getRequiredEnv("COUCHDB_USERNAME");
+
+export const COUCHDB_PASSWORD = getRequiredEnv("COUCHDB_PASSWORD");
+
+export const COUCHDB_DATABASE = getRequiredEnv("COUCHDB_DATABASE");

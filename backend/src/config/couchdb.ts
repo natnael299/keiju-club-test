@@ -7,12 +7,23 @@ import {
   COUCHDB_USERNAME,
 } from "./env.js";
 
-export const couch = Nano(COUCHDB_URL);
+function createAuthenticatedCouchDbUrl(): string {
+  const url = new URL(COUCHDB_URL);
+
+  url.username = COUCHDB_USERNAME;
+  url.password = COUCHDB_PASSWORD;
+
+  return url.toString();
+}
+
+export const couch = Nano({
+  url: createAuthenticatedCouchDbUrl(),
+});
 
 export const databaseName = COUCHDB_DATABASE;
 
 export const db = couch.use(databaseName);
 
-export async function authenticateCouchDb() {
-  await couch.auth(COUCHDB_USERNAME, COUCHDB_PASSWORD);
+export async function authenticateCouchDb(): Promise<void> {
+  await couch.db.list();
 }

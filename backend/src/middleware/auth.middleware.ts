@@ -25,26 +25,68 @@ export async function requireAuth(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   const authorization = req.headers.authorization;
 
   if (!authorization?.startsWith("Bearer ")) {
-    return res.status(401).json({
-      error: "Authentication required",
+    res.status(401).json({
+      success: false,
+      error: "Authentication required.",
+      message: "Authentication required.",
     });
+
+    return;
   }
 
-  const token = authorization.slice(7);
+  const token = authorization.slice(7).trim();
+
+  if (!token) {
+    res.status(401).json({
+      success: false,
+      error: "Authentication required.",
+      message: "Authentication required.",
+    });
+
+    return;
+  }
+
+  let payload: JwtPayload;
 
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    const decodedToken = jwt.verify(token, JWT_SECRET);
 
+    if (!isValidJwtPayload(decodedToken)) {
+      res.status(401).json({
+        success: false,
+        error: "Invalid or expired token.",
+        message: "Invalid or expired token.",
+      });
+
+      return;
+    }
+
+    payload = decodedToken;
+  } catch {
+    res.status(401).json({
+      success: false,
+      error: "Invalid or expired token.",
+      message: "Invalid or expired token.",
+    });
+
+    return;
+  }
+
+  try {
     const user = await usersRepository.findById(payload.userId);
 
     if (!user) {
-      return res.status(401).json({
-        error: "User not found",
+      res.status(401).json({
+        success: false,
+        error: "User account was not found.",
+        message: "User account was not found.",
       });
+
+      return;
     }
 
     req.authUser = {
@@ -55,9 +97,29 @@ export async function requireAuth(
     };
 
     next();
-  } catch {
-    return res.status(401).json({
-      error: "Invalid or expired token",
-    });
+  } catch (error) {
+    next(error);
   }
+}
+
+function isValidJwtPayload(value: unknown): value is JwtPayload {
+  if (
+    typeof value !== "object" ||
+    value === null ||
+    !("userId" in value) ||
+    !("role" in value)
+  ) {
+    return false;
+  }
+
+  const payload = value as {
+    userId?: unknown;
+    role?: unknown;
+  };
+
+  return (
+    typeof payload.userId === "string" &&
+    payload.userId.length > 0 &&
+    (payload.role === "caretaker" || payload.role === "organizationRep")
+  );
 }
