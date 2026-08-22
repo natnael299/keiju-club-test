@@ -236,5 +236,12 @@
     "reports": "Reports could not be loaded",
     "people": "People could not be loaded",
     "organization": "Organization information could not be loaded"
+  },
+
+  "organizerEvents": {
+    "loading": "Loading events...",
+    "loadError": "Events could not be loaded",
+    "emptyTitle": "No events found",
+    "emptyDescription": "Create your first event to make it available in Keiju Club."
   }
 }

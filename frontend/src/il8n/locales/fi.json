@@ -236,5 +236,12 @@
     "reports": "Raportteja ei voitu ladata",
     "people": "Henkilöitä ei voitu ladata",
     "organization": "Organisaation tietoja ei voitu ladata"
+  },
+
+  "organizerEvents": {
+    "loading": "Ladataan tapahtumia...",
+    "loadError": "Tapahtumia ei voitu ladata",
+    "emptyTitle": "Tapahtumia ei löytynyt",
+    "emptyDescription": "Luo ensimmäinen tapahtuma, jotta se näkyy Keiju Clubissa."
   }
 }

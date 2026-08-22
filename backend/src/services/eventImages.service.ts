@@ -12,4 +12,7 @@ export const eventImagesService = {
   async getEventImage(eventId: string) {
     return clubEventsRepository.getImage(eventId);
   },
+  async removeEventImage(eventId: string) {
+    return clubEventsRepository.removeImage(eventId);
+  },
 };

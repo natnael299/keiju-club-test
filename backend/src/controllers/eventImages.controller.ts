@@ -114,7 +114,7 @@ export const eventImagesController = {
 
       res.setHeader("Content-Type", image.contentType);
 
-      res.setHeader("Content-Length", image.buffer.length.toString());
+      res.setHeader("Cache-Control", "no-cache");
 
       res.setHeader("Cache-Control", "public, max-age=3600");
 

@@ -25,6 +25,8 @@ type ClubEventsStore = {
 
   uploadClubEventImage: (eventId: string, image: File) => Promise<ClubEvent>;
 
+  removeClubEventImage: (eventId: string) => Promise<ClubEvent>;
+
   deleteClubEvent: (eventId: string) => Promise<void>;
 
   reset: () => void;
@@ -160,6 +162,36 @@ export const useClubEventsStore = create<ClubEventsStore>((set) => ({
       set({
         loading: false,
         error: getErrorMessage(error, "Failed to upload event image"),
+      });
+
+      throw error;
+    }
+  },
+
+  async removeClubEventImage(eventId) {
+    set({
+      loading: true,
+      error: null,
+    });
+
+    try {
+      const updatedEvent = await clubEventsApi.removeImage(eventId);
+
+      set((state) => ({
+        clubEvents: state.clubEvents.map((clubEvent) =>
+          clubEvent.id === eventId ? updatedEvent : clubEvent,
+        ),
+        loading: false,
+      }));
+
+      return updatedEvent;
+    } catch (error) {
+      set({
+        loading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to remove event image",
       });
 
       throw error;

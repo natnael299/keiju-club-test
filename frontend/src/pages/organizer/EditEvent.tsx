@@ -31,6 +31,10 @@ export default function EditEvent() {
     (state) => state.uploadClubEventImage,
   );
 
+  const removeClubEventImage = useClubEventsStore(
+    (state) => state.removeClubEventImage,
+  );
+
   const [error, setError] = useState<string | null>(null);
 
   const event = useMemo(() => {
@@ -75,6 +79,8 @@ export default function EditEvent() {
 
       if (values.imageFile) {
         await uploadClubEventImage(eventId, values.imageFile);
+      } else if (values.imageRemoved && event.imageUrl) {
+        await removeClubEventImage(eventId);
       }
 
       navigate("/organizer/events");

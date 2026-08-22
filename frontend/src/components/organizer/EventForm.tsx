@@ -33,6 +33,7 @@ export type EventFormValues = {
 
   imageFile: File | null;
   imagePreview: string | null;
+  imageRemoved: boolean;
 };
 
 type Props = {
@@ -100,6 +101,7 @@ const emptyValues: EventFormValues = {
 
   imageFile: null,
   imagePreview: null,
+  imageRemoved: false,
 };
 
 export default function EventForm({
@@ -156,6 +158,7 @@ export default function EventForm({
       ...current,
       imageFile: file,
       imagePreview: previewUrl,
+      imageRemoved: false,
     }));
   };
 
@@ -168,6 +171,7 @@ export default function EventForm({
       ...current,
       imageFile: null,
       imagePreview: null,
+      imageRemoved: true,
     }));
 
     if (fileInputRef.current) {

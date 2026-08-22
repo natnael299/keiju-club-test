@@ -108,6 +108,14 @@ export const clubEventsApi = {
     return normalizeEvent(event);
   },
 
+  async removeImage(eventId: string) {
+    const event = await api<ClubEvent>(`/club-events/${eventId}/image`, {
+      method: "DELETE",
+    });
+
+    return normalizeEvent(event);
+  },
+
   delete(eventId: string) {
     return api<void>(`/club-events/${eventId}`, {
       method: "DELETE",

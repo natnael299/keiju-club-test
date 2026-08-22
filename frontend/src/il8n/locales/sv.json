@@ -236,5 +236,12 @@
     "reports": "Rapporterna kunde inte laddas",
     "people": "Personerna kunde inte laddas",
     "organization": "Organisationens uppgifter kunde inte laddas"
+  },
+
+  "organizerEvents": {
+    "loading": "Laddar evenemang...",
+    "loadError": "Evenemangen kunde inte laddas",
+    "emptyTitle": "Inga evenemang hittades",
+    "emptyDescription": "Skapa ditt första evenemang för att visa det i Keiju Club."
   }
 }
