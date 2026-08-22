@@ -4,6 +4,7 @@ import ClubEventDetailCard from "@/components/cards/ClubEventDetailCard";
 import OrganizerDashboardHeader from "@/components/organizer/OrganizerDashboardHeader";
 import OrganizerQuickActions from "@/components/organizer/OrganizerQuickActions";
 import OrganizerStats from "@/components/organizer/OrganizerStats";
+import LoadError from "@/components/shared/LoadError";
 import SectionHeader from "@/components/shared/SectionHeader";
 
 import OrganizerLayout from "@/layouts/OrganizerLayout";
@@ -80,13 +81,12 @@ export default function OrganizerDashboard() {
           Loading events...
         </p>
       ) : error ? (
-        <div className="rounded-2xl border border-destructive/30 bg-destructive/5 px-5 py-4">
-          <p className="font-semibold text-destructive">
-            Events could not be loaded
-          </p>
-
-          <p className="mt-1 text-sm text-muted-foreground">{error}</p>
-        </div>
+        <LoadError
+          title="Events could not be loaded"
+          message={error}
+          retrying={loading}
+          onRetry={fetchOrganizationClubEvents}
+        />
       ) : activeEvents.length === 0 ? (
         <div className="rounded-2xl border border-border bg-card px-5 py-6 text-center">
           <p className="font-semibold text-foreground">No active events</p>

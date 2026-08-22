@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { useTranslation } from "react-i18next";
+
 import ClubFilters from "@/components/club/ClubFilters";
 import {
   defaultClubFilters,
@@ -7,16 +9,23 @@ import {
 } from "@/components/club/clubFilters.types";
 import ClubHeader from "@/components/club/ClubHeader";
 import ClubList from "@/components/club/ClubList";
+import LoadError from "@/components/shared/LoadError";
 
 import AppLayout from "@/layouts/AppLayout";
 
 import { useClubEventsStore } from "@/store/clubEvents.store";
 
 export default function Club() {
+  const { t } = useTranslation();
+
   const [clubFilters, setClubFilters] =
     useState<ClubFiltersValue>(defaultClubFilters);
 
   const clubEvents = useClubEventsStore((state) => state.clubEvents);
+
+  const loading = useClubEventsStore((state) => state.loading);
+
+  const error = useClubEventsStore((state) => state.error);
 
   const fetchClubEvents = useClubEventsStore((state) => state.fetchClubEvents);
 
@@ -118,13 +127,32 @@ export default function Club() {
     <AppLayout>
       <ClubHeader />
 
-      <ClubFilters
-        value={clubFilters}
-        onChange={setClubFilters}
-        resultCount={filteredEvents.length}
-      />
+      {loading && clubEvents.length === 0 ? (
+        <div className="py-12 text-center text-sm text-muted-foreground">
+          {t("club.loading", {
+            defaultValue: "Loading events...",
+          })}
+        </div>
+      ) : error ? (
+        <LoadError
+          title={t("club.loadError", {
+            defaultValue: "Events could not be loaded",
+          })}
+          message={error}
+          retrying={loading}
+          onRetry={fetchClubEvents}
+        />
+      ) : (
+        <>
+          <ClubFilters
+            value={clubFilters}
+            onChange={setClubFilters}
+            resultCount={filteredEvents.length}
+          />
 
-      <ClubList events={filteredEvents} />
+          <ClubList events={filteredEvents} />
+        </>
+      )}
     </AppLayout>
   );
 }

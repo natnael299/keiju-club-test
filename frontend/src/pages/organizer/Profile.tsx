@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Building2, Mail, MapPin, Phone, UserRound } from "lucide-react";
 
 import { useTranslation } from "react-i18next";
 
-import Card from "@/components/shared/Card";
 import SettingsList from "@/components/profile/SettingsList";
+import Card from "@/components/shared/Card";
+import LoadError from "@/components/shared/LoadError";
 
 import OrganizerLayout from "@/layouts/OrganizerLayout";
 
@@ -26,55 +27,46 @@ export default function OrganizerProfile() {
 
   const [error, setError] = useState<string | null>(null);
 
+  const loadOrganization = useCallback(async (): Promise<void> => {
+    if (user?.role !== "organizationRep" || !user.organizationId) {
+      setError(
+        t("organizer.organizationMissing", {
+          defaultValue: "No organization is connected to this account.",
+        }),
+      );
+
+      setLoading(false);
+
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const organizationData = await organizationsApi.getById(
+        user.organizationId,
+      );
+
+      setOrganization(organizationData);
+    } catch (caughtError) {
+      console.error("ORGANIZATION PROFILE ERROR:", caughtError);
+
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : t("organizer.profileError", {
+              defaultValue: "Organization details could not be loaded.",
+            }),
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [user, t]);
+
   useEffect(() => {
-    let active = true;
-
-    const loadOrganization = async () => {
-      if (user?.role !== "organizationRep" || !user.organizationId) {
-        if (active) {
-          setError("No organization is connected to this account.");
-
-          setLoading(false);
-        }
-
-        return;
-      }
-
-      try {
-        const organizationData = await organizationsApi.getById(
-          user.organizationId,
-        );
-
-        if (!active) {
-          return;
-        }
-
-        setOrganization(organizationData);
-      } catch (error) {
-        console.error("ORGANIZATION PROFILE ERROR:", error);
-
-        if (!active) {
-          return;
-        }
-
-        setError(
-          error instanceof Error
-            ? error.message
-            : "Organization details could not be loaded.",
-        );
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
-      }
-    };
-
     void loadOrganization();
-
-    return () => {
-      active = false;
-    };
-  }, [user]);
+  }, [loadOrganization]);
 
   return (
     <OrganizerLayout>
@@ -92,21 +84,22 @@ export default function OrganizerProfile() {
         </p>
       </section>
 
-      {loading ? (
+      {loading && !organization ? (
         <p className="py-8 text-center text-sm text-muted-foreground">
           {t("organizer.profileLoading", {
             defaultValue: "Loading organization information...",
           })}
         </p>
       ) : error ? (
-        <div className="mt-6 rounded-2xl border border-destructive/30 bg-destructive/5 px-5 py-4">
-          <p className="font-semibold text-destructive">
-            {t("organizer.profileError", {
+        <div className="mt-6">
+          <LoadError
+            title={t("organizer.profileError", {
               defaultValue: "Organization information could not be loaded",
             })}
-          </p>
-
-          <p className="mt-1 text-sm text-muted-foreground">{error}</p>
+            message={error}
+            retrying={loading}
+            onRetry={loadOrganization}
+          />
         </div>
       ) : organization ? (
         <>

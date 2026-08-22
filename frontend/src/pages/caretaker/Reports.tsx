@@ -1,8 +1,10 @@
 import { useEffect, useMemo } from "react";
 
-import ReportsHeader from "@/components/reports/ReportsHeader";
 import LatestReport from "@/components/reports/LatestReport";
 import PreviousReports from "@/components/reports/PreviousReports";
+import ReportsHeader from "@/components/reports/ReportsHeader";
+import LoadError from "@/components/shared/LoadError";
+
 import AppLayout from "@/layouts/AppLayout";
 
 import { useOwnerStore } from "@/store/owner.store";
@@ -14,6 +16,8 @@ export default function Reports() {
   const reports = useReportsStore((state) => state.reports);
 
   const loading = useReportsStore((state) => state.loading);
+
+  const error = useReportsStore((state) => state.error);
 
   const fetchOwnerReports = useReportsStore((state) => state.fetchOwnerReports);
 
@@ -33,19 +37,35 @@ export default function Reports() {
     return reports
       .filter((report) => report.id !== currentReport?.id)
       .sort(
-        (a, b) =>
-          new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
+        (firstReport, secondReport) =>
+          new Date(secondReport.startDate).getTime() -
+          new Date(firstReport.startDate).getTime(),
       );
   }, [reports, currentReport]);
+
+  const handleRetry = async (): Promise<void> => {
+    if (!selectedOwnerId) {
+      return;
+    }
+
+    await fetchOwnerReports(selectedOwnerId);
+  };
 
   return (
     <AppLayout>
       <ReportsHeader />
 
-      {loading ? (
+      {loading && reports.length === 0 ? (
         <div className="py-12 text-center text-sm text-muted-foreground">
           Ladataan raportteja...
         </div>
+      ) : error ? (
+        <LoadError
+          title="Raportteja ei voitu ladata"
+          message={error}
+          retrying={loading}
+          onRetry={handleRetry}
+        />
       ) : (
         <>
           <LatestReport report={currentReport} />
