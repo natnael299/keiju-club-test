@@ -21,31 +21,23 @@ export const eventImagesController = {
       const user = req.authUser;
 
       if (!user) {
-        res.status(401).json({
-          success: false,
-          error: "Authentication required.",
-          message: "Authentication required.",
-        });
+        sendError(res, 401, "Authentication required.");
 
         return;
       }
 
       if (user.role !== "organizationRep") {
-        res.status(403).json({
-          success: false,
-          error: "Only organization representatives can upload event images.",
-          message: "Only organization representatives can upload event images.",
-        });
+        sendError(
+          res,
+          403,
+          "Only organization representatives can upload event images.",
+        );
 
         return;
       }
 
       if (!user.organizationId) {
-        res.status(403).json({
-          success: false,
-          error: "Organization is missing from this account.",
-          message: "Organization is missing from this account.",
-        });
+        sendError(res, 403, "Organization is missing from this account.");
 
         return;
       }
@@ -55,21 +47,17 @@ export const eventImagesController = {
       const event = await clubEventsService.getClubEventById(eventId);
 
       if (!event) {
-        res.status(404).json({
-          success: false,
-          error: "Club event not found.",
-          message: "Club event not found.",
-        });
+        sendError(res, 404, "Club event not found.");
 
         return;
       }
 
       if (event.organizationId !== user.organizationId) {
-        res.status(403).json({
-          success: false,
-          error: "You cannot change another organization's event image.",
-          message: "You cannot change another organization's event image.",
-        });
+        sendError(
+          res,
+          403,
+          "You cannot change another organization's event image.",
+        );
 
         return;
       }
@@ -77,21 +65,17 @@ export const eventImagesController = {
       const image = req.file;
 
       if (!image) {
-        res.status(400).json({
-          success: false,
-          error: "Select an event image.",
-          message: "Select an event image.",
-        });
+        sendError(res, 400, "Select an event image.");
 
         return;
       }
 
       if (!hasValidImageSignature(image.buffer, image.mimetype)) {
-        res.status(400).json({
-          success: false,
-          error: "The uploaded file is not a valid JPG, PNG or WEBP image.",
-          message: "The uploaded file is not a valid JPG, PNG or WEBP image.",
-        });
+        sendError(
+          res,
+          400,
+          "The uploaded file is not a valid JPG, PNG or WEBP image.",
+        );
 
         return;
       }
@@ -103,11 +87,7 @@ export const eventImagesController = {
       );
 
       if (!updatedEvent) {
-        res.status(404).json({
-          success: false,
-          error: "Club event not found.",
-          message: "Club event not found.",
-        });
+        sendError(res, 404, "Club event not found.");
 
         return;
       }
@@ -127,11 +107,7 @@ export const eventImagesController = {
       const image = await eventImagesService.getEventImage(req.params.eventId);
 
       if (!image) {
-        res.status(404).json({
-          success: false,
-          error: "Event image not found.",
-          message: "Event image not found.",
-        });
+        sendError(res, 404, "Event image not found.");
 
         return;
       }
@@ -147,7 +123,79 @@ export const eventImagesController = {
       next(error);
     }
   },
+
+  async removeEventImage(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const user = req.authUser;
+
+      if (!user) {
+        sendError(res, 401, "Authentication required.");
+
+        return;
+      }
+
+      if (user.role !== "organizationRep") {
+        sendError(
+          res,
+          403,
+          "Only organization representatives can remove event images.",
+        );
+
+        return;
+      }
+
+      if (!user.organizationId) {
+        sendError(res, 403, "Organization is missing from this account.");
+
+        return;
+      }
+
+      const eventId = req.params.eventId as string;
+
+      const event = await clubEventsService.getClubEventById(eventId);
+
+      if (!event) {
+        sendError(res, 404, "Club event not found.");
+
+        return;
+      }
+
+      if (event.organizationId !== user.organizationId) {
+        sendError(
+          res,
+          403,
+          "You cannot remove another organization's event image.",
+        );
+
+        return;
+      }
+
+      const updatedEvent = await eventImagesService.removeEventImage(eventId);
+
+      if (!updatedEvent) {
+        sendError(res, 404, "Club event not found.");
+
+        return;
+      }
+
+      res.status(200).json(toClientDoc(updatedEvent));
+    } catch (error) {
+      next(error);
+    }
+  },
 };
+
+function sendError(res: Response, statusCode: number, message: string): void {
+  res.status(statusCode).json({
+    success: false,
+    error: message,
+    message,
+  });
+}
 
 function hasValidImageSignature(buffer: Buffer, contentType: string): boolean {
   if (contentType === "image/jpeg") {

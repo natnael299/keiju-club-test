@@ -3,7 +3,11 @@ import type { Request, Response } from "express";
 import type { AuthenticatedRequest } from "../middleware/auth.middleware.js";
 import { clubEventsService } from "../services/clubEvents.service.js";
 
-import type { EventAudience, EventCategory } from "../types/index.js";
+import type {
+  EventAudience,
+  EventCategory,
+  RegistrationStatus,
+} from "../types/index.js";
 
 import { toClientDoc } from "../utils/documents.js";
 
@@ -23,6 +27,7 @@ type CreateClubEventBody = {
 
   imageUrl?: string;
   registrationUrl?: string;
+  registrationStatus?: RegistrationStatus;
 
   categories: EventCategory[];
   audience: EventAudience;
@@ -141,12 +146,6 @@ export const clubEventsController = {
 
       const body = req.body as CreateClubEventBody;
 
-      if (body.registrationUrl && !isValidHttpUrl(body.registrationUrl)) {
-        return res.status(400).json({
-          error: "Registration URL must be a valid HTTP or HTTPS address",
-        });
-      }
-
       const event = await clubEventsService.createClubEvent({
         ...body,
         organizationId: user.organizationId,
@@ -201,12 +200,6 @@ export const clubEventsController = {
       }
 
       const updates = req.body as UpdateClubEventBody;
-
-      if (updates.registrationUrl && !isValidHttpUrl(updates.registrationUrl)) {
-        return res.status(400).json({
-          error: "Registration URL must be a valid HTTP or HTTPS address",
-        });
-      }
 
       const event = await clubEventsService.updateClubEvent(eventId, updates);
 
@@ -282,13 +275,3 @@ export const clubEventsController = {
     }
   },
 };
-
-function isValidHttpUrl(value: string): boolean {
-  try {
-    const url = new URL(value);
-
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch {
-    return false;
-  }
-}

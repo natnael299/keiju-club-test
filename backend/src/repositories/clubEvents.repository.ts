@@ -3,7 +3,6 @@ import { db } from "../config/couchdb.js";
 import type { ClubEvent } from "../types/index.js";
 
 const MAX_UPDATE_ATTEMPTS = 3;
-
 const EVENT_IMAGE_ATTACHMENT = "event-image";
 
 type EventDocumentWithAttachments = ClubEvent & {
@@ -36,7 +35,6 @@ export const clubEventsRepository = {
   async findById(eventId: string): Promise<ClubEvent | null> {
     try {
       const document = await db.get(eventId);
-
       const event = document as unknown as ClubEvent;
 
       if (event.docType !== "clubEvent") {
@@ -77,13 +75,15 @@ export const clubEventsRepository = {
     for (let attempt = 1; attempt <= MAX_UPDATE_ATTEMPTS; attempt += 1) {
       const currentDocument = await db.get(event._id);
 
-      const currentEvent = currentDocument as unknown as ClubEvent;
+      const currentEvent =
+        currentDocument as unknown as EventDocumentWithAttachments;
 
       if (currentEvent.docType !== "clubEvent") {
         throw new Error("Document is not a club event.");
       }
 
-      const updatedEvent: ClubEvent = {
+      const updatedEvent: EventDocumentWithAttachments = {
+        ...currentEvent,
         ...event,
         _rev: currentDocument._rev,
       };
@@ -121,7 +121,7 @@ export const clubEventsRepository = {
       }
 
       try {
-        const attachmentResponse = await db.attachment.insert(
+        await db.attachment.insert(
           eventId,
           EVENT_IMAGE_ATTACHMENT,
           imageBuffer,
@@ -131,13 +131,18 @@ export const clubEventsRepository = {
           },
         );
 
-        const eventWithImage: ClubEvent = {
-          ...currentEvent,
+        const refreshedDocument = await db.get(eventId);
 
-          _rev: attachmentResponse.rev,
+        const refreshedEvent =
+          refreshedDocument as unknown as EventDocumentWithAttachments;
 
+        if (refreshedEvent.docType !== "clubEvent") {
+          throw new Error("Document is not a club event.");
+        }
+
+        const eventWithImage: EventDocumentWithAttachments = {
+          ...refreshedEvent,
           imageUrl: `/api/club-events/${eventId}/image`,
-
           ldt: new Date().toISOString(),
         };
 
@@ -193,9 +198,62 @@ export const clubEventsRepository = {
     }
   },
 
+  async removeImage(eventId: string): Promise<ClubEvent | null> {
+    for (let attempt = 1; attempt <= MAX_UPDATE_ATTEMPTS; attempt += 1) {
+      try {
+        const currentDocument = (await db.get(
+          eventId,
+        )) as unknown as EventDocumentWithAttachments;
+
+        if (currentDocument.docType !== "clubEvent") {
+          return null;
+        }
+
+        let refreshedDocument = currentDocument;
+
+        if (currentDocument._attachments?.[EVENT_IMAGE_ATTACHMENT]) {
+          await db.attachment.destroy(eventId, EVENT_IMAGE_ATTACHMENT, {
+            rev: currentDocument._rev,
+          });
+
+          refreshedDocument = (await db.get(
+            eventId,
+          )) as unknown as EventDocumentWithAttachments;
+        }
+
+        const eventWithoutImage: EventDocumentWithAttachments = {
+          ...refreshedDocument,
+          imageUrl: undefined,
+          ldt: new Date().toISOString(),
+        };
+
+        const response = await db.insert(eventWithoutImage);
+
+        return {
+          ...eventWithoutImage,
+          _rev: response.rev,
+        };
+      } catch (error) {
+        if (isNotFoundError(error)) {
+          return null;
+        }
+
+        const shouldRetry =
+          isConflictError(error) && attempt < MAX_UPDATE_ATTEMPTS;
+
+        if (!shouldRetry) {
+          throw error;
+        }
+      }
+    }
+
+    throw new Error(
+      "The event image could not be removed after multiple attempts.",
+    );
+  },
+
   async remove(eventId: string): Promise<void> {
     const document = await db.get(eventId);
-
     const event = document as unknown as ClubEvent;
 
     if (event.docType !== "clubEvent") {
