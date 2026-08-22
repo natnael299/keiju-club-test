@@ -1,18 +1,23 @@
 import "dotenv/config";
+
 import bcrypt from "bcryptjs";
 
 import { authenticateCouchDb, db } from "../config/couchdb.js";
+
 import { mockUsers } from "../data/index.js";
+
 import type { User } from "../types/index.js";
 
 const TEST_PASSWORD = "password123";
 
-async function seedUsers() {
+async function seedUsers(): Promise<void> {
   try {
+    preventProductionSeeding();
+
     await authenticateCouchDb();
 
     console.log("Connected to CouchDB.");
-    console.log("Seeding users...");
+    console.log("Seeding demo users...");
 
     const passwordHash = await bcrypt.hash(TEST_PASSWORD, 10);
 
@@ -27,15 +32,18 @@ async function seedUsers() {
           _rev: existingUser._rev,
 
           email: mockUser.email.trim().toLowerCase(),
+
           passwordHash,
 
           cdt: existingUser.cdt ?? mockUser.cdt,
+
           ldt: new Date().toISOString(),
         };
 
         await db.insert(updatedUser);
 
-        console.log(`Updated user: ${updatedUser.email}`);
+        console.log(`Updated demo user: ${updatedUser.email}`);
+
         continue;
       }
 
@@ -43,6 +51,7 @@ async function seedUsers() {
         ...mockUser,
 
         email: mockUser.email.trim().toLowerCase(),
+
         passwordHash,
 
         ldt: new Date().toISOString(),
@@ -50,15 +59,24 @@ async function seedUsers() {
 
       await db.insert(newUser);
 
-      console.log(`Inserted user: ${newUser.email}`);
+      console.log(`Inserted demo user: ${newUser.email}`);
     }
 
-    console.log("User seed completed successfully.");
-    console.log("Test password: password123");
+    console.log("Demo user seed completed successfully.");
+
+    console.log(`Demo password: ${TEST_PASSWORD}`);
   } catch (error) {
-    console.error("User seed failed:", error);
+    console.error("Demo user seed failed:", error);
 
     process.exitCode = 1;
+  }
+}
+
+function preventProductionSeeding(): void {
+  const environment = process.env.NODE_ENV?.trim().toLowerCase();
+
+  if (environment === "production") {
+    throw new Error("Demo user seeding is disabled in production.");
   }
 }
 

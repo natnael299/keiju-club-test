@@ -23,10 +23,16 @@ type ClubEventsStore = {
     event: UpdateClubEventPayload,
   ) => Promise<ClubEvent>;
 
+  uploadClubEventImage: (eventId: string, image: File) => Promise<ClubEvent>;
+
   deleteClubEvent: (eventId: string) => Promise<void>;
 
   reset: () => void;
 };
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
 
 export const useClubEventsStore = create<ClubEventsStore>((set) => ({
   clubEvents: [],
@@ -52,10 +58,7 @@ export const useClubEventsStore = create<ClubEventsStore>((set) => ({
       set({
         clubEvents: [],
         loading: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to fetch Club events",
+        error: getErrorMessage(error, "Failed to fetch Club events"),
       });
     }
   },
@@ -79,10 +82,7 @@ export const useClubEventsStore = create<ClubEventsStore>((set) => ({
       set({
         clubEvents: [],
         loading: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to fetch organization events",
+        error: getErrorMessage(error, "Failed to fetch organization events"),
       });
     }
   },
@@ -105,10 +105,7 @@ export const useClubEventsStore = create<ClubEventsStore>((set) => ({
     } catch (error) {
       set({
         loading: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to create Club event",
+        error: getErrorMessage(error, "Failed to create Club event"),
       });
 
       throw error;
@@ -128,7 +125,6 @@ export const useClubEventsStore = create<ClubEventsStore>((set) => ({
         clubEvents: state.clubEvents.map((clubEvent) =>
           clubEvent.id === eventId ? updatedEvent : clubEvent,
         ),
-
         loading: false,
       }));
 
@@ -136,10 +132,34 @@ export const useClubEventsStore = create<ClubEventsStore>((set) => ({
     } catch (error) {
       set({
         loading: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to update Club event",
+        error: getErrorMessage(error, "Failed to update Club event"),
+      });
+
+      throw error;
+    }
+  },
+
+  async uploadClubEventImage(eventId, image) {
+    set({
+      loading: true,
+      error: null,
+    });
+
+    try {
+      const updatedEvent = await clubEventsApi.uploadImage(eventId, image);
+
+      set((state) => ({
+        clubEvents: state.clubEvents.map((clubEvent) =>
+          clubEvent.id === eventId ? updatedEvent : clubEvent,
+        ),
+        loading: false,
+      }));
+
+      return updatedEvent;
+    } catch (error) {
+      set({
+        loading: false,
+        error: getErrorMessage(error, "Failed to upload event image"),
       });
 
       throw error;
@@ -157,16 +177,12 @@ export const useClubEventsStore = create<ClubEventsStore>((set) => ({
 
       set((state) => ({
         clubEvents: state.clubEvents.filter((event) => event.id !== eventId),
-
         loading: false,
       }));
     } catch (error) {
       set({
         loading: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to delete Club event",
+        error: getErrorMessage(error, "Failed to delete Club event"),
       });
 
       throw error;

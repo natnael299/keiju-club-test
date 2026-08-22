@@ -1,22 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 
-import type { TFunction } from "i18next";
-
-import { useNavigate, useParams } from "react-router-dom";
-
 import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router-dom";
 
 import EventForm, {
   type EventFormValues,
 } from "@/components/organizer/EventForm";
-
 import OrganizerLayout from "@/layouts/OrganizerLayout";
-
 import { useClubEventsStore } from "@/store/clubEvents.store";
 
 export default function EditEvent() {
   const navigate = useNavigate();
-
   const { t } = useTranslation();
 
   const { eventId } = useParams<{
@@ -32,6 +26,10 @@ export default function EditEvent() {
   );
 
   const updateClubEvent = useClubEventsStore((state) => state.updateClubEvent);
+
+  const uploadClubEventImage = useClubEventsStore(
+    (state) => state.uploadClubEventImage,
+  );
 
   const [error, setError] = useState<string | null>(null);
 
@@ -61,40 +59,35 @@ export default function EditEvent() {
     try {
       await updateClubEvent(eventId, {
         title: values.title.trim(),
-
         description: values.description.trim(),
-
         city: values.city.trim(),
-
         address: values.address.trim(),
-
         startsAt: values.startsAt,
-
         endsAt: values.endsAt,
-
         categories: values.categories,
-
         audience: values.audience,
-
-        registrationUrl,
-
+        registrationUrl: registrationUrl || undefined,
         registrationStatus: registrationUrl
           ? values.registrationStatus
           : undefined,
-
-        imageUrl:
-          values.imagePreview && !values.imagePreview.startsWith("blob:")
-            ? values.imagePreview
-            : event.imageUrl,
+        imageUrl: event.imageUrl,
       });
 
-      navigate("/organizer/events", {
-        replace: true,
-      });
+      if (values.imageFile) {
+        await uploadClubEventImage(eventId, values.imageFile);
+      }
+
+      navigate("/organizer/events");
     } catch (caughtError) {
       console.error("UPDATE EVENT ERROR:", caughtError);
 
-      setError(getLocalizedError(caughtError, t));
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : t("editEventPage.error", {
+              defaultValue: "The event could not be updated.",
+            }),
+      );
     }
   };
 
@@ -146,25 +139,15 @@ export default function EditEvent() {
             key={event.id}
             initialValues={{
               title: event.title,
-
               description: event.description,
-
               city: event.city,
-
               address: event.address,
-
               startsAt: toDateTimeLocal(event.startsAt),
-
               endsAt: toDateTimeLocal(event.endsAt),
-
               categories: event.categories,
-
               audience: event.audience,
-
               registrationUrl: event.registrationUrl ?? "",
-
               registrationStatus: event.registrationStatus ?? "open",
-
               imagePreview: event.imageUrl ?? null,
             }}
             submitLabel={t("eventForm.update")}
@@ -178,21 +161,6 @@ export default function EditEvent() {
   );
 }
 
-function getLocalizedError(error: unknown, t: TFunction): string {
-  if (
-    error instanceof Error &&
-    error.message === "The event end date must be after its start date."
-  ) {
-    return t("createEventPage.invalidDateRange");
-  }
-
-  if (error instanceof Error && error.message) {
-    return error.message;
-  }
-
-  return t("editEventPage.error");
-}
-
 function toDateTimeLocal(value: string): string {
   const date = new Date(value);
 
@@ -201,13 +169,9 @@ function toDateTimeLocal(value: string): string {
   }
 
   const year = date.getFullYear();
-
   const month = String(date.getMonth() + 1).padStart(2, "0");
-
   const day = String(date.getDate()).padStart(2, "0");
-
   const hours = String(date.getHours()).padStart(2, "0");
-
   const minutes = String(date.getMinutes()).padStart(2, "0");
 
   return `${year}-${month}-${day}T${hours}:${minutes}`;

@@ -10,49 +10,102 @@ import type {
 export type CreateClubEventPayload = {
   title: string;
   description: string;
-
   imageUrl?: string;
-
   registrationUrl?: string;
   registrationStatus?: RegistrationStatus;
-
   categories: EventCategory[];
   audience: EventAudience;
-
   address: string;
   city: string;
-
   startsAt: string;
   endsAt: string;
 };
 
 export type UpdateClubEventPayload = Partial<CreateClubEventPayload>;
 
+function resolveImageUrl(imageUrl?: string): string | undefined {
+  if (!imageUrl) {
+    return undefined;
+  }
+
+  if (/^https?:\/\//i.test(imageUrl)) {
+    return imageUrl;
+  }
+
+  const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, "");
+
+  if (!apiUrl) {
+    return imageUrl;
+  }
+
+  try {
+    const apiOrigin = new URL(apiUrl, window.location.origin).origin;
+
+    return new URL(imageUrl, apiOrigin).toString();
+  } catch {
+    return imageUrl;
+  }
+}
+
+function normalizeEvent(event: ClubEvent): ClubEvent {
+  return {
+    ...event,
+    imageUrl: resolveImageUrl(event.imageUrl),
+  };
+}
+
+function normalizeEvents(events: ClubEvent[]): ClubEvent[] {
+  return events.map(normalizeEvent);
+}
+
 export const clubEventsApi = {
-  getAll() {
-    return api<ClubEvent[]>("/club-events");
+  async getAll() {
+    const events = await api<ClubEvent[]>("/club-events");
+
+    return normalizeEvents(events);
   },
 
-  getOrganizationEvents() {
-    return api<ClubEvent[]>("/club-events/organization");
+  async getOrganizationEvents() {
+    const events = await api<ClubEvent[]>("/club-events/organization");
+
+    return normalizeEvents(events);
   },
 
-  getById(eventId: string) {
-    return api<ClubEvent>(`/club-events/${eventId}`);
+  async getById(eventId: string) {
+    const event = await api<ClubEvent>(`/club-events/${eventId}`);
+
+    return normalizeEvent(event);
   },
 
-  create(payload: CreateClubEventPayload) {
-    return api<ClubEvent>("/club-events", {
+  async create(payload: CreateClubEventPayload) {
+    const event = await api<ClubEvent>("/club-events", {
       method: "POST",
       body: JSON.stringify(payload),
     });
+
+    return normalizeEvent(event);
   },
 
-  update(eventId: string, payload: UpdateClubEventPayload) {
-    return api<ClubEvent>(`/club-events/${eventId}`, {
+  async update(eventId: string, payload: UpdateClubEventPayload) {
+    const event = await api<ClubEvent>(`/club-events/${eventId}`, {
       method: "PUT",
       body: JSON.stringify(payload),
     });
+
+    return normalizeEvent(event);
+  },
+
+  async uploadImage(eventId: string, image: File) {
+    const formData = new FormData();
+
+    formData.append("image", image);
+
+    const event = await api<ClubEvent>(`/club-events/${eventId}/image`, {
+      method: "PUT",
+      body: formData,
+    });
+
+    return normalizeEvent(event);
   },
 
   delete(eventId: string) {
