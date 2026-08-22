@@ -21,36 +21,75 @@ export default function OrganizerProfile() {
 
   const user = useAuthStore((state) => state.user);
 
+  const organizationId =
+    user?.role === "organizationRep" ? user.organizationId : undefined;
+
   const [organization, setOrganization] = useState<Organization | null>(null);
 
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState<string | null>(null);
 
-  const loadOrganization = useCallback(async (): Promise<void> => {
-    if (user?.role !== "organizationRep" || !user.organizationId) {
-      setError(
+  const fetchOrganizationData = useCallback(async (): Promise<Organization> => {
+    if (!organizationId) {
+      throw new Error(
         t("organizer.organizationMissing", {
           defaultValue: "No organization is connected to this account.",
         }),
       );
-
-      setLoading(false);
-
-      return;
     }
 
+    return organizationsApi.getById(organizationId);
+  }, [organizationId, t]);
+
+  useEffect(() => {
+    let active = true;
+
+    fetchOrganizationData()
+      .then((organizationData) => {
+        if (!active) {
+          return;
+        }
+
+        setOrganization(organizationData);
+        setError(null);
+      })
+      .catch((caughtError: unknown) => {
+        if (!active) {
+          return;
+        }
+
+        console.error("ORGANIZATION PROFILE ERROR:", caughtError);
+
+        setError(
+          caughtError instanceof Error
+            ? caughtError.message
+            : t("organizer.profileError", {
+                defaultValue: "Organization details could not be loaded.",
+              }),
+        );
+      })
+      .finally(() => {
+        if (active) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [fetchOrganizationData, t]);
+
+  const handleRetry = async (): Promise<void> => {
     setLoading(true);
     setError(null);
 
     try {
-      const organizationData = await organizationsApi.getById(
-        user.organizationId,
-      );
+      const organizationData = await fetchOrganizationData();
 
       setOrganization(organizationData);
     } catch (caughtError) {
-      console.error("ORGANIZATION PROFILE ERROR:", caughtError);
+      console.error("ORGANIZATION PROFILE RETRY ERROR:", caughtError);
 
       setError(
         caughtError instanceof Error
@@ -62,11 +101,7 @@ export default function OrganizerProfile() {
     } finally {
       setLoading(false);
     }
-  }, [user, t]);
-
-  useEffect(() => {
-    void loadOrganization();
-  }, [loadOrganization]);
+  };
 
   return (
     <OrganizerLayout>
@@ -98,7 +133,7 @@ export default function OrganizerProfile() {
             })}
             message={error}
             retrying={loading}
-            onRetry={loadOrganization}
+            onRetry={handleRetry}
           />
         </div>
       ) : organization ? (

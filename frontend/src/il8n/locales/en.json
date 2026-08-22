@@ -16,7 +16,8 @@
     "description": "Choose whose information you want to view.",
     "loading": "Loading people...",
     "emptyTitle": "No people found",
-    "emptyDescription": "There are currently no people connected to your account."
+    "emptyDescription": "There are currently no people connected to your account.",
+    "loadError": "People could not be loaded"
   },
 
   "greeting": {
@@ -81,7 +82,16 @@
     "createEventDescription": "Add a new Club activity.",
 
     "manageEvents": "Manage events",
-    "manageEventsDescription": "Edit upcoming activities."
+    "manageEventsDescription": "Edit upcoming activities.",
+    "profileSubtitle": "View your organization and account information.",
+    "profileLoading": "Loading organization information...",
+    "profileError": "Organization information could not be loaded",
+    "organizationMissing": "No organization is connected to this account.",
+    "organization": "Keiju Club organization",
+    "organizationAddress": "Address",
+    "organizationEmail": "Email",
+    "organizationPhone": "Phone",
+    "representative": "Organization representative"
   },
 
   "organizerProfile": {
@@ -205,5 +215,26 @@
     "description": "The page may have been moved, removed or the address may be incorrect.",
     "back": "Go back",
     "home": "Go to home"
+  },
+  "common": {
+    "tryAgain": "Try again",
+    "retrying": "Trying again...",
+    "loading": "Loading..."
+  },
+
+  "alerts": {
+    "loading": "Loading alerts...",
+    "loadError": "Alerts could not be loaded"
+  },
+
+  "club": {
+    "loading": "Loading events...",
+    "loadError": "Events could not be loaded"
+  },
+
+  "dataErrors": {
+    "reports": "Reports could not be loaded",
+    "people": "People could not be loaded",
+    "organization": "Organization information could not be loaded"
   }
 }

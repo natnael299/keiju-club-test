@@ -16,7 +16,8 @@
     "description": "Välj vems uppgifter du vill visa.",
     "loading": "Laddar personer...",
     "emptyTitle": "Inga personer hittades",
-    "emptyDescription": "Det finns för närvarande inga personer kopplade till ditt konto."
+    "emptyDescription": "Det finns för närvarande inga personer kopplade till ditt konto.",
+    "loadError": "Personerna kunde inte laddas"
   },
 
   "greeting": {
@@ -71,7 +72,16 @@
     "createEventDescription": "Lägg till en ny Club-aktivitet.",
 
     "manageEvents": "Hantera evenemang",
-    "manageEventsDescription": "Redigera kommande aktiviteter."
+    "manageEventsDescription": "Redigera kommande aktiviteter.",
+    "profileSubtitle": "Visa uppgifter om din organisation och ditt användarkonto.",
+    "profileLoading": "Laddar organisationens uppgifter...",
+    "profileError": "Organisationens uppgifter kunde inte laddas",
+    "organizationMissing": "Ingen organisation är kopplad till detta användarkonto.",
+    "organization": "Keiju Club-organisation",
+    "organizationAddress": "Adress",
+    "organizationEmail": "E-post",
+    "organizationPhone": "Telefon",
+    "representative": "Organisationsrepresentant"
   },
 
   "organizerProfile": {
@@ -205,5 +215,26 @@
     "description": "Sidan kan ha flyttats eller tagits bort, eller så kan adressen vara felaktig.",
     "back": "Gå tillbaka",
     "home": "Gå till startsidan"
+  },
+  "common": {
+    "tryAgain": "Försök igen",
+    "retrying": "Försöker igen...",
+    "loading": "Laddar..."
+  },
+
+  "alerts": {
+    "loading": "Laddar varningar...",
+    "loadError": "Varningarna kunde inte laddas"
+  },
+
+  "club": {
+    "loading": "Laddar evenemang...",
+    "loadError": "Evenemangen kunde inte laddas"
+  },
+
+  "dataErrors": {
+    "reports": "Rapporterna kunde inte laddas",
+    "people": "Personerna kunde inte laddas",
+    "organization": "Organisationens uppgifter kunde inte laddas"
   }
 }

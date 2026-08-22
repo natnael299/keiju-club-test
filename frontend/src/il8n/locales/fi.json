@@ -16,7 +16,8 @@
     "description": "Valitse, kenen tietoja haluat tarkastella.",
     "loading": "Ladataan henkilöitä...",
     "emptyTitle": "Henkilöitä ei löytynyt",
-    "emptyDescription": "Tilillesi ei ole tällä hetkellä liitetty henkilöitä."
+    "emptyDescription": "Tilillesi ei ole tällä hetkellä liitetty henkilöitä.",
+    "loadError": "Henkilöitä ei voitu ladata"
   },
 
   "greeting": {
@@ -71,7 +72,16 @@
     "createEventDescription": "Lisää uusi Club-aktiviteetti.",
 
     "manageEvents": "Hallinnoi tapahtumia",
-    "manageEventsDescription": "Muokkaa tulevia aktiviteetteja."
+    "manageEventsDescription": "Muokkaa tulevia aktiviteetteja.",
+    "profileSubtitle": "Tarkastele organisaatiosi ja käyttäjätilisi tietoja.",
+    "profileLoading": "Ladataan organisaation tietoja...",
+    "profileError": "Organisaation tietoja ei voitu ladata",
+    "organizationMissing": "Tähän käyttäjätiliin ei ole yhdistetty organisaatiota.",
+    "organization": "Keiju Club -organisaatio",
+    "organizationAddress": "Osoite",
+    "organizationEmail": "Sähköposti",
+    "organizationPhone": "Puhelin",
+    "representative": "Organisaation edustaja"
   },
 
   "organizerProfile": {
@@ -205,5 +215,26 @@
     "description": "Sivu on ehkä siirretty tai poistettu, tai osoite saattaa olla virheellinen.",
     "back": "Palaa takaisin",
     "home": "Siirry etusivulle"
+  },
+  "common": {
+    "tryAgain": "Yritä uudelleen",
+    "retrying": "Yritetään uudelleen...",
+    "loading": "Ladataan..."
+  },
+
+  "alerts": {
+    "loading": "Ladataan hälytyksiä...",
+    "loadError": "Hälytyksiä ei voitu ladata"
+  },
+
+  "club": {
+    "loading": "Ladataan tapahtumia...",
+    "loadError": "Tapahtumia ei voitu ladata"
+  },
+
+  "dataErrors": {
+    "reports": "Raportteja ei voitu ladata",
+    "people": "Henkilöitä ei voitu ladata",
+    "organization": "Organisaation tietoja ei voitu ladata"
   }
 }

@@ -1,26 +1,22 @@
-import { Check, ChevronRight } from "lucide-react";
 import { useEffect } from "react";
+
+import { Check, ChevronRight } from "lucide-react";
+
 import { useTranslation } from "react-i18next";
+
 import { useNavigate } from "react-router-dom";
 
 import logo from "@/assets/logo.png";
+
 import Card from "@/components/shared/Card";
+import LoadError from "@/components/shared/LoadError";
 
 import { useAuthStore } from "@/store/authStore";
 import { useOwnerStore } from "@/store/owner.store";
 
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
-
 export default function SelectOwner() {
   const navigate = useNavigate();
+
   const { t, i18n } = useTranslation();
 
   const user = useAuthStore((state) => state.user);
@@ -29,29 +25,33 @@ export default function SelectOwner() {
 
   const loading = useOwnerStore((state) => state.loading);
 
+  const error = useOwnerStore((state) => state.error);
+
   const fetchOwners = useOwnerStore((state) => state.fetchOwners);
 
   const selectedOwnerId = useOwnerStore((state) => state.selectedOwnerId);
 
   const setSelectedOwnerId = useOwnerStore((state) => state.setSelectedOwnerId);
 
+  const ownerIds = user?.role === "caretaker" ? (user.ownerIds ?? []) : [];
+
   useEffect(() => {
-    if (user?.role !== "caretaker" || !user.ownerIds?.length) {
+    if (ownerIds.length === 0 || owners.length > 0) {
       return;
     }
 
-    /*
-     * If owners are already loaded,
-     * don't fetch them again.
-     */
-    if (owners.length > 0) {
+    void fetchOwners(ownerIds);
+  }, [ownerIds, owners.length, fetchOwners]);
+
+  const handleRetry = async (): Promise<void> => {
+    if (ownerIds.length === 0) {
       return;
     }
 
-    void fetchOwners(user.ownerIds);
-  }, [user, owners.length, fetchOwners]);
+    await fetchOwners(ownerIds);
+  };
 
-  const handleSelectOwner = (ownerId: string) => {
+  const handleSelectOwner = (ownerId: string): void => {
     setSelectedOwnerId(ownerId);
 
     navigate("/app/home", {
@@ -78,6 +78,15 @@ export default function SelectOwner() {
           <p className="text-center text-sm text-muted-foreground">
             {t("selectOwner.loading")}
           </p>
+        ) : error ? (
+          <LoadError
+            title={t("selectOwner.loadError", {
+              defaultValue: "People could not be loaded",
+            })}
+            message={error}
+            retrying={loading}
+            onRetry={handleRetry}
+          />
         ) : owners.length === 0 ? (
           <div className="rounded-2xl border border-border bg-card px-5 py-6 text-center">
             <p className="font-semibold text-foreground">
@@ -141,7 +150,17 @@ export default function SelectOwner() {
   );
 }
 
-function formatBirthDate(birthDate: string, language: string) {
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+function formatBirthDate(birthDate: string, language: string): string {
   const date = new Date(`${birthDate}T00:00:00`);
 
   if (Number.isNaN(date.getTime())) {
