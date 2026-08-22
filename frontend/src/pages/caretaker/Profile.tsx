@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 
+import { useTranslation } from "react-i18next";
+
 import OwnerSwitcher from "@/components/profile/OwnerSwitcher";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import SettingsList from "@/components/profile/SettingsList";
@@ -12,6 +14,8 @@ import { useAuthStore } from "@/store/authStore";
 import { useOwnerStore } from "@/store/owner.store";
 
 export default function Profile() {
+  const { t } = useTranslation();
+
   const user = useAuthStore((state) => state.user);
 
   const owners = useOwnerStore((state) => state.owners);
@@ -45,11 +49,13 @@ export default function Profile() {
       <ProfileHeader />
 
       {loading && owners.length === 0 ? (
-        <p className="mb-6 text-sm text-muted-foreground">Loading...</p>
+        <p className="mb-6 text-sm text-muted-foreground">
+          {t("common.loading")}
+        </p>
       ) : error ? (
         <div className="mb-6">
           <LoadError
-            title="People could not be loaded"
+            title={t("dataErrors.people")}
             message={error}
             retrying={loading}
             onRetry={handleRetry}

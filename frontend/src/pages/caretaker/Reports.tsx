@@ -1,5 +1,7 @@
 import { useEffect, useMemo } from "react";
 
+import { useTranslation } from "react-i18next";
+
 import LatestReport from "@/components/reports/LatestReport";
 import PreviousReports from "@/components/reports/PreviousReports";
 import ReportsHeader from "@/components/reports/ReportsHeader";
@@ -11,6 +13,8 @@ import { useOwnerStore } from "@/store/owner.store";
 import { useReportsStore } from "@/store/reports.store";
 
 export default function Reports() {
+  const { t } = useTranslation();
+
   const selectedOwnerId = useOwnerStore((state) => state.selectedOwnerId);
 
   const reports = useReportsStore((state) => state.reports);
@@ -57,11 +61,11 @@ export default function Reports() {
 
       {loading && reports.length === 0 ? (
         <div className="py-12 text-center text-sm text-muted-foreground">
-          Ladataan raportteja...
+          {t("common.loading")}
         </div>
       ) : error ? (
         <LoadError
-          title="Raportteja ei voitu ladata"
+          title={t("dataErrors.reports")}
           message={error}
           retrying={loading}
           onRetry={handleRetry}
